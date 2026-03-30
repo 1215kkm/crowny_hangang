@@ -1,0 +1,135 @@
+{
+  "phases": [
+    {
+      "id": "warmup",
+      "name": "워밍업",
+      "icon": "emoji_people",
+      "missions": [
+        {
+          "id": "m1",
+          "type": "talk",
+          "text": "오늘 한강 온 이유 공유",
+          "sub": "서로 한 문장씩!",
+          "icon": "chat",
+          "timer_sec": 120,
+          "difficulty": ["easy", "normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        },
+        {
+          "id": "m2",
+          "type": "talk",
+          "text": "공통점 3개 찾기",
+          "sub": "의외의 공통점을 찾아보세요",
+          "icon": "search",
+          "timer_sec": 180,
+          "difficulty": ["easy", "normal"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "activity",
+      "name": "액티비티",
+      "icon": "sports_esports",
+      "missions": [
+        {
+          "id": "m3",
+          "type": "photo",
+          "text": "가장 웃긴 셀카 찍기!",
+          "sub": "서로 찍어주고 가장 웃긴 사진 뽑기",
+          "icon": "photo_camera",
+          "timer_sec": 180,
+          "difficulty": ["normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true,
+          "config": {
+            "require_photo": true,
+            "camera_mode": "front"
+          }
+        },
+        {
+          "id": "m4",
+          "type": "action",
+          "text": "주변 특이한 것 찾기",
+          "sub": "가장 특이한 것을 발견하는 사람이 승리!",
+          "icon": "search",
+          "timer_sec": 300,
+          "difficulty": ["easy", "normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        },
+        {
+          "id": "m5",
+          "type": "action",
+          "text": "지나가는 사람에게 사진 부탁",
+          "sub": "용기를 내서 부탁해보세요!",
+          "icon": "photo_camera",
+          "timer_sec": 180,
+          "difficulty": ["hard"],
+          "tags": ["korean"],
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "deep_talk",
+      "name": "대화 심화",
+      "icon": "psychology",
+      "missions": [
+        {
+          "id": "m6",
+          "type": "talk",
+          "text": "감동/웃긴 일 공유",
+          "sub": "최근에 있었던 이야기 하나씩",
+          "icon": "chat",
+          "timer_sec": 300,
+          "difficulty": ["normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        },
+        {
+          "id": "m7",
+          "type": "talk",
+          "text": "한강 음식 추천",
+          "sub": "서로에게 꼭 먹어봐야 할 음식 추천",
+          "icon": "ramen_dining",
+          "timer_sec": 300,
+          "difficulty": ["easy", "normal"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "bonus",
+      "name": "보너스",
+      "icon": "star",
+      "missions": [
+        {
+          "id": "m8",
+          "type": "talk",
+          "text": "오늘 만남 한 문장 요약",
+          "sub": "오늘 이 만남을 한 문장으로!",
+          "icon": "edit",
+          "timer_sec": 120,
+          "difficulty": ["easy", "normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        },
+        {
+          "id": "m9",
+          "type": "talk",
+          "text": "다음에 같이 하고 싶은 것",
+          "sub": "재미있는 제안을 해보세요",
+          "icon": "lightbulb",
+          "timer_sec": 180,
+          "difficulty": ["easy", "normal", "hard"],
+          "tags": ["korean", "foreigner"],
+          "active": true
+        }
+      ]
+    }
+  ]
+}

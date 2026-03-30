@@ -1,0 +1,41 @@
+name: crowny_hangang
+description: 한강 오프라인 커뮤니티 앱 - 한강에서 만나는 새로운 인연
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # UI
+  google_fonts: ^6.1.0
+  material_design_icons_flutter: ^7.0.7296
+
+  # State management
+  provider: ^6.1.1
+
+  # Navigation
+  go_router: ^13.0.0
+
+  # Utils
+  intl: ^0.19.0
+  uuid: ^4.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+    - assets/missions/
