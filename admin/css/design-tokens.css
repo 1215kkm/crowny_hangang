@@ -1,0 +1,73 @@
+/* ============================================
+   Crowny Hangang - Global Design Tokens
+   CSS Custom Properties로 전체 앱 디자인 관리
+   ============================================ */
+
+:root {
+  /* ── 메인 색상 ── */
+  --color-primary: #4A90D9;
+  --color-secondary: #2C3E50;
+  --color-accent: #F39C12;
+
+  /* ── 배경 색상 ── */
+  --color-bg: #FFFFFF;
+  --color-bg-secondary: #F5F7FA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* ── 텍스트 색상 ── */
+  --color-text-primary: #1A1A2E;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+  --color-text-inverse: #FFFFFF;
+
+  /* ── 상태 색상 ── */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* ── 폰트 ── */
+  --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-h1: 28px;
+  --font-size-h2: 22px;
+  --font-size-h3: 18px;
+  --font-size-body: 15px;
+  --font-size-caption: 13px;
+  --font-size-small: 11px;
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-regular: 400;
+
+  /* ── 그림자 ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* ── 버튼 ── */
+  --btn-hover-color: #3A7BC8;
+  --btn-active-color: #2E6AB0;
+  --btn-disabled-color: #D1D5DB;
+  --btn-text-color: #FFFFFF;
+
+  /* ── Border Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* ── 여백 ── */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-section: 40px;
+
+  /* ── 기타 ── */
+  --transition-speed: 0.2s;
+  --border-color: #E5E7EB;
+  --input-bg: #F9FAFB;
+  --input-border: #D1D5DB;
+  --input-focus-border: var(--color-primary);
+}

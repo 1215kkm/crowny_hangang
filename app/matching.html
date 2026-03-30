@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 한강 - 매칭</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #4A90D9;
+      --color-secondary: #2C3E50;
+      --color-accent: #F39C12;
+      --color-bg: #F5F7FA;
+      --color-bg-card: #FFFFFF;
+      --color-text-primary: #1A1A2E;
+      --color-text-secondary: #6B7280;
+      --color-text-muted: #9CA3AF;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-error: #EF4444;
+      --font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--color-bg-card);
+      padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .header-filter {
+      font-size: 13px; color: var(--color-primary); font-weight: 500; cursor: pointer;
+    }
+
+    /* ── 매칭 알림 배너 ── */
+    .match-alert {
+      margin: 12px 20px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #4A90D9 0%, #6C5CE7 100%);
+      border-radius: var(--radius-md);
+      color: white;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .match-alert-icon { font-size: 28px; }
+    .match-alert-text { flex: 1; }
+    .match-alert-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+    .match-alert-sub { font-size: 12px; opacity: 0.85; }
+    .match-alert-btn {
+      background: white; color: var(--color-primary);
+      border: none; border-radius: var(--radius-full);
+      padding: 8px 16px; font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: var(--font-family);
+    }
+
+    /* ── 그룹 사이즈 선택 ── */
+    .group-selector {
+      display: flex; gap: 8px;
+      padding: 0 20px; margin-bottom: 16px;
+    }
+    .group-option {
+      flex: 1; padding: 10px; text-align: center;
+      background: var(--color-bg-card); border: 1.5px solid #E5E7EB;
+      border-radius: var(--radius-md); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .group-option.active {
+      border-color: var(--color-primary);
+      background: rgba(74,144,217,0.06);
+    }
+    .group-option-icon { font-size: 20px; margin-bottom: 4px; }
+    .group-option-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+    .group-option.active .group-option-label { color: var(--color-primary); }
+
+    /* ── 매칭 카드 (틴더 스타일) ── */
+    .match-card-stack {
+      position: relative;
+      height: 420px;
+      margin: 0 20px 16px;
+    }
+    .match-card {
+      position: absolute;
+      width: 100%;
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .match-card:nth-child(2) {
+      transform: scale(0.95) translateY(10px);
+      opacity: 0.7;
+    }
+    .match-card:nth-child(3) {
+      transform: scale(0.9) translateY(20px);
+      opacity: 0.4;
+    }
+    .match-card-header {
+      height: 200px;
+      background: linear-gradient(135deg, #FF9A56 0%, #FF6B6B 50%, #EE5A24 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .match-card-emoji { font-size: 80px; }
+    .match-card-distance {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(0,0,0,0.4); color: white;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 500;
+      backdrop-filter: blur(8px);
+    }
+    .match-card-trust {
+      position: absolute; top: 14px; left: 14px;
+      background: rgba(16,185,129,0.9); color: white;
+      padding: 4px 10px; border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600;
+    }
+    .match-card-body { padding: 18px; }
+    .match-card-name-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .match-card-name { font-size: 20px; font-weight: 700; }
+    .match-card-lang {
+      font-size: 11px; padding: 2px 8px; border-radius: var(--radius-full);
+      background: rgba(74,144,217,0.1); color: var(--color-primary); font-weight: 500;
+    }
+    .match-card-activity {
+      font-size: 14px; color: var(--color-text-secondary); margin-bottom: 12px;
+    }
+    .match-card-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+    }
+    .match-card-tag {
+      font-size: 12px; padding: 4px 10px;
+      background: var(--color-bg); border-radius: var(--radius-full);
+      color: var(--color-text-secondary);
+    }
+    .match-card-temp {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: var(--color-bg);
+      border-radius: var(--radius-md);
+    }
+    .temp-icon { font-size: 18px; }
+    .temp-label { font-size: 12px; color: var(--color-text-secondary); flex: 1; }
+    .temp-value { font-size: 16px; font-weight: 700; color: var(--color-accent); }
+    .temp-bar {
+      width: 60px; height: 4px; background: #E5E7EB; border-radius: 2px;
+      overflow: hidden;
+    }
+    .temp-fill {
+      height: 100%; background: linear-gradient(90deg, #10B981, #F59E0B, #EF4444);
+      border-radius: 2px; width: 72%;
+    }
+
+    /* ── 매칭 액션 버튼 ── */
+    .match-actions {
+      display: flex; justify-content: center; gap: 16px;
+      padding: 0 20px 16px;
+    }
+    .action-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%; border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.2s;
+    }
+    .action-btn:hover { transform: scale(1.1); }
+    .action-btn:active { transform: scale(0.9); }
+    .action-btn.pass {
+      background: white; color: var(--color-text-muted);
+    }
+    .action-btn.wave {
+      background: linear-gradient(135deg, var(--color-primary), #6C5CE7);
+      color: white; width: 68px; height: 68px; font-size: 30px;
+    }
+    .action-btn.super {
+      background: white; color: var(--color-accent);
+    }
+
+    /* ── 하단 힌트 ── */
+    .match-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--color-text-muted);
+      padding: 0 20px 16px;
+    }
+
+    /* ── 최근 손 흔들기 ── */
+    .recent-section {
+      padding: 0 20px 100px;
+    }
+    .recent-title {
+      font-size: 14px; font-weight: 600; color: var(--color-text-secondary);
+      margin-bottom: 12px;
+    }
+    .recent-list { display: flex; flex-direction: column; gap: 8px; }
+    .recent-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px;
+      background: var(--color-bg-card);
+      border-radius: var(--radius-md);
+      border: 1px solid #F0F0F0;
+    }
+    .recent-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .recent-avatar.bg1 { background: linear-gradient(135deg, #56CCF2, #2F80ED); }
+    .recent-avatar.bg2 { background: linear-gradient(135deg, #F2C94C, #F2994A); }
+    .recent-info { flex: 1; }
+    .recent-name { font-size: 13px; font-weight: 600; }
+    .recent-status { font-size: 11px; color: var(--color-text-muted); }
+    .recent-status.waiting { color: var(--color-warning); }
+    .recent-status.accepted { color: var(--color-success); }
+    .recent-time { font-size: 11px; color: var(--color-text-muted); }
+
+    /* ── 하단 네비게이션 ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: var(--color-bg-card); border-top: 1px solid #E5E7EB;
+      display: flex; justify-content: space-around;
+      padding: 8px 0; padding-bottom: max(8px, env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 10px; color: var(--color-text-muted); cursor: pointer;
+      padding: 4px 12px; text-decoration: none;
+    }
+    .nav-item.active { color: var(--color-primary); }
+    .nav-icon { font-size: 22px; }
+    .nav-label { font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <span class="header-title">👋 매칭</span>
+    <span class="header-filter">🔽 필터</span>
+  </div>
+
+  <!-- 매칭 알림 -->
+  <div class="match-alert">
+    <span class="match-alert-icon">✨</span>
+    <div class="match-alert-text">
+      <div class="match-alert-title">여의도치맥왕님이 손을 흔들었어요!</div>
+      <div class="match-alert-sub">200m 거리 · 치맥 중 · 합석 환영</div>
+    </div>
+    <button class="match-alert-btn">수락</button>
+  </div>
+
+  <!-- 그룹 사이즈 선택 -->
+  <div class="group-selector">
+    <div class="group-option active">
+      <div class="group-option-icon">👥</div>
+      <div class="group-option-label">1:1</div>
+    </div>
+    <div class="group-option">
+      <div class="group-option-icon">👥👤</div>
+      <div class="group-option-label">소그룹</div>
+    </div>
+    <div class="group-option">
+      <div class="group-option-icon">➡️👥</div>
+      <div class="group-option-label">합류형</div>
+    </div>
+  </div>
+
+  <!-- 매칭 카드 스택 -->
+  <div class="match-card-stack">
+    <!-- 카드 3 (뒤) -->
+    <div class="match-card" style="z-index: 1;">
+      <div class="match-card-header" style="background: linear-gradient(135deg, #56CCF2, #2F80ED);">
+        <span class="match-card-emoji">🐕</span>
+      </div>
+    </div>
+    <!-- 카드 2 (중간) -->
+    <div class="match-card" style="z-index: 2;">
+      <div class="match-card-header" style="background: linear-gradient(135deg, #F2C94C, #F2994A);">
+        <span class="match-card-emoji">📸</span>
+      </div>
+    </div>
+    <!-- 카드 1 (앞) -->
+    <div class="match-card" style="z-index: 3;">
+      <div class="match-card-header">
+        <span class="match-card-emoji">🏃</span>
+        <span class="match-card-distance">📍 120m</span>
+        <span class="match-card-trust">✓ Lv.3 인증됨</span>
+      </div>
+      <div class="match-card-body">
+        <div class="match-card-name-row">
+          <span class="match-card-name">뚝섬러닝러</span>
+          <span class="match-card-lang">🇰🇷 KR</span>
+        </div>
+        <div class="match-card-activity">🏃 러닝 중 · "같이 달릴 사람~ 5km 생각 중!"</div>
+        <div class="match-card-tags">
+          <span class="match-card-tag">⏰ 시간 잘 지켜요</span>
+          <span class="match-card-tag">💬 대화 재밌어요</span>
+          <span class="match-card-tag">🔥 분위기 메이커</span>
+        </div>
+        <div class="match-card-temp">
+          <span class="temp-icon">🌡️</span>
+          <span class="temp-label">한강 온도</span>
+          <div class="temp-bar"><div class="temp-fill"></div></div>
+          <span class="temp-value">38.5°</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 매칭 액션 버튼 -->
+  <div class="match-actions">
+    <button class="action-btn pass">✕</button>
+    <button class="action-btn wave">👋</button>
+    <button class="action-btn super">⭐</button>
+  </div>
+
+  <div class="match-hint">
+    👋 손 흔들기로 관심을 표현하세요 · ✕ 다음 사람
+  </div>
+
+  <!-- 최근 손 흔들기 -->
+  <div class="recent-section">
+    <div class="recent-title">최근 손 흔들기</div>
+    <div class="recent-list">
+      <div class="recent-item">
+        <div class="recent-avatar bg1">🍺</div>
+        <div class="recent-info">
+          <div class="recent-name">여의도치맥왕</div>
+          <div class="recent-status accepted">✓ 수락됨 · 채팅 시작</div>
+        </div>
+        <span class="recent-time">2분 전</span>
+      </div>
+      <div class="recent-item">
+        <div class="recent-avatar bg2">📸</div>
+        <div class="recent-info">
+          <div class="recent-name">SakuraLover</div>
+          <div class="recent-status waiting">⏳ 대기 중</div>
+        </div>
+        <span class="recent-time">15분 전</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 네비게이션 -->
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">홈</span>
+    </a>
+    <a class="nav-item active" href="matching.html">
+      <span class="nav-icon">👋</span>
+      <span class="nav-label">매칭</span>
+    </a>
+    <a class="nav-item" href="mission.html">
+      <span class="nav-icon">⏱</span>
+      <span class="nav-label">미션</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">💬</span>
+      <span class="nav-label">채팅</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">프로필</span>
+    </a>
+  </nav>
+
+</body>
+</html>
