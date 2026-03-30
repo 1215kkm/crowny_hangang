@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 - 미션 v4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    :root{--purple:#7B61FF;--pink:#E845A0;--orange:#FF8A56;--cyan:#36D1DC;--green:#34D399;--font:'Noto Sans KR',-apple-system,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(165deg,#7B61FF 0%,#A78BFA 35%,#C4B5FD 100%);overflow-x:hidden}
+    .mi{font-family:'Material Icons Round';font-size:22px;font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+
+    .header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .icon-btn{width:40px;height:40px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);color:white}
+    .page-title{font-size:18px;font-weight:800}
+    .skip-text{font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer}
+
+    .progress{padding:0 24px 24px}
+    .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.5);margin-bottom:8px;font-weight:600}
+    .prog-labels .done{color:var(--green)}
+    .prog-labels .active{color:white}
+    .prog-bar{display:flex;gap:5px}
+    .prog-seg{flex:1;height:4px;background:rgba(255,255,255,0.18);border-radius:2px}
+    .prog-seg.done{background:var(--green)}
+    .prog-seg.active{background:white}
+
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px}
+    .handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 28px}
+
+    .mission{text-align:center;margin-bottom:28px}
+    .mission-tag{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:rgba(123,97,255,0.08);border-radius:10px;font-size:11px;font-weight:700;color:var(--purple);margin-bottom:20px}
+    .mission-tag .mi{font-size:14px}
+    .mission-icon{width:80px;height:80px;border-radius:24px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:white}
+    .mission-icon .mi{font-size:40px}
+    .mission-icon.m1{background:linear-gradient(135deg,#FF6B9D,#E845A0)}
+    .mission-text{font-size:22px;font-weight:800;color:#1E1B4B;line-height:1.4;margin-bottom:6px}
+    .mission-sub{font-size:13px;color:#9CA3AF}
+
+    .timer-wrap{display:flex;justify-content:center;margin:24px 0 28px}
+    .timer-circle{width:120px;height:120px;position:relative}
+    .timer-svg{width:120px;height:120px;transform:rotate(-90deg)}
+    .timer-bg{fill:none;stroke:#EDE9FE;stroke-width:6}
+    .timer-prog{fill:none;stroke:url(#tg);stroke-width:6;stroke-linecap:round;stroke-dasharray:326;stroke-dashoffset:95}
+    .timer-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+    .timer-time{font-size:32px;font-weight:900;color:#1E1B4B}
+    .timer-label{font-size:10px;color:#9CA3AF;margin-top:2px}
+
+    .actions{display:flex;gap:12px;margin-bottom:32px}
+    .abtn{flex:1;padding:15px;border-radius:16px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s}
+    .abtn .mi{font-size:20px}
+    .abtn.skip{background:#F3F4F6;color:#9CA3AF}
+    .abtn.done{background:linear-gradient(135deg,var(--purple),var(--pink));color:white;box-shadow:0 4px 16px rgba(123,97,255,0.3)}
+    .abtn:active{transform:scale(0.97)}
+
+    .next-title{font-size:14px;font-weight:700;color:#1E1B4B;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+    .next-title .mi{font-size:18px;color:var(--purple)}
+    .next-list{display:flex;flex-direction:column;gap:10px}
+    .next-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F9F7FF;border-radius:16px;transition:all 0.2s}
+    .next-item.locked{opacity:0.4}
+    .ni-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .ni-icon .mi{font-size:20px}
+    .ni-icon.i1{background:linear-gradient(135deg,#FF6B9D,#FF8A56)}
+    .ni-icon.i2{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+    .ni-icon.i3{background:linear-gradient(135deg,#36D1DC,#5B86E5)}
+    .ni-info{flex:1}
+    .ni-name{font-size:13px;font-weight:600;color:#1E1B4B}
+    .ni-meta{font-size:11px;color:#9CA3AF;margin-top:1px;display:flex;align-items:center;gap:3px}
+    .ni-meta .mi{font-size:13px}
+    .ni-arrow{color:#D1D5DB}
+    .ni-arrow .mi{font-size:18px}
+
+    .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -2px 20px rgba(0,0,0,0.04)}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#C4B5FD;cursor:pointer;padding:6px 16px;text-decoration:none}
+    .bnav-item.active{color:var(--purple)}
+    .bnav-item .mi{font-size:24px}
+    .bnav-item.active .mi{background:linear-gradient(135deg,rgba(123,97,255,0.1),rgba(232,69,160,0.06));border-radius:12px;padding:4px 16px}
+    .bnav-label{font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="icon-btn"><span class="mi">arrow_back</span></div>
+    <div class="page-title">미션 타이머</div>
+    <span class="skip-text">나가기</span>
+  </div>
+
+  <div class="progress">
+    <div class="prog-labels">
+      <span class="done">워밍업 ✓</span>
+      <span class="active">액티비티</span>
+      <span>대화 심화</span>
+      <span>보너스</span>
+    </div>
+    <div class="prog-bar">
+      <div class="prog-seg done"></div>
+      <div class="prog-seg active"></div>
+      <div class="prog-seg"></div>
+      <div class="prog-seg"></div>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div class="handle"></div>
+
+    <div class="mission">
+      <div class="mission-tag"><span class="mi">bolt</span>Phase 2 · 액티비티</div>
+      <div class="mission-icon m1"><span class="mi">photo_camera</span></div>
+      <div class="mission-text">가장 웃긴 셀카<br>찍기!</div>
+      <div class="mission-sub">서로 찍어주고 가장 웃긴 사진 뽑기</div>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="timer-circle">
+        <svg class="timer-svg" viewBox="0 0 120 120">
+          <defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7B61FF"/><stop offset="100%" stop-color="#E845A0"/></linearGradient></defs>
+          <circle class="timer-bg" cx="60" cy="60" r="52"/>
+          <circle class="timer-prog" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="timer-center">
+          <div class="timer-time">1:47</div>
+          <div class="timer-label">남은 시간</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="abtn skip"><span class="mi">refresh</span>다른 미션</button>
+      <button class="abtn done"><span class="mi">check_circle</span>완료!</button>
+    </div>
+
+    <div class="next-title"><span class="mi">playlist_play</span>다음 미션</div>
+    <div class="next-list">
+      <div class="next-item">
+        <div class="ni-icon i1"><span class="mi">search</span></div>
+        <div class="ni-info"><div class="ni-name">주변 특이한 것 찾기</div><div class="ni-meta"><span class="mi">timer</span>5분</div></div>
+        <div class="ni-arrow"><span class="mi">chevron_right</span></div>
+      </div>
+      <div class="next-item locked">
+        <div class="ni-icon i2"><span class="mi">chat</span></div>
+        <div class="ni-info"><div class="ni-name">감동/웃긴 일 공유</div><div class="ni-meta"><span class="mi">timer</span>5분 · Phase 3</div></div>
+        <div class="ni-arrow"><span class="mi">lock</span></div>
+      </div>
+      <div class="next-item locked">
+        <div class="ni-icon i3"><span class="mi">ramen_dining</span></div>
+        <div class="ni-info"><div class="ni-name">한강 음식 추천</div><div class="ni-meta"><span class="mi">timer</span>5분 · Phase 3</div></div>
+        <div class="ni-arrow"><span class="mi">lock</span></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bnav">
+    <a class="bnav-item"><span class="mi">home</span><span class="bnav-label">홈</span></a>
+    <a class="bnav-item"><span class="mi">waving_hand</span><span class="bnav-label">매칭</span></a>
+    <a class="bnav-item active"><span class="mi">timer</span><span class="bnav-label">미션</span></a>
+    <a class="bnav-item"><span class="mi">chat_bubble</span><span class="bnav-label">채팅</span></a>
+    <a class="bnav-item"><span class="mi">person</span><span class="bnav-label">프로필</span></a>
+  </nav>
+</body>
+</html>

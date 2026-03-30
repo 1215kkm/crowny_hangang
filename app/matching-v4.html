@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 - 매칭 v4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    :root{--purple:#7B61FF;--pink:#E845A0;--orange:#FF8A56;--cyan:#36D1DC;--font:'Noto Sans KR',-apple-system,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(165deg,#7B61FF 0%,#A78BFA 35%,#C4B5FD 100%);overflow-x:hidden}
+    .mi{font-family:'Material Icons Round';font-size:22px;font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+
+    .header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .icon-btn{width:40px;height:40px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);color:white}
+    .page-title{font-size:18px;font-weight:800}
+
+    .tabs{display:flex;gap:0;margin:0 24px 20px;background:rgba(255,255,255,0.15);border-radius:16px;padding:4px;backdrop-filter:blur(10px)}
+    .tab{flex:1;padding:10px 0;text-align:center;border-radius:13px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.25s}
+    .tab.active{background:white;color:var(--purple);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+
+    .usage{margin:0 24px 24px;background:rgba(255,255,255,0.12);border-radius:16px;padding:14px 18px;backdrop-filter:blur(10px)}
+    .usage-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.75);margin-bottom:8px;font-weight:500}
+    .usage-bar{height:5px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden}
+    .usage-fill{height:100%;width:40%;background:linear-gradient(90deg,#36D1DC,var(--orange));border-radius:3px}
+
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px}
+    .handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 28px}
+
+    .card{margin-bottom:24px}
+    .card-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .card-avatar{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .card-avatar .mi{font-size:30px}
+    .card-avatar.g1{background:linear-gradient(135deg,#FF6B9D,#FF8A56)}
+    .card-info{flex:1}
+    .card-name{font-size:18px;font-weight:800;color:#1E1B4B;margin-bottom:2px}
+    .card-sub{font-size:12px;color:#9CA3AF;display:flex;align-items:center;gap:4px}
+    .card-sub .mi{font-size:14px}
+    .card-badge{padding:5px 12px;background:linear-gradient(135deg,rgba(123,97,255,0.08),rgba(232,69,160,0.06));border-radius:10px;font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:3px}
+    .card-badge .mi{font-size:14px}
+
+    .card-quote{padding:16px;background:#F9F7FF;border-radius:18px;font-size:14px;color:#4B5563;line-height:1.6;margin-bottom:18px;position:relative}
+    .card-quote::before{content:'"';position:absolute;top:8px;left:12px;font-size:28px;color:#C4B5FD;font-weight:800;line-height:1}
+
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+    .tag{padding:8px 14px;border-radius:12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+    .tag .mi{font-size:15px}
+    .tag.t1{background:rgba(255,107,157,0.08);color:#E845A0}
+    .tag.t2{background:rgba(123,97,255,0.08);color:var(--purple)}
+    .tag.t3{background:rgba(54,209,220,0.08);color:#0EA5E9}
+
+    .temp{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F9F7FF;border-radius:16px;margin-bottom:24px}
+    .temp .mi{font-size:24px;color:var(--purple)}
+    .temp-info{flex:1}
+    .temp-label{font-size:11px;color:#9CA3AF;margin-bottom:4px}
+    .temp-bar{height:5px;background:#EDE9FE;border-radius:3px;overflow:hidden}
+    .temp-fill{height:100%;width:72%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:3px}
+    .temp-val{font-size:20px;font-weight:800;color:var(--orange)}
+
+    .actions{display:flex;gap:12px}
+    .abtn{flex:1;padding:15px;border-radius:16px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s}
+    .abtn .mi{font-size:20px}
+    .abtn.pass{background:#F3F4F6;color:#9CA3AF}
+    .abtn.wave{background:linear-gradient(135deg,var(--purple),var(--pink));color:white;box-shadow:0 4px 16px rgba(123,97,255,0.3)}
+    .abtn:active{transform:scale(0.97)}
+
+    .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -2px 20px rgba(0,0,0,0.04)}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#C4B5FD;cursor:pointer;padding:6px 16px;text-decoration:none}
+    .bnav-item.active{color:var(--purple)}
+    .bnav-item .mi{font-size:24px}
+    .bnav-item.active .mi{background:linear-gradient(135deg,rgba(123,97,255,0.1),rgba(232,69,160,0.06));border-radius:12px;padding:4px 16px}
+    .bnav-label{font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="icon-btn"><span class="mi">arrow_back</span></div>
+    <div class="page-title">매칭</div>
+    <div class="icon-btn"><span class="mi">tune</span></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active">추천</div>
+    <div class="tab">근처</div>
+  </div>
+
+  <div class="usage">
+    <div class="usage-row"><span>오늘 손흔들기 2회</span><span>남은 3회</span></div>
+    <div class="usage-bar"><div class="usage-fill"></div></div>
+  </div>
+
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="card">
+      <div class="card-top">
+        <div class="card-avatar g1"><span class="mi">directions_run</span></div>
+        <div class="card-info">
+          <div class="card-name">뚝섬러닝러</div>
+          <div class="card-sub"><span class="mi">location_on</span>120m · 러닝 중</div>
+        </div>
+        <div class="card-badge"><span class="mi">verified</span>Lv.3</div>
+      </div>
+      <div class="card-quote" style="padding-left:28px">같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜</div>
+      <div class="tags">
+        <div class="tag t1"><span class="mi">schedule</span>시간 잘 지켜요</div>
+        <div class="tag t2"><span class="mi">chat</span>대화 재밌어요</div>
+        <div class="tag t3"><span class="mi">local_fire_department</span>분위기 메이커</div>
+      </div>
+      <div class="temp">
+        <span class="mi">thermostat</span>
+        <div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill"></div></div></div>
+        <span class="temp-val">38.5°</span>
+      </div>
+      <div class="actions">
+        <button class="abtn pass"><span class="mi">close</span>다음에</button>
+        <button class="abtn wave"><span class="mi">waving_hand</span>손흔들기</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bnav">
+    <a class="bnav-item"><span class="mi">home</span><span class="bnav-label">홈</span></a>
+    <a class="bnav-item active"><span class="mi">waving_hand</span><span class="bnav-label">매칭</span></a>
+    <a class="bnav-item"><span class="mi">timer</span><span class="bnav-label">미션</span></a>
+    <a class="bnav-item"><span class="mi">chat_bubble</span><span class="bnav-label">채팅</span></a>
+    <a class="bnav-item"><span class="mi">person</span><span class="bnav-label">프로필</span></a>
+  </nav>
+</body>
+</html>
