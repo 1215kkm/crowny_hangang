@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>크라우니 한강 - 디자인 비교</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: #0F0F1A;
+      color: #fff;
+      min-height: 100vh;
+      padding: 30px 20px 60px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #8892A4;
+      margin-bottom: 32px;
+    }
+    .row-label {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      padding-left: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .row-label .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .badge.v1 { background: rgba(74,144,217,0.2); color: #4A90D9; }
+    .badge.v2 { background: rgba(124,58,237,0.2); color: #A78BFA; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .screen-wrap {
+      background: #1A1A2E;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .screen-wrap:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(124,58,237,0.2);
+    }
+    .screen-label {
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #A5A5C0;
+      background: #1A1A2E;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .screen-label .name { color: #fff; }
+    .screen-frame {
+      width: 100%;
+      aspect-ratio: 9/18;
+      border: none;
+      display: block;
+    }
+
+    /* 반응형 */
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+      .grid { grid-template-columns: 1fr; gap: 12px; }
+      body { padding: 20px 12px 40px; }
+      h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>크라우니 한강</h1>
+  <div class="subtitle">디자인 비교 · v1 (블루) vs v2 (퍼플 그라데이션)</div>
+
+  <!-- v1 -->
+  <div class="row-label">
+    Design A <span class="badge v1">블루 · 심플</span>
+  </div>
+  <div class="grid">
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">홈</span> home.html</div>
+      <iframe class="screen-frame" src="home.html"></iframe>
+    </div>
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">매칭</span> matching.html</div>
+      <iframe class="screen-frame" src="matching.html"></iframe>
+    </div>
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">미션</span> mission.html</div>
+      <iframe class="screen-frame" src="mission.html"></iframe>
+    </div>
+  </div>
+
+  <!-- v2 -->
+  <div class="row-label">
+    Design B <span class="badge v2">퍼플 · 그라데이션</span>
+  </div>
+  <div class="grid">
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">홈</span> home-v2.html</div>
+      <iframe class="screen-frame" src="home-v2.html"></iframe>
+    </div>
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">매칭</span> matching-v2.html</div>
+      <iframe class="screen-frame" src="matching-v2.html"></iframe>
+    </div>
+    <div class="screen-wrap">
+      <div class="screen-label"><span class="name">미션</span> mission-v2.html</div>
+      <iframe class="screen-frame" src="mission-v2.html"></iframe>
+    </div>
+  </div>
+
+</body>
+</html>

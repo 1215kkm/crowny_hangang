@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 한강 - 미션 v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-light: #A78BFA;
+      --secondary: #EC4899;
+      --accent: #F97316;
+      --bg: #1A1040;
+      --bg-card: #251A56;
+      --bg-card2: #2D1F66;
+      --text: #FFFFFF;
+      --text-sub: #B8A5D6;
+      --text-muted: #6B5B8A;
+      --success: #10B981;
+      --font: 'Noto Sans KR', -apple-system, sans-serif;
+      --shadow: 0 4px 24px rgba(124,58,237,0.25);
+      --r-sm: 12px;
+      --r-md: 18px;
+      --r-lg: 24px;
+      --r-full: 9999px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      max-width: 390px; margin: 0 auto; min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(26,16,64,0.95) 100%);
+      backdrop-filter: blur(12px);
+      padding: 14px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .header-back { font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 17px; font-weight: 800; }
+    .header-exit {
+      font-size: 12px; color: var(--text-sub); cursor: pointer;
+      padding: 5px 12px; border-radius: var(--r-full);
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* ── 상대 프로필 ── */
+    .partner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .partner-av {
+      width: 46px; height: 46px; border-radius: 14px;
+      background: linear-gradient(135deg, #F97316, #EC4899);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .partner-info { flex: 1; }
+    .partner-name { font-size: 14px; font-weight: 700; }
+    .partner-sub { font-size: 12px; color: var(--text-sub); }
+    .partner-badge {
+      font-size: 11px; font-weight: 700; padding: 5px 12px;
+      border-radius: var(--r-full);
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
+      color: var(--success);
+    }
+
+    /* ── 페이즈 ── */
+    .phase-bar { display: flex; gap: 4px; padding: 16px 20px 6px; }
+    .phase-seg {
+      flex: 1; height: 5px; border-radius: 3px;
+      background: rgba(255,255,255,0.06); overflow: hidden;
+    }
+    .phase-seg.done { background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+    .phase-seg.active { background: rgba(124,58,237,0.3); }
+    .phase-seg.active .phase-fill {
+      height: 100%; width: 60%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 3px;
+      animation: prog 3s linear infinite;
+    }
+    @keyframes prog { 0%{width:0} 100%{width:100%} }
+    .phase-labels {
+      display: flex; justify-content: space-between;
+      padding: 4px 20px 18px; font-size: 10px; color: var(--text-muted);
+    }
+    .phase-labels .active { color: var(--primary-light); font-weight: 700; }
+    .phase-labels .done { color: var(--success); font-weight: 600; }
+
+    /* ── 난이도 ── */
+    .diff-row {
+      display: flex; gap: 8px; justify-content: center; padding: 0 20px 18px;
+    }
+    .diff-opt {
+      padding: 7px 16px; border-radius: var(--r-full);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      font-size: 12px; font-weight: 600; color: var(--text-sub);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .diff-opt.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(236,72,153,0.1));
+      color: var(--primary-light);
+    }
+
+    /* ── 미션 카드 ── */
+    .mission-card {
+      margin: 0 20px; padding: 28px 24px 20px;
+      background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-card2) 100%);
+      border-radius: var(--r-lg); text-align: center;
+      position: relative; overflow: hidden;
+      border: 1px solid rgba(124,58,237,0.2);
+      box-shadow: var(--shadow);
+    }
+    .mission-phase-tag {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 5px 14px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15));
+      color: var(--primary-light); margin-bottom: 16px;
+    }
+    .mission-emoji { font-size: 56px; margin-bottom: 16px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
+    .mission-text { font-size: 22px; font-weight: 800; line-height: 1.35; margin-bottom: 6px; }
+    .mission-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 24px; }
+
+    /* ── 타이머 ── */
+    .timer-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto 20px; }
+    .timer-svg { width: 150px; height: 150px; transform: rotate(-90deg); }
+    .timer-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 7; }
+    .timer-prog {
+      fill: none; stroke-width: 7; stroke-linecap: round;
+      stroke: url(#timerGrad);
+      stroke-dasharray: 430; stroke-dashoffset: 130;
+      filter: drop-shadow(0 0 10px rgba(124,58,237,0.5));
+    }
+    .timer-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      text-align: center;
+    }
+    .timer-time { font-size: 38px; font-weight: 900; letter-spacing: -1px; }
+    .timer-label { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+
+    /* 물결 */
+    .wave-fx {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 45px;
+      overflow: hidden; border-radius: 0 0 var(--r-lg) var(--r-lg);
+    }
+    .wave-svg { position: absolute; bottom: -2px; width: 200%; animation: waveAni 4s linear infinite; }
+    @keyframes waveAni { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+    /* ── 미션 액션 ── */
+    .mission-actions { display: flex; gap: 10px; padding: 20px 20px 12px; }
+    .m-btn {
+      flex: 1; padding: 14px; border-radius: var(--r-md); border: none;
+      font-family: var(--font); font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .m-btn.skip { background: rgba(255,255,255,0.06); color: var(--text-sub); }
+    .m-btn.skip:hover { background: rgba(255,255,255,0.1); }
+    .m-btn.done {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; box-shadow: 0 4px 16px rgba(124,58,237,0.35);
+    }
+    .m-btn.done:active { transform: scale(0.97); }
+
+    /* ── 다음 미션 ── */
+    .upcoming { padding: 20px 20px 16px; }
+    .up-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .up-list { display: flex; flex-direction: column; gap: 8px; }
+    .up-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; background: var(--bg-card);
+      border-radius: var(--r-md); border: 1px solid rgba(124,58,237,0.1);
+    }
+    .up-item.locked { opacity: 0.35; }
+    .up-num {
+      width: 30px; height: 30px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+    }
+    .up-item:not(.locked) .up-num {
+      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15));
+      color: var(--primary-light);
+    }
+    .up-item.locked .up-num { background: rgba(255,255,255,0.04); color: var(--text-muted); }
+    .up-info { flex: 1; }
+    .up-name { font-size: 13px; font-weight: 600; }
+    .up-time { font-size: 11px; color: var(--text-muted); }
+    .up-icon { font-size: 16px; }
+
+    /* ── 종료 시스템 ── */
+    .end-section { padding: 0 20px 100px; }
+    .end-card {
+      background: var(--bg-card); border-radius: var(--r-lg);
+      padding: 16px; border: 1px solid rgba(124,58,237,0.1);
+    }
+    .end-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
+    .end-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+    }
+    .end-icon { font-size: 22px; }
+    .end-text { flex: 1; }
+    .end-label { font-size: 13px; font-weight: 600; }
+    .end-sub { font-size: 11px; color: var(--text-muted); }
+    .end-time { font-size: 16px; font-weight: 800; color: var(--accent); }
+    .end-btns { display: flex; gap: 8px; }
+    .end-btn {
+      flex: 1; padding: 11px; border-radius: var(--r-md); border: none;
+      font-family: var(--font); font-size: 13px; font-weight: 700;
+      cursor: pointer; text-align: center;
+    }
+    .end-btn.extend {
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
+      color: var(--success);
+    }
+    .end-btn.finish {
+      background: rgba(239,68,68,0.1); color: #EF4444;
+    }
+
+    /* ── 네비게이션 ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: rgba(26,16,64,0.95); backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(124,58,237,0.1);
+      display: flex; justify-content: space-around;
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom)); z-index: 100;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 10px; color: var(--text-muted); cursor: pointer;
+      padding: 4px 14px; text-decoration: none;
+    }
+    .nav-item.active { color: var(--primary-light); }
+    .nav-icon { font-size: 20px; padding: 4px 14px; }
+    .nav-label { font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="header-back">←</span>
+    <span class="header-title">⏱ 미션 타이머</span>
+    <span class="header-exit">나가기</span>
+  </div>
+
+  <div class="partner">
+    <div class="partner-av">🏃</div>
+    <div class="partner-info">
+      <div class="partner-name">뚝섬러닝러</div>
+      <div class="partner-sub">함께 미션 진행 중</div>
+    </div>
+    <span class="partner-badge">매칭됨 ✓</span>
+  </div>
+
+  <div class="phase-bar">
+    <div class="phase-seg done"></div>
+    <div class="phase-seg active"><div class="phase-fill"></div></div>
+    <div class="phase-seg"></div>
+    <div class="phase-seg"></div>
+  </div>
+  <div class="phase-labels">
+    <span class="done">워밍업 ✓</span>
+    <span class="active">액티비티</span>
+    <span>대화 심화</span>
+    <span>보너스</span>
+  </div>
+
+  <div class="diff-row">
+    <div class="diff-opt">😊 가벼운</div>
+    <div class="diff-opt active">😎 보통</div>
+    <div class="diff-opt">🔥 모험적</div>
+  </div>
+
+  <div class="mission-card">
+    <span class="mission-phase-tag">Phase 2 · 액티비티</span>
+    <div class="mission-emoji">📸</div>
+    <div class="mission-text">한강 배경으로<br>가장 웃긴 셀카 찍기!</div>
+    <div class="mission-sub">서로 찍어주고 가장 웃긴 사진 뽑기 🤣</div>
+
+    <div class="timer-wrap">
+      <svg class="timer-svg" viewBox="0 0 150 150">
+        <defs>
+          <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:#7C3AED"/>
+            <stop offset="50%" style="stop-color:#EC4899"/>
+            <stop offset="100%" style="stop-color:#F97316"/>
+          </linearGradient>
+        </defs>
+        <circle class="timer-bg" cx="75" cy="75" r="68"/>
+        <circle class="timer-prog" cx="75" cy="75" r="68"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-time">1:47</div>
+        <div class="timer-label">남은 시간</div>
+      </div>
+    </div>
+
+    <div class="wave-fx">
+      <svg class="wave-svg" viewBox="0 0 800 45" preserveAspectRatio="none">
+        <path d="M0,22 C100,38 200,6 300,22 C400,38 500,6 600,22 C700,38 800,6 800,22 L800,45 L0,45 Z" fill="rgba(124,58,237,0.08)"/>
+        <path d="M0,28 C100,12 200,38 300,28 C400,12 500,38 600,28 C700,12 800,38 800,28 L800,45 L0,45 Z" fill="rgba(236,72,153,0.05)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="mission-actions">
+    <button class="m-btn skip">🔄 다른 미션</button>
+    <button class="m-btn done">✅ 완료!</button>
+  </div>
+
+  <div class="upcoming">
+    <div class="up-title">다음 미션</div>
+    <div class="up-list">
+      <div class="up-item">
+        <div class="up-num">3</div>
+        <div class="up-info">
+          <div class="up-name">주변에서 가장 특이한 것 찾기</div>
+          <div class="up-time">⏱ 5분</div>
+        </div>
+        <span class="up-icon">🔍</span>
+      </div>
+      <div class="up-item locked">
+        <div class="up-num">4</div>
+        <div class="up-info">
+          <div class="up-name">최근 감동/웃긴 일 공유</div>
+          <div class="up-time">⏱ 5분 · Phase 3</div>
+        </div>
+        <span class="up-icon">🔒</span>
+      </div>
+      <div class="up-item locked">
+        <div class="up-num">5</div>
+        <div class="up-info">
+          <div class="up-name">한강 음식 서로 추천</div>
+          <div class="up-time">⏱ 5분 · Phase 3</div>
+        </div>
+        <span class="up-icon">🔒</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="end-section">
+    <div class="end-card">
+      <div class="end-title">⏰ 한강 타임아웃</div>
+      <div class="end-row">
+        <span class="end-icon">⏳</span>
+        <div class="end-text">
+          <div class="end-label">설정한 시간까지</div>
+          <div class="end-sub">1시간으로 설정됨</div>
+        </div>
+        <span class="end-time">42분</span>
+      </div>
+      <div class="end-btns">
+        <button class="end-btn extend">🙌 더 놀래요</button>
+        <button class="end-btn finish">👋 여기까지</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="#"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👋</span><span class="nav-label">매칭</span></a>
+    <a class="nav-item active" href="#"><span class="nav-icon">⏱</span><span class="nav-label">미션</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">💬</span><span class="nav-label">채팅</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👤</span><span class="nav-label">프로필</span></a>
+  </nav>
+</body>
+</html>

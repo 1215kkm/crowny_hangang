@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>크라우니 한강 - 홈 v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-light: #A78BFA;
+      --secondary: #EC4899;
+      --accent: #F97316;
+      --bg: #F3F0FF;
+      --bg-card: #FFFFFF;
+      --text: #1E1B4B;
+      --text-sub: #6B7280;
+      --text-muted: #A5A5C0;
+      --success: #10B981;
+      --warning: #FBBF24;
+      --error: #EF4444;
+      --font: 'Noto Sans KR', -apple-system, sans-serif;
+      --shadow: 0 4px 20px rgba(124,58,237,0.12);
+      --shadow-lg: 0 8px 30px rgba(124,58,237,0.18);
+      --r-sm: 12px;
+      --r-md: 18px;
+      --r-lg: 24px;
+      --r-full: 9999px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      max-width: 390px;
+      margin: 0 auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%);
+      padding: 16px 20px 20px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: -10%; right: -10%;
+      height: 60px;
+      background: var(--bg);
+      border-radius: 50% 50% 0 0;
+    }
+    .header-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .header-logo { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .header-icons { display: flex; gap: 14px; }
+    .header-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; cursor: pointer;
+      backdrop-filter: blur(8px);
+    }
+    .header-greeting { font-size: 14px; opacity: 0.9; margin-bottom: 4px; }
+    .header-title { font-size: 20px; font-weight: 700; }
+    .header-location {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 8px; padding: 5px 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: var(--r-full);
+      font-size: 12px; font-weight: 600;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ── 날씨 카드 ── */
+    .weather-card {
+      margin: -8px 20px 16px;
+      padding: 14px 18px;
+      background: var(--bg-card);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow);
+      display: flex; align-items: center; gap: 12px;
+      position: relative; z-index: 2;
+    }
+    .weather-icon-wrap {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #FDE68A, #F97316);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .weather-text { flex: 1; }
+    .weather-title { font-size: 13px; font-weight: 600; }
+    .weather-sub { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+    .weather-badge {
+      padding: 5px 12px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; font-size: 11px; font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── 지도 ── */
+    .map-container {
+      margin: 0 20px 16px;
+      height: 180px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(145deg, #EDE9FE 0%, #DDD6FE 50%, #C4B5FD 100%);
+      position: relative; overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .map-river {
+      position: absolute; bottom: 28%; left: 0; right: 0;
+      height: 36px;
+      background: linear-gradient(180deg, rgba(124,58,237,0.2), rgba(124,58,237,0.08));
+      transform: skewY(-2deg);
+    }
+    .map-pin {
+      position: absolute; width: 34px; height: 34px;
+      border-radius: 50%; border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; cursor: pointer;
+    }
+    .map-pin.me { background: var(--primary); top: 50%; left: 44%; z-index: 2; }
+    .map-pin.u1 { background: #EC4899; top: 38%; left: 28%; }
+    .map-pin.u2 { background: #10B981; top: 62%; left: 62%; }
+    .map-pin.u3 { background: #F97316; top: 34%; left: 68%; }
+    .map-pin.u4 { background: #8B5CF6; top: 58%; left: 18%; }
+    .map-label {
+      position: absolute; top: calc(50% + 20px); left: 44%;
+      transform: translateX(-50%);
+      background: var(--primary); color: white;
+      font-size: 9px; font-weight: 700;
+      padding: 2px 8px; border-radius: var(--r-full);
+    }
+    .map-btn {
+      position: absolute; bottom: 10px; right: 10px;
+      background: white; border: none;
+      border-radius: var(--r-sm); padding: 6px 12px;
+      font-size: 10px; font-weight: 600;
+      color: var(--primary); box-shadow: var(--shadow);
+      cursor: pointer; font-family: var(--font);
+    }
+
+    /* ── 근처 사용자 수 ── */
+    .nearby-bar {
+      padding: 0 20px 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nearby-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .nearby-text { font-size: 14px; font-weight: 600; }
+    .nearby-text span { color: var(--primary); }
+
+    /* ── 활동 태그 ── */
+    .activities { padding: 0 20px 16px; }
+    .section-title {
+      font-size: 13px; font-weight: 700; color: var(--text-sub);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    .tags {
+      display: flex; gap: 8px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 4px;
+    }
+    .tags::-webkit-scrollbar { display: none; }
+    .tag {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--bg-card);
+      border: 2px solid transparent;
+      border-radius: var(--r-full);
+      font-size: 13px; font-weight: 600;
+      white-space: nowrap; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124,58,237,0.06);
+      transition: all 0.2s;
+    }
+    .tag.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(236,72,153,0.06));
+      color: var(--primary);
+    }
+    .tag .cnt {
+      font-size: 10px; font-weight: 700;
+      background: var(--bg); color: var(--primary);
+      padding: 2px 7px; border-radius: var(--r-full);
+    }
+    .tag.active .cnt { background: var(--primary); color: white; }
+
+    /* ── 번개 모임 ── */
+    .flash { padding: 0 20px 16px; }
+    .flash-head {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .flash-title { font-size: 17px; font-weight: 800; }
+    .flash-more { font-size: 13px; color: var(--primary); font-weight: 600; cursor: pointer; }
+    .flash-scroll {
+      display: flex; gap: 12px; overflow-x: auto;
+      scrollbar-width: none; padding-bottom: 4px;
+    }
+    .flash-scroll::-webkit-scrollbar { display: none; }
+    .fcard {
+      min-width: 200px; background: var(--bg-card);
+      border-radius: var(--r-lg); padding: 16px;
+      box-shadow: var(--shadow); cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(124,58,237,0.06);
+    }
+    .fcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .fcard-top { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+    .fcard-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .fcard-icon.food { background: linear-gradient(135deg, #FDE68A, #F97316); }
+    .fcard-icon.run { background: linear-gradient(135deg, #A78BFA, #7C3AED); }
+    .fcard-icon.night { background: linear-gradient(135deg, #6366F1, #312E81); }
+    .fcard-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 9px; border-radius: var(--r-full);
+    }
+    .fcard-badge.hot { background: #FEE2E2; color: var(--error); }
+    .fcard-badge.soon { background: #FEF3C7; color: #B45309; }
+    .fcard-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .fcard-info { font-size: 11px; color: var(--text-sub); margin-bottom: 8px; }
+    .fcard-people { display: flex; align-items: center; gap: 6px; }
+    .fcard-avatars { display: flex; }
+    .fcard-av {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid white; margin-left: -5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px;
+    }
+    .fcard-av:first-child { margin-left: 0; }
+    .fcard-av.c1 { background: linear-gradient(135deg,#EC4899,#F97316); }
+    .fcard-av.c2 { background: linear-gradient(135deg,#10B981,#3B82F6); }
+    .fcard-av.c3 { background: linear-gradient(135deg,#8B5CF6,#6366F1); }
+    .fcard-count { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+    /* ── 사용자 리스트 ── */
+    .users { padding: 0 20px 90px; }
+    .ucard {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; background: var(--bg-card);
+      border-radius: var(--r-lg); margin-bottom: 10px;
+      box-shadow: 0 2px 12px rgba(124,58,237,0.06);
+      cursor: pointer; transition: all 0.2s;
+      border: 1px solid rgba(124,58,237,0.04);
+    }
+    .ucard:hover { box-shadow: var(--shadow); }
+    .uav {
+      width: 50px; height: 50px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0; position: relative;
+    }
+    .uav.g1 { background: linear-gradient(135deg, #F97316, #EC4899); }
+    .uav.g2 { background: linear-gradient(135deg, #3B82F6, #8B5CF6); }
+    .uav.g3 { background: linear-gradient(135deg, #FBBF24, #F97316); }
+    .uav.g4 { background: linear-gradient(135deg, #EC4899, #8B5CF6); }
+    .uav-online {
+      position: absolute; bottom: 0; right: 0;
+      width: 12px; height: 12px; background: var(--success);
+      border-radius: 50%; border: 2.5px solid white;
+    }
+    .uinfo { flex: 1; min-width: 0; }
+    .uname-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+    .uname { font-size: 14px; font-weight: 700; }
+    .ulang {
+      font-size: 9px; font-weight: 700;
+      padding: 2px 6px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.1));
+      color: var(--primary);
+    }
+    .uact { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .uright { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .udist { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .wave-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; border: none;
+      padding: 7px 16px; border-radius: var(--r-full);
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; font-family: var(--font);
+      box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+      transition: all 0.2s;
+    }
+    .wave-btn:hover { box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+    .wave-btn:active { transform: scale(0.95); }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed; bottom: 76px;
+      right: calc(50% - 175px);
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 18px; border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: white; cursor: pointer;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+      z-index: 99; transition: transform 0.2s;
+    }
+    .fab:hover { transform: scale(1.08) rotate(90deg); }
+
+    /* ── 네비게이션 ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px;
+      background: var(--bg-card);
+      border-top: 1px solid rgba(124,58,237,0.08);
+      display: flex; justify-content: space-around;
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(124,58,237,0.06);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 10px; color: var(--text-muted); cursor: pointer;
+      padding: 4px 14px; text-decoration: none; transition: color 0.2s;
+    }
+    .nav-item.active { color: var(--primary); }
+    .nav-item.active .nav-icon {
+      background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(236,72,153,0.08));
+      border-radius: 12px; padding: 4px 14px;
+    }
+    .nav-icon { font-size: 20px; padding: 4px 14px; }
+    .nav-label { font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-top">
+      <span class="header-logo">Crowny</span>
+      <div class="header-icons">
+        <div class="header-icon">🔔</div>
+        <div class="header-icon">⚙️</div>
+      </div>
+    </div>
+    <div class="header-greeting">안녕하세요 👋</div>
+    <div class="header-title">한강에서 만나요!</div>
+    <div class="header-location">📍 여의도 한강공원</div>
+  </div>
+
+  <!-- 날씨 카드 -->
+  <div class="weather-card">
+    <div class="weather-icon-wrap">🌅</div>
+    <div class="weather-text">
+      <div class="weather-title">오늘 일몰 19:23</div>
+      <div class="weather-sub">반포대교 야경 추천!</div>
+    </div>
+    <div class="weather-badge">같이 볼래요?</div>
+  </div>
+
+  <!-- 지도 -->
+  <div class="map-container">
+    <div class="map-river"></div>
+    <div class="map-pin me">😊</div>
+    <div class="map-label">나</div>
+    <div class="map-pin u1">🏃</div>
+    <div class="map-pin u2">🍺</div>
+    <div class="map-pin u3">🐕</div>
+    <div class="map-pin u4">📸</div>
+    <button class="map-btn">🗺 지도 확대</button>
+  </div>
+
+  <!-- 근처 -->
+  <div class="nearby-bar">
+    <span class="nearby-dot"></span>
+    <span class="nearby-text"><span>12명</span>이 근처에 있어요</span>
+  </div>
+
+  <!-- 활동 태그 -->
+  <div class="activities">
+    <div class="section-title">활동</div>
+    <div class="tags">
+      <div class="tag active">🍻 치맥 <span class="cnt">5</span></div>
+      <div class="tag">🏃 러닝 <span class="cnt">3</span></div>
+      <div class="tag">🚶 산책 <span class="cnt">2</span></div>
+      <div class="tag">🧺 피크닉 <span class="cnt">1</span></div>
+      <div class="tag">🐕 반려동물 <span class="cnt">1</span></div>
+    </div>
+  </div>
+
+  <!-- 번개 모임 -->
+  <div class="flash">
+    <div class="flash-head">
+      <div class="flash-title">⚡ 번개 모임</div>
+      <span class="flash-more">더보기 ›</span>
+    </div>
+    <div class="flash-scroll">
+      <div class="fcard">
+        <div class="fcard-top">
+          <div class="fcard-icon food">🍗</div>
+          <span class="fcard-badge hot">마감 임박</span>
+        </div>
+        <div class="fcard-name">치킨 같이 시켜요!</div>
+        <div class="fcard-info">📍 여의도 2지구 · 지금</div>
+        <div class="fcard-people">
+          <div class="fcard-avatars">
+            <div class="fcard-av c1">😎</div>
+            <div class="fcard-av c2">😄</div>
+          </div>
+          <span class="fcard-count">2/4명</span>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-top">
+          <div class="fcard-icon run">🏃</div>
+          <span class="fcard-badge soon">30분 후</span>
+        </div>
+        <div class="fcard-name">한강 러닝 5km</div>
+        <div class="fcard-info">📍 뚝섬→잠실 · 19:30</div>
+        <div class="fcard-people">
+          <div class="fcard-avatars">
+            <div class="fcard-av c3">💪</div>
+          </div>
+          <span class="fcard-count">1/5명</span>
+        </div>
+      </div>
+      <div class="fcard">
+        <div class="fcard-top">
+          <div class="fcard-icon night">🌉</div>
+          <span class="fcard-badge soon">1시간 후</span>
+        </div>
+        <div class="fcard-name">야경 산책 + 라면</div>
+        <div class="fcard-info">📍 반포대교 · 20:00</div>
+        <div class="fcard-people">
+          <div class="fcard-avatars">
+            <div class="fcard-av c1">🌙</div>
+            <div class="fcard-av c2">✨</div>
+            <div class="fcard-av c3">🍜</div>
+          </div>
+          <span class="fcard-count">3/6명</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 사용자 리스트 -->
+  <div class="users">
+    <div class="section-title">근처 사용자</div>
+    <div class="ucard">
+      <div class="uav g1">🏃<span class="uav-online"></span></div>
+      <div class="uinfo">
+        <div class="uname-row"><span class="uname">뚝섬러닝러</span><span class="ulang">🇰🇷 KR</span></div>
+        <div class="uact">🏃 러닝 중 · "같이 달릴 사람~"</div>
+      </div>
+      <div class="uright">
+        <span class="udist">120m</span>
+        <button class="wave-btn">👋 손흔들기</button>
+      </div>
+    </div>
+    <div class="ucard">
+      <div class="uav g2">🍺<span class="uav-online"></span></div>
+      <div class="uinfo">
+        <div class="uname-row"><span class="uname">여의도치맥왕</span><span class="ulang">🇰🇷 KR</span></div>
+        <div class="uact">🍻 치맥 중 · "합석 환영!"</div>
+      </div>
+      <div class="uright">
+        <span class="udist">200m</span>
+        <button class="wave-btn">👋 손흔들기</button>
+      </div>
+    </div>
+    <div class="ucard">
+      <div class="uav g3">📸<span class="uav-online"></span></div>
+      <div class="uinfo">
+        <div class="uname-row"><span class="uname">SakuraLover</span><span class="ulang">🇯🇵 JP</span><span class="ulang">🇬🇧 EN</span></div>
+        <div class="uact">📸 사진 촬영 · "한강 처음이에요!"</div>
+      </div>
+      <div class="uright">
+        <span class="udist">350m</span>
+        <button class="wave-btn">👋 Wave</button>
+      </div>
+    </div>
+    <div class="ucard">
+      <div class="uav g4">🐕<span class="uav-online"></span></div>
+      <div class="uinfo">
+        <div class="uname-row"><span class="uname">한강멍멍이</span><span class="ulang">🇰🇷 KR</span></div>
+        <div class="uact">🐕 산책 중 · "강아지 좋아하시는 분!"</div>
+      </div>
+      <div class="uright">
+        <span class="udist">450m</span>
+        <button class="wave-btn">👋 손흔들기</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="fab">＋</button>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="#">
+      <span class="nav-icon">🏠</span><span class="nav-label">홈</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">👋</span><span class="nav-label">매칭</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">⏱</span><span class="nav-label">미션</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">💬</span><span class="nav-label">채팅</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="nav-icon">👤</span><span class="nav-label">프로필</span>
+    </a>
+  </nav>
+</body>
+</html>

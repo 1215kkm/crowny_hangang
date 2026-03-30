@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 한강 - 매칭 v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-light: #A78BFA;
+      --secondary: #EC4899;
+      --accent: #F97316;
+      --bg: #F3F0FF;
+      --bg-card: #FFFFFF;
+      --text: #1E1B4B;
+      --text-sub: #6B7280;
+      --text-muted: #A5A5C0;
+      --success: #10B981;
+      --warning: #FBBF24;
+      --error: #EF4444;
+      --font: 'Noto Sans KR', -apple-system, sans-serif;
+      --shadow: 0 4px 20px rgba(124,58,237,0.12);
+      --shadow-lg: 0 8px 30px rgba(124,58,237,0.18);
+      --r-sm: 12px;
+      --r-md: 18px;
+      --r-lg: 24px;
+      --r-full: 9999px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font); background: var(--bg); color: var(--text);
+      max-width: 390px; margin: 0 auto; min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(135deg, #7C3AED 0%, #A855F7 50%, #EC4899 100%);
+      padding: 16px 20px 22px; color: white; position: relative; overflow: hidden;
+    }
+    .header::after {
+      content: ''; position: absolute; bottom: -30px; left: -10%; right: -10%;
+      height: 60px; background: var(--bg); border-radius: 50% 50% 0 0;
+    }
+    .header-top {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .header-title { font-size: 20px; font-weight: 800; }
+    .header-filter {
+      padding: 6px 14px; border-radius: var(--r-full);
+      background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+
+    /* ── 매칭 알림 ── */
+    .alert-card {
+      margin: -6px 20px 16px; padding: 14px 16px;
+      background: var(--bg-card); border-radius: var(--r-lg);
+      box-shadow: var(--shadow); display: flex; align-items: center; gap: 12px;
+      position: relative; z-index: 2;
+      border-left: 4px solid var(--secondary);
+    }
+    .alert-avatar {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, #F97316, #EC4899);
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+      flex-shrink: 0;
+    }
+    .alert-text { flex: 1; }
+    .alert-name { font-size: 13px; font-weight: 700; }
+    .alert-sub { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+    .alert-btn {
+      padding: 8px 18px; border-radius: var(--r-full); border: none;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; font-size: 12px; font-weight: 700; cursor: pointer;
+      font-family: var(--font); box-shadow: 0 2px 8px rgba(124,58,237,0.3);
+    }
+
+    /* ── 그룹 선택 ── */
+    .group-sel {
+      display: flex; gap: 8px; padding: 0 20px 16px;
+    }
+    .g-opt {
+      flex: 1; padding: 12px 8px; text-align: center;
+      background: var(--bg-card); border: 2px solid transparent;
+      border-radius: var(--r-lg); cursor: pointer;
+      box-shadow: 0 2px 8px rgba(124,58,237,0.06);
+      transition: all 0.2s;
+    }
+    .g-opt.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(236,72,153,0.04));
+    }
+    .g-opt-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      margin: 0 auto 6px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .g-opt.active .g-opt-icon { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+    .g-opt:not(.active) .g-opt-icon { background: var(--bg); }
+    .g-opt-label { font-size: 11px; font-weight: 600; color: var(--text-sub); }
+    .g-opt.active .g-opt-label { color: var(--primary); }
+
+    /* ── 매칭 카드 ── */
+    .card-stack {
+      position: relative; height: 400px; margin: 0 20px 16px;
+    }
+    .m-card {
+      position: absolute; width: 100%;
+      background: var(--bg-card); border-radius: var(--r-lg);
+      box-shadow: var(--shadow-lg); overflow: hidden;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .m-card:nth-child(2) { transform: scale(0.95) translateY(10px); opacity: 0.6; }
+    .m-card:nth-child(3) { transform: scale(0.9) translateY(20px); opacity: 0.3; }
+    .m-card-hero {
+      height: 190px; position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .m-card-hero.c1 { background: linear-gradient(135deg, #F97316 0%, #EC4899 50%, #8B5CF6 100%); }
+    .m-card-hero.c2 { background: linear-gradient(135deg, #3B82F6, #8B5CF6); }
+    .m-card-hero.c3 { background: linear-gradient(135deg, #FBBF24, #F97316); }
+    .m-card-emoji { font-size: 72px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15)); }
+    .m-card-dist {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(0,0,0,0.3); backdrop-filter: blur(8px);
+      color: white; padding: 5px 12px; border-radius: var(--r-full);
+      font-size: 12px; font-weight: 600;
+    }
+    .m-card-trust {
+      position: absolute; top: 14px; left: 14px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: white; padding: 5px 12px; border-radius: var(--r-full);
+      font-size: 11px; font-weight: 700;
+    }
+    .m-card-body { padding: 18px; }
+    .m-card-name-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    }
+    .m-card-name { font-size: 20px; font-weight: 800; }
+    .m-card-lang {
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: var(--r-full);
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.08));
+      color: var(--primary);
+    }
+    .m-card-act {
+      font-size: 14px; color: var(--text-sub); margin-bottom: 12px;
+    }
+    .m-card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .m-card-tag {
+      font-size: 11px; font-weight: 600; padding: 5px 12px;
+      background: var(--bg); border-radius: var(--r-full); color: var(--text-sub);
+    }
+    /* 한강 온도 바 */
+    .temp-bar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px; background: var(--bg); border-radius: var(--r-md);
+    }
+    .temp-icon { font-size: 20px; }
+    .temp-label { font-size: 12px; color: var(--text-sub); flex: 1; font-weight: 500; }
+    .temp-track { width: 70px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; }
+    .temp-fill {
+      height: 100%; border-radius: 3px; width: 72%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+    }
+    .temp-val { font-size: 18px; font-weight: 800; color: var(--accent); }
+
+    /* ── 액션 버튼 ── */
+    .actions {
+      display: flex; justify-content: center; gap: 14px; padding: 0 20px 14px;
+    }
+    .act-btn {
+      border-radius: 50%; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: var(--shadow); transition: transform 0.2s;
+    }
+    .act-btn:hover { transform: scale(1.1); }
+    .act-btn:active { transform: scale(0.9); }
+    .act-btn.pass {
+      width: 52px; height: 52px; background: white; font-size: 22px; color: var(--text-muted);
+    }
+    .act-btn.wave {
+      width: 68px; height: 68px; font-size: 30px; color: white;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+    }
+    .act-btn.super {
+      width: 52px; height: 52px; background: white; font-size: 22px; color: var(--accent);
+    }
+    .hint {
+      text-align: center; font-size: 12px; color: var(--text-muted);
+      padding: 0 20px 16px; font-weight: 500;
+    }
+
+    /* ── 최근 ── */
+    .recent { padding: 0 20px 90px; }
+    .recent-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .r-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; background: var(--bg-card);
+      border-radius: var(--r-lg); margin-bottom: 8px;
+      box-shadow: 0 2px 8px rgba(124,58,237,0.06);
+    }
+    .r-av {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    }
+    .r-av.rg1 { background: linear-gradient(135deg, #3B82F6, #8B5CF6); }
+    .r-av.rg2 { background: linear-gradient(135deg, #FBBF24, #F97316); }
+    .r-info { flex: 1; }
+    .r-name { font-size: 13px; font-weight: 700; }
+    .r-status { font-size: 11px; }
+    .r-status.ok { color: var(--success); font-weight: 600; }
+    .r-status.wait { color: var(--warning); font-weight: 600; }
+    .r-time { font-size: 11px; color: var(--text-muted); }
+
+    /* ── 네비게이션 ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 390px; background: var(--bg-card);
+      border-top: 1px solid rgba(124,58,237,0.08);
+      display: flex; justify-content: space-around;
+      padding: 8px 0 max(8px, env(safe-area-inset-bottom)); z-index: 100;
+      box-shadow: 0 -4px 20px rgba(124,58,237,0.06);
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      font-size: 10px; color: var(--text-muted); cursor: pointer;
+      padding: 4px 14px; text-decoration: none;
+    }
+    .nav-item.active { color: var(--primary); }
+    .nav-item.active .nav-icon { background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(236,72,153,0.08)); border-radius: 12px; padding: 4px 14px; }
+    .nav-icon { font-size: 20px; padding: 4px 14px; }
+    .nav-label { font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-top">
+      <span class="header-title">👋 매칭</span>
+      <span class="header-filter">🔽 필터</span>
+    </div>
+  </div>
+
+  <!-- 매칭 알림 -->
+  <div class="alert-card">
+    <div class="alert-avatar">🍺</div>
+    <div class="alert-text">
+      <div class="alert-name">여의도치맥왕님이 손을 흔들었어요!</div>
+      <div class="alert-sub">200m · 치맥 중 · 합석 환영</div>
+    </div>
+    <button class="alert-btn">수락</button>
+  </div>
+
+  <!-- 그룹 선택 -->
+  <div class="group-sel">
+    <div class="g-opt active">
+      <div class="g-opt-icon">👥</div>
+      <div class="g-opt-label">1:1</div>
+    </div>
+    <div class="g-opt">
+      <div class="g-opt-icon">👥👤</div>
+      <div class="g-opt-label">소그룹</div>
+    </div>
+    <div class="g-opt">
+      <div class="g-opt-icon">➡️👥</div>
+      <div class="g-opt-label">합류형</div>
+    </div>
+  </div>
+
+  <!-- 매칭 카드 스택 -->
+  <div class="card-stack">
+    <div class="m-card" style="z-index:1;">
+      <div class="m-card-hero c3"><span class="m-card-emoji">🐕</span></div>
+    </div>
+    <div class="m-card" style="z-index:2;">
+      <div class="m-card-hero c2"><span class="m-card-emoji">📸</span></div>
+    </div>
+    <div class="m-card" style="z-index:3;">
+      <div class="m-card-hero c1">
+        <span class="m-card-emoji">🏃</span>
+        <span class="m-card-dist">📍 120m</span>
+        <span class="m-card-trust">✓ Lv.3</span>
+      </div>
+      <div class="m-card-body">
+        <div class="m-card-name-row">
+          <span class="m-card-name">뚝섬러닝러</span>
+          <span class="m-card-lang">🇰🇷 KR</span>
+        </div>
+        <div class="m-card-act">🏃 러닝 중 · "같이 달릴 사람~ 5km!"</div>
+        <div class="m-card-tags">
+          <span class="m-card-tag">⏰ 시간 약속 Good</span>
+          <span class="m-card-tag">💬 대화 재밌어요</span>
+          <span class="m-card-tag">🔥 분위기 메이커</span>
+        </div>
+        <div class="temp-bar">
+          <span class="temp-icon">🌡️</span>
+          <span class="temp-label">한강 온도</span>
+          <div class="temp-track"><div class="temp-fill"></div></div>
+          <span class="temp-val">38.5°</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 액션 -->
+  <div class="actions">
+    <button class="act-btn pass">✕</button>
+    <button class="act-btn wave">👋</button>
+    <button class="act-btn super">⭐</button>
+  </div>
+  <div class="hint">👋 손 흔들기로 관심 표현 · ✕ 다음 사람</div>
+
+  <!-- 최근 -->
+  <div class="recent">
+    <div class="recent-title">최근 손 흔들기</div>
+    <div class="r-item">
+      <div class="r-av rg1">🍺</div>
+      <div class="r-info">
+        <div class="r-name">여의도치맥왕</div>
+        <div class="r-status ok">✓ 수락됨 · 채팅 시작</div>
+      </div>
+      <span class="r-time">2분 전</span>
+    </div>
+    <div class="r-item">
+      <div class="r-av rg2">📸</div>
+      <div class="r-info">
+        <div class="r-name">SakuraLover</div>
+        <div class="r-status wait">⏳ 대기 중</div>
+      </div>
+      <span class="r-time">15분 전</span>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="#"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></a>
+    <a class="nav-item active" href="#"><span class="nav-icon">👋</span><span class="nav-label">매칭</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">⏱</span><span class="nav-label">미션</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">💬</span><span class="nav-label">채팅</span></a>
+    <a class="nav-item" href="#"><span class="nav-icon">👤</span><span class="nav-label">프로필</span></a>
+  </nav>
+</body>
+</html>
