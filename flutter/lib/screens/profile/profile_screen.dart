@@ -15,10 +15,13 @@ class ProfileScreen extends StatelessWidget {
     return PurpleScaffold(
       title: '프로필',
       leading: const SizedBox(width: 40),
-      trailing: Container(
-        width: 40, height: 40,
-        decoration: CrownyTheme.iconButtonDecoration,
-        child: const Icon(Icons.settings_rounded, color: Colors.white, size: 22),
+      trailing: GestureDetector(
+        onTap: () => Navigator.pushNamed(context, '/settings'),
+        child: Container(
+          width: 40, height: 40,
+          decoration: CrownyTheme.iconButtonDecoration,
+          child: const Icon(Icons.settings_rounded, color: Colors.white, size: 22),
+        ),
       ),
       topContent: Padding(
         padding: const EdgeInsets.symmetric(horizontal: CrownyTheme.pagePadding),
