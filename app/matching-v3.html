@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 - 매칭 v3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --purple:#7B61FF; --pink:#E845A0; --orange:#FF8A56; --cyan:#36D1DC; --font:'Noto Sans KR',-apple-system,sans-serif; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(160deg,#7B61FF 0%,#9B7EFF 40%,#CDB4FF 100%);overflow-x:hidden}
+
+    /* 헤더 */
+    .header{padding:20px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .back-btn{font-size:20px;cursor:pointer;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+    .page-title{font-size:18px;font-weight:800}
+    .more-btn{font-size:18px;cursor:pointer;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center}
+
+    /* 탭 선택 */
+    .tabs{display:flex;gap:0;margin:0 24px 24px;background:rgba(255,255,255,0.15);border-radius:16px;padding:4px;backdrop-filter:blur(8px)}
+    .tab{flex:1;padding:10px 0;text-align:center;border-radius:13px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.7);cursor:pointer;transition:all 0.2s}
+    .tab.active{background:white;color:var(--purple);box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+
+    /* 사용량 바 */
+    .usage{margin:0 24px 24px;background:rgba(255,255,255,0.12);border-radius:16px;padding:14px 18px;backdrop-filter:blur(8px)}
+    .usage-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.8);margin-bottom:8px;font-weight:500}
+    .usage-bar{height:6px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden}
+    .usage-fill{height:100%;width:40%;background:linear-gradient(90deg,#36D1DC,#FF8A56);border-radius:3px}
+
+    /* 흰색 시트 */
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px;min-height:500px}
+    .sheet-handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 24px}
+
+    /* 프로필 카드 */
+    .profile-card{margin-bottom:20px}
+    .profile-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+    .profile-avatar{width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+    .profile-avatar.g1{background:linear-gradient(135deg,#FF6B9D,#FF8A56)}
+    .profile-info{flex:1}
+    .profile-name{font-size:18px;font-weight:800;color:#1E1B4B;margin-bottom:2px}
+    .profile-sub{font-size:13px;color:#9CA3AF}
+    .profile-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:linear-gradient(135deg,rgba(123,97,255,0.1),rgba(232,69,160,0.08));border-radius:8px;font-size:11px;font-weight:700;color:var(--purple)}
+    .profile-desc{font-size:14px;color:#6B7280;line-height:1.6;margin-bottom:16px;padding:14px;background:#F8F6FF;border-radius:16px}
+    .profile-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .ptag{padding:8px 14px;border-radius:12px;font-size:12px;font-weight:600;border:none}
+    .ptag.t1{background:linear-gradient(135deg,rgba(255,107,157,0.12),rgba(255,138,86,0.08));color:#E845A0}
+    .ptag.t2{background:linear-gradient(135deg,rgba(123,97,255,0.12),rgba(91,134,229,0.08));color:var(--purple)}
+    .ptag.t3{background:linear-gradient(135deg,rgba(54,209,220,0.12),rgba(91,134,229,0.08));color:#36D1DC}
+
+    /* 한강 온도 */
+    .temp-card{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F8F6FF;border-radius:16px;margin-bottom:20px}
+    .temp-icon{font-size:24px}
+    .temp-info{flex:1}
+    .temp-label{font-size:12px;color:#9CA3AF;font-weight:500}
+    .temp-bar{height:6px;background:#EDE9FE;border-radius:3px;margin-top:4px;overflow:hidden}
+    .temp-fill{height:100%;width:72%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:3px}
+    .temp-val{font-size:20px;font-weight:800;color:var(--orange)}
+
+    /* 액션 버튼 */
+    .actions{display:flex;gap:12px}
+    .act-btn{flex:1;padding:14px;border-radius:16px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;text-align:center;transition:all 0.2s}
+    .act-btn.pass{background:#F3F4F6;color:#9CA3AF}
+    .act-btn.wave{background:linear-gradient(135deg,var(--purple),var(--pink));color:white;box-shadow:0 4px 16px rgba(123,97,255,0.35)}
+    .act-btn:active{transform:scale(0.97)}
+
+    /* 하단 네비 */
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;border-top:1px solid #F3F4F6;display:flex;justify-content:space-around;padding:10px 0 max(10px,env(safe-area-inset-bottom));z-index:100}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#C4B5FD;cursor:pointer;text-decoration:none;padding:2px 12px}
+    .nav-item.active{color:var(--purple)}
+    .nav-icon{font-size:20px;padding:4px 14px}
+    .nav-item.active .nav-icon{background:linear-gradient(135deg,rgba(123,97,255,0.12),rgba(232,69,160,0.08));border-radius:12px}
+    .nav-label{font-weight:600}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn">‹</div>
+    <div class="page-title">매칭</div>
+    <div class="more-btn">⋮</div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <div class="tab active">추천</div>
+    <div class="tab">근처</div>
+  </div>
+
+  <!-- 사용량 -->
+  <div class="usage">
+    <div class="usage-row">
+      <span>오늘 손흔들기 2회</span>
+      <span>남은 3회</span>
+    </div>
+    <div class="usage-bar"><div class="usage-fill"></div></div>
+  </div>
+
+  <!-- 흰색 시트 -->
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="profile-avatar g1">🏃</div>
+        <div class="profile-info">
+          <div class="profile-name">뚝섬러닝러</div>
+          <div class="profile-sub">📍 120m · 러닝 중</div>
+        </div>
+        <div class="profile-badge">✓ Lv.3</div>
+      </div>
+
+      <div class="profile-desc">
+        "같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜"
+      </div>
+
+      <div class="profile-tags">
+        <div class="ptag t1">⏰ 시간 잘 지켜요</div>
+        <div class="ptag t2">💬 대화 재밌어요</div>
+        <div class="ptag t3">🔥 분위기 메이커</div>
+      </div>
+
+      <div class="temp-card">
+        <span class="temp-icon">🌡️</span>
+        <div class="temp-info">
+          <div class="temp-label">한강 온도</div>
+          <div class="temp-bar"><div class="temp-fill"></div></div>
+        </div>
+        <span class="temp-val">38.5°</span>
+      </div>
+
+      <div class="actions">
+        <button class="act-btn pass">다음에 ✕</button>
+        <button class="act-btn wave">👋 손흔들기</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></a>
+    <a class="nav-item active"><span class="nav-icon">👋</span><span class="nav-label">매칭</span></a>
+    <a class="nav-item"><span class="nav-icon">⏱</span><span class="nav-label">미션</span></a>
+    <a class="nav-item"><span class="nav-icon">💬</span><span class="nav-label">채팅</span></a>
+    <a class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">프로필</span></a>
+  </nav>
+</body>
+</html>

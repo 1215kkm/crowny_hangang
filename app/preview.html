@@ -3,136 +3,159 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>크라우니 한강 - 디자인 비교</title>
+  <title>크라우니 한강 - 디자인 프리뷰</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Noto Sans KR', sans-serif;
-      background: #0F0F1A;
-      color: #fff;
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: #F0EDFF;
+      padding: 32px 24px;
       min-height: 100vh;
-      padding: 30px 20px 60px;
     }
     h1 {
       text-align: center;
       font-size: 28px;
       font-weight: 800;
-      margin-bottom: 6px;
-      background: linear-gradient(135deg, #7C3AED, #EC4899, #F97316);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #1E1B4B;
+      margin-bottom: 4px;
     }
     .subtitle {
       text-align: center;
       font-size: 14px;
-      color: #8892A4;
+      color: #9CA3AF;
       margin-bottom: 32px;
     }
+
     .row-label {
       font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 14px;
-      padding-left: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-weight: 800;
+      color: #7B61FF;
+      margin-bottom: 4px;
+      padding-left: 4px;
     }
-    .row-label .badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 999px;
+    .row-sub {
+      font-size: 12px;
+      font-weight: 500;
+      color: #9CA3AF;
+      margin-bottom: 16px;
+      padding-left: 4px;
     }
-    .badge.v1 { background: rgba(74,144,217,0.2); color: #4A90D9; }
-    .badge.v2 { background: rgba(124,58,237,0.2); color: #A78BFA; }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 36px;
-    }
-    .screen-wrap {
-      background: #1A1A2E;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .screen-wrap:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(124,58,237,0.2);
-    }
-    .screen-label {
-      padding: 10px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #A5A5C0;
-      background: #1A1A2E;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .screen-label .name { color: #fff; }
-    .screen-frame {
-      width: 100%;
-      aspect-ratio: 9/18;
-      border: none;
-      display: block;
+      margin-bottom: 40px;
     }
 
-    /* 반응형 */
-    @media (max-width: 900px) {
-      .grid { grid-template-columns: repeat(2, 1fr); }
+    .phone-frame {
+      background: #1E1B4B;
+      border-radius: 24px;
+      padding: 8px;
+      box-shadow: 0 8px 32px rgba(30, 27, 75, 0.15);
+      transition: transform 0.3s;
     }
-    @media (max-width: 580px) {
-      .grid { grid-template-columns: 1fr; gap: 12px; }
-      body { padding: 20px 12px 40px; }
-      h1 { font-size: 22px; }
+    .phone-frame:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(30, 27, 75, 0.2);
+    }
+    .phone-screen {
+      border-radius: 18px;
+      overflow: hidden;
+      background: white;
+    }
+    .phone-screen iframe {
+      width: 100%;
+      height: 680px;
+      border: none;
+    }
+    .phone-label {
+      text-align: center;
+      padding: 8px 0 4px;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.5px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #C4B5FD, transparent);
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .grid { gap: 10px; }
+      .phone-screen iframe { height: 580px; }
+      body { padding: 20px 12px; }
+    }
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .phone-screen iframe { height: 520px; }
     }
   </style>
 </head>
 <body>
 
-  <h1>크라우니 한강</h1>
-  <div class="subtitle">디자인 비교 · v1 (블루) vs v2 (퍼플 그라데이션)</div>
+  <h1>Crowny 한강</h1>
+  <p class="subtitle">앱 디자인 프리뷰 · 3가지 스타일 비교</p>
 
   <!-- v1 -->
-  <div class="row-label">
-    Design A <span class="badge v1">블루 · 심플</span>
-  </div>
+  <div class="row-label">Style A — 블루 미니멀</div>
+  <div class="row-sub">밝은 배경 + 블루 포인트 · 기본 카드 레이아웃</div>
   <div class="grid">
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">홈</span> home.html</div>
-      <iframe class="screen-frame" src="home.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="home.html"></iframe></div>
+      <div class="phone-label">홈</div>
     </div>
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">매칭</span> matching.html</div>
-      <iframe class="screen-frame" src="matching.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="matching.html"></iframe></div>
+      <div class="phone-label">매칭</div>
     </div>
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">미션</span> mission.html</div>
-      <iframe class="screen-frame" src="mission.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="mission.html"></iframe></div>
+      <div class="phone-label">미션</div>
     </div>
   </div>
 
+  <div class="divider"></div>
+
   <!-- v2 -->
-  <div class="row-label">
-    Design B <span class="badge v2">퍼플 · 그라데이션</span>
-  </div>
+  <div class="row-label">Style B — 퍼플 프리미엄</div>
+  <div class="row-sub">보라 그라데이션 헤더 + 화이트 카드 · 프리미엄 느낌</div>
   <div class="grid">
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">홈</span> home-v2.html</div>
-      <iframe class="screen-frame" src="home-v2.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="home-v2.html"></iframe></div>
+      <div class="phone-label">홈</div>
     </div>
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">매칭</span> matching-v2.html</div>
-      <iframe class="screen-frame" src="matching-v2.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="home-v3.html"></iframe></div>
+      <div class="phone-label">홈 (v3 대체)</div>
     </div>
-    <div class="screen-wrap">
-      <div class="screen-label"><span class="name">미션</span> mission-v2.html</div>
-      <iframe class="screen-frame" src="mission-v2.html"></iframe>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="matching.html"></iframe></div>
+      <div class="phone-label">매칭 (v1)</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- v3 - 레퍼런스 스타일 -->
+  <div class="row-label">Style C — 레퍼런스 스타일 ⭐</div>
+  <div class="row-sub">풀 보라 배경 + 흰색 바텀시트 + 컬러 아이콘 · 깔끔 & 명확한 색상</div>
+  <div class="grid">
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="home-v3.html"></iframe></div>
+      <div class="phone-label">홈</div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="matching-v3.html"></iframe></div>
+      <div class="phone-label">매칭</div>
+    </div>
+    <div class="phone-frame">
+      <div class="phone-screen"><iframe src="mission-v3.html"></iframe></div>
+      <div class="phone-label">미션</div>
     </div>
   </div>
 

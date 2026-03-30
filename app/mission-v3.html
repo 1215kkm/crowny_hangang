@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 - 미션 v3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--purple:#7B61FF;--pink:#E845A0;--orange:#FF8A56;--cyan:#36D1DC;--green:#34D399;--font:'Noto Sans KR',-apple-system,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(160deg,#7B61FF 0%,#9B7EFF 40%,#CDB4FF 100%);overflow-x:hidden}
+
+    /* 헤더 */
+    .header{padding:20px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .back-btn{font-size:20px;cursor:pointer;width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+    .page-title{font-size:18px;font-weight:800}
+    .skip-btn{font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;font-weight:500}
+
+    /* 진행바 */
+    .progress-section{padding:0 24px 20px}
+    .progress-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.6);margin-bottom:8px;font-weight:600}
+    .progress-labels .active{color:white}
+    .progress-labels .done{color:var(--green)}
+    .progress-bar{display:flex;gap:4px}
+    .progress-dot{flex:1;height:4px;background:rgba(255,255,255,0.2);border-radius:2px}
+    .progress-dot.done{background:var(--green)}
+    .progress-dot.active{background:white}
+
+    /* 흰색 시트 */
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px;min-height:580px}
+    .sheet-handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 24px}
+
+    /* 미션 카드 */
+    .mission-card{text-align:center;margin-bottom:24px}
+    .mission-tag{display:inline-block;padding:5px 14px;background:linear-gradient(135deg,rgba(123,97,255,0.1),rgba(232,69,160,0.08));border-radius:10px;font-size:11px;font-weight:700;color:var(--purple);margin-bottom:16px}
+    .mission-emoji{font-size:64px;margin-bottom:14px}
+    .mission-text{font-size:22px;font-weight:800;color:#1E1B4B;line-height:1.4;margin-bottom:6px}
+    .mission-sub{font-size:13px;color:#9CA3AF;margin-bottom:24px}
+
+    /* 타이머 */
+    .timer-wrap{display:flex;justify-content:center;margin-bottom:24px}
+    .timer-circle{width:120px;height:120px;position:relative}
+    .timer-svg{width:120px;height:120px;transform:rotate(-90deg)}
+    .timer-bg{fill:none;stroke:#EDE9FE;stroke-width:6}
+    .timer-progress{fill:none;stroke:url(#timerGrad);stroke-width:6;stroke-linecap:round;stroke-dasharray:326;stroke-dashoffset:95}
+    .timer-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+    .timer-time{font-size:32px;font-weight:900;color:#1E1B4B}
+    .timer-label{font-size:10px;color:#9CA3AF;margin-top:1px}
+
+    /* 액션 */
+    .mission-actions{display:flex;gap:10px;margin-bottom:28px}
+    .m-btn{flex:1;padding:14px;border-radius:16px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+    .m-btn.skip{background:#F3F4F6;color:#9CA3AF}
+    .m-btn.done{background:linear-gradient(135deg,var(--purple),var(--pink));color:white;box-shadow:0 4px 16px rgba(123,97,255,0.35)}
+    .m-btn:active{transform:scale(0.97)}
+
+    /* 다음 미션 리스트 */
+    .next-title{font-size:14px;font-weight:700;color:#1E1B4B;margin-bottom:14px}
+    .next-list{display:flex;flex-direction:column;gap:10px}
+    .next-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F8F6FF;border-radius:16px}
+    .next-item.locked{opacity:0.45}
+    .next-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .next-icon.i1{background:linear-gradient(135deg,#FF6B9D,#FF8A56)}
+    .next-icon.i2{background:linear-gradient(135deg,#A78BFA,#7C3AED)}
+    .next-icon.i3{background:linear-gradient(135deg,#36D1DC,#5B86E5)}
+    .next-info{flex:1}
+    .next-name{font-size:13px;font-weight:600;color:#1E1B4B}
+    .next-meta{font-size:11px;color:#9CA3AF;margin-top:1px}
+    .next-arrow{font-size:14px;color:#D1D5DB}
+
+    /* 네비 */
+    .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;border-top:1px solid #F3F4F6;display:flex;justify-content:space-around;padding:10px 0 max(10px,env(safe-area-inset-bottom));z-index:100}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:#C4B5FD;cursor:pointer;text-decoration:none;padding:2px 12px}
+    .nav-item.active{color:var(--purple)}
+    .nav-icon{font-size:20px;padding:4px 14px}
+    .nav-item.active .nav-icon{background:linear-gradient(135deg,rgba(123,97,255,0.12),rgba(232,69,160,0.08));border-radius:12px}
+    .nav-label{font-weight:600}
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="back-btn">‹</div>
+    <div class="page-title">미션 타이머</div>
+    <span class="skip-btn">나가기</span>
+  </div>
+
+  <!-- 진행바 -->
+  <div class="progress-section">
+    <div class="progress-labels">
+      <span class="done">워밍업 ✓</span>
+      <span class="active">액티비티</span>
+      <span>대화 심화</span>
+      <span>보너스</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-dot done"></div>
+      <div class="progress-dot active"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+    </div>
+  </div>
+
+  <!-- 흰색 시트 -->
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+
+    <!-- 미션 카드 -->
+    <div class="mission-card">
+      <div class="mission-tag">Phase 2 · 액티비티</div>
+      <div class="mission-emoji">📸</div>
+      <div class="mission-text">가장 웃긴 셀카<br>찍기!</div>
+      <div class="mission-sub">서로 찍어주고 가장 웃긴 사진 뽑기 🤣</div>
+
+      <!-- 타이머 -->
+      <div class="timer-wrap">
+        <div class="timer-circle">
+          <svg class="timer-svg" viewBox="0 0 120 120">
+            <defs>
+              <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#7B61FF"/>
+                <stop offset="100%" stop-color="#E845A0"/>
+              </linearGradient>
+            </defs>
+            <circle class="timer-bg" cx="60" cy="60" r="52"/>
+            <circle class="timer-progress" cx="60" cy="60" r="52"/>
+          </svg>
+          <div class="timer-center">
+            <div class="timer-time">1:47</div>
+            <div class="timer-label">남은 시간</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 액션 -->
+    <div class="mission-actions">
+      <button class="m-btn skip">🔄 다른 미션</button>
+      <button class="m-btn done">✅ 완료!</button>
+    </div>
+
+    <!-- 다음 미션 -->
+    <div class="next-title">다음 미션</div>
+    <div class="next-list">
+      <div class="next-item">
+        <div class="next-icon i1">🔍</div>
+        <div class="next-info">
+          <div class="next-name">주변 특이한 것 찾기</div>
+          <div class="next-meta">⏱ 5분</div>
+        </div>
+        <span class="next-arrow">›</span>
+      </div>
+      <div class="next-item locked">
+        <div class="next-icon i2">💬</div>
+        <div class="next-info">
+          <div class="next-name">감동/웃긴 일 공유</div>
+          <div class="next-meta">⏱ 5분 · Phase 3</div>
+        </div>
+        <span class="next-arrow">🔒</span>
+      </div>
+      <div class="next-item locked">
+        <div class="next-icon i3">🍜</div>
+        <div class="next-info">
+          <div class="next-name">한강 음식 추천</div>
+          <div class="next-meta">⏱ 5분 · Phase 3</div>
+        </div>
+        <span class="next-arrow">🔒</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></a>
+    <a class="nav-item"><span class="nav-icon">👋</span><span class="nav-label">매칭</span></a>
+    <a class="nav-item active"><span class="nav-icon">⏱</span><span class="nav-label">미션</span></a>
+    <a class="nav-item"><span class="nav-icon">💬</span><span class="nav-label">채팅</span></a>
+    <a class="nav-item"><span class="nav-icon">👤</span><span class="nav-label">프로필</span></a>
+  </nav>
+</body>
+</html>
