@@ -5,8 +5,11 @@ import 'screens/auth/auth_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/settings/settings_screen.dart';
 import 'screens/commerce/commerce_screen.dart';
+import 'services/map_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MapService.initialize();
   runApp(const CrownyApp());
 }
 

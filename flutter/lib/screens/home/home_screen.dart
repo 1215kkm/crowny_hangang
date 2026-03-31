@@ -6,6 +6,7 @@ import '../../widgets/crowny_bottom_nav.dart';
 import '../../widgets/gradient_icon_box.dart';
 import '../../widgets/glass_card.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/hangang_map.dart';
 
 class HomeScreen extends StatelessWidget {
   final int navIndex;
@@ -101,6 +102,10 @@ class HomeScreen extends StatelessWidget {
       sheetContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 한강 지도
+          const HangangMap(height: 180, district: 'yeouido'),
+          const SizedBox(height: 20),
+
           // 한강 주문 바로가기
           GestureDetector(
             onTap: () => Navigator.pushNamed(context, '/commerce'),
