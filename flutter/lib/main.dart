@@ -4,6 +4,7 @@ import 'screens/splash/splash_screen.dart';
 import 'screens/auth/auth_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/settings/settings_screen.dart';
+import 'screens/commerce/commerce_screen.dart';
 
 void main() {
   runApp(const CrownyApp());
@@ -24,6 +25,7 @@ class CrownyApp extends StatelessWidget {
         '/auth': (_) => const AuthScreen(),
         '/main': (_) => const MainShell(),
         '/settings': (_) => const SettingsScreen(),
+        '/commerce': (_) => const CommerceScreen(),
       },
     );
   }

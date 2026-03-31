@@ -101,6 +101,36 @@ class HomeScreen extends StatelessWidget {
       sheetContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 한강 주문 바로가기
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/commerce'),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFFFFF7ED), Color(0xFFFEF3C7)]),
+                borderRadius: BorderRadius.circular(CrownyTheme.radiusMd),
+                border: Border.all(color: const Color(0xFFFDE68A)),
+              ),
+              child: Row(
+                children: [
+                  const GradientIconBox(icon: Icons.delivery_dining_rounded, gradientType: 'orange', size: 42, iconSize: 22, borderRadius: 14),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text('한강 주문', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF92400E))),
+                        Text('배달 · 편의점 · 선물하기', style: TextStyle(fontSize: 11, color: Color(0xFFB45309))),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: const Color(0xFFD97706), size: 20),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+
           // 번개 모임
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
