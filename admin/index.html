@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crowny 한강 - 슈퍼 관리자</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- 사이드바 -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="icon"><span class="mi">water</span></div>
+      Crowny Admin
+    </div>
+    <div class="sidebar-menu">
+      <div class="menu-label">관리</div>
+      <div class="menu-item active" data-page="design">
+        <span class="mi">palette</span> 디자인 관리
+      </div>
+      <div class="menu-item" data-page="missions">
+        <span class="mi">timer</span> 미션 관리
+      </div>
+      <div class="menu-item" data-page="languages">
+        <span class="mi">language</span> 언어 관리
+      </div>
+      <div class="menu-label">운영</div>
+      <div class="menu-item" data-page="users">
+        <span class="mi">group</span> 사용자 관리
+      </div>
+      <div class="menu-item" data-page="events">
+        <span class="mi">event</span> 이벤트 관리
+      </div>
+      <div class="menu-item" data-page="commerce">
+        <span class="mi">shopping_cart</span> 커머스 (숨김)
+      </div>
+      <div class="menu-label">시스템</div>
+      <div class="menu-item" data-page="settings">
+        <span class="mi">settings</span> 설정
+      </div>
+    </div>
+  </nav>
+
+  <!-- 메인 콘텐츠 -->
+  <div class="main">
+
+    <!-- ============ 디자인 관리 ============ -->
+    <div class="page-section active" id="page-design">
+      <div class="page-header">
+        <div class="page-title">🎨 디자인 관리</div>
+        <div class="page-actions">
+          <button class="btn btn-outline" onclick="resetDesign()"><span class="mi" style="font-size:16px">restart_alt</span> 기본값 복원</button>
+          <button class="btn btn-primary" onclick="applyDesign()"><span class="mi" style="font-size:16px">check</span> 전체 적용</button>
+        </div>
+      </div>
+
+      <div class="design-layout">
+        <!-- 좌측: 디자인 패널 -->
+        <div class="design-panel">
+          <div class="panel-title"><span class="mi">tune</span> 글로벌 디자인 변수</div>
+
+          <div class="color-group">
+            <div class="color-label">메인 색상</div>
+            <div class="color-row">
+              <input type="color" class="color-preview" value="#6C3CE1" data-token="primary">
+              <span class="color-name">Primary</span>
+              <input type="text" class="color-input" value="#6C3CE1" data-token="primary">
+            </div>
+            <div class="color-row">
+              <input type="color" class="color-preview" value="#D63384" data-token="secondary">
+              <span class="color-name">Secondary</span>
+              <input type="text" class="color-input" value="#D63384" data-token="secondary">
+            </div>
+            <div class="color-row">
+              <input type="color" class="color-preview" value="#E8590C" data-token="accent">
+              <span class="color-name">Accent</span>
+              <input type="text" class="color-input" value="#E8590C" data-token="accent">
+            </div>
+          </div>
+
+          <div class="color-group">
+            <div class="color-label">배경 색상</div>
+            <div class="color-row">
+              <input type="color" class="color-preview" value="#5B2FD6" data-token="bgPurple">
+              <span class="color-name">보라 배경</span>
+              <input type="text" class="color-input" value="#5B2FD6" data-token="bgPurple">
+            </div>
+            <div class="color-row">
+              <input type="color" class="color-preview" value="#F9F7FF" data-token="bgCard">
+              <span class="color-name">카드 배경</span>
+              <input type="text" class="color-input" value="#F9F7FF" data-token="bgCard">
+            </div>
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label"><span>Border Radius</span><span id="val-radius">18px</span></div>
+            <input type="range" min="4" max="32" value="18" oninput="document.getElementById('val-radius').textContent=this.value+'px'">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label"><span>본문 글자 크기</span><span id="val-font">14px</span></div>
+            <input type="range" min="12" max="18" value="14" oninput="document.getElementById('val-font').textContent=this.value+'px'">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label"><span>제목 글자 크기</span><span id="val-heading">22px</span></div>
+            <input type="range" min="18" max="30" value="22" oninput="document.getElementById('val-heading').textContent=this.value+'px'">
+          </div>
+
+          <div class="slider-group">
+            <div class="slider-label"><span>섹션 여백</span><span id="val-spacing">28px</span></div>
+            <input type="range" min="16" max="48" value="28" oninput="document.getElementById('val-spacing').textContent=this.value+'px'">
+          </div>
+
+          <div class="color-group">
+            <div class="color-label">그림자 강도</div>
+            <div class="slider-group">
+              <div class="slider-label"><span>그림자 불투명도</span><span id="val-shadow">12%</span></div>
+              <input type="range" min="0" max="30" value="12" oninput="document.getElementById('val-shadow').textContent=this.value+'%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- 우측: 화면 프리뷰 그리드 -->
+        <div>
+          <div class="screen-grid">
+            <div class="screen-card">
+              <div class="screen-preview"><iframe src="../app/home-v4.html"></iframe></div>
+              <div class="screen-info">
+                <span class="screen-name">홈</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview"><iframe src="../app/matching-v4.html"></iframe></div>
+              <div class="screen-info">
+                <span class="screen-name">매칭</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview"><iframe src="../app/mission-v4.html"></iframe></div>
+              <div class="screen-info">
+                <span class="screen-name">미션</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview" style="background:white; display:flex; align-items:center; justify-content:center; color:var(--admin-text-muted); font-size:13px;">채팅 화면</div>
+              <div class="screen-info">
+                <span class="screen-name">채팅</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview" style="background:white; display:flex; align-items:center; justify-content:center; color:var(--admin-text-muted); font-size:13px;">프로필 화면</div>
+              <div class="screen-info">
+                <span class="screen-name">프로필</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview" style="background:white; display:flex; align-items:center; justify-content:center; color:var(--admin-text-muted); font-size:13px;">이벤트 화면</div>
+              <div class="screen-info">
+                <span class="screen-name">이벤트</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+            <div class="screen-card">
+              <div class="screen-preview" style="background:white; display:flex; align-items:center; justify-content:center; color:var(--admin-text-muted); font-size:13px;">설정 화면</div>
+              <div class="screen-info">
+                <span class="screen-name">설정</span>
+                <div class="screen-toggle">글로벌 <div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 미션 관리 ============ -->
+    <div class="page-section" id="page-missions">
+      <div class="page-header">
+        <div class="page-title">⏱ 미션 관리</div>
+        <div class="page-actions">
+          <button class="btn btn-primary" onclick="addMission()"><span class="mi" style="font-size:16px">add</span> 미션 추가</button>
+        </div>
+      </div>
+
+      <div class="mission-list">
+        <!-- Phase 1: 워밍업 -->
+        <div class="mission-phase">
+          <div class="phase-header">
+            <div class="phase-icon p1"><span class="mi">emoji_people</span></div>
+            <div class="phase-name">Phase 1 · 워밍업</div>
+            <div class="phase-count">2개 미션</div>
+            <span class="mi" style="color:var(--admin-text-muted)">expand_more</span>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">오늘 한강 온 이유 공유</div>
+              <div class="mission-meta">
+                <span>⏱ 2분</span>
+                <span class="tag">talk</span>
+                <span class="tag">전체</span>
+              </div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">공통점 3개 찾기</div>
+              <div class="mission-meta">
+                <span>⏱ 3분</span>
+                <span class="tag">talk</span>
+                <span class="tag">전체</span>
+              </div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2: 액티비티 -->
+        <div class="mission-phase">
+          <div class="phase-header">
+            <div class="phase-icon p2"><span class="mi">sports_esports</span></div>
+            <div class="phase-name">Phase 2 · 액티비티</div>
+            <div class="phase-count">3개 미션</div>
+            <span class="mi" style="color:var(--admin-text-muted)">expand_more</span>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">가장 웃긴 셀카 찍기!</div>
+              <div class="mission-meta">
+                <span>⏱ 3분</span>
+                <span class="tag">photo</span>
+                <span class="tag">전체</span>
+              </div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">주변 특이한 것 찾기</div>
+              <div class="mission-meta">
+                <span>⏱ 5분</span>
+                <span class="tag">action</span>
+                <span class="tag">전체</span>
+              </div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">지나가는 사람에게 사진 부탁</div>
+              <div class="mission-meta">
+                <span>⏱ 3분</span>
+                <span class="tag">action</span>
+                <span class="tag">한국인</span>
+              </div>
+            </div>
+            <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3: 대화 심화 -->
+        <div class="mission-phase">
+          <div class="phase-header">
+            <div class="phase-icon p3"><span class="mi">psychology</span></div>
+            <div class="phase-name">Phase 3 · 대화 심화</div>
+            <div class="phase-count">2개 미션</div>
+            <span class="mi" style="color:var(--admin-text-muted)">expand_more</span>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">감동/웃긴 일 공유</div>
+              <div class="mission-meta"><span>⏱ 5분</span><span class="tag">talk</span><span class="tag">전체</span></div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">한강 음식 추천</div>
+              <div class="mission-meta"><span>⏱ 5분</span><span class="tag">talk</span><span class="tag">전체</span></div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 4: 보너스 -->
+        <div class="mission-phase">
+          <div class="phase-header">
+            <div class="phase-icon p4"><span class="mi">star</span></div>
+            <div class="phase-name">Phase 4 · 보너스</div>
+            <div class="phase-count">2개 미션</div>
+            <span class="mi" style="color:var(--admin-text-muted)">expand_more</span>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">오늘 만남 한 문장 요약</div>
+              <div class="mission-meta"><span>⏱ 2분</span><span class="tag">talk</span><span class="tag">전체</span></div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+          <div class="mission-item">
+            <span class="mission-drag mi">drag_indicator</span>
+            <div class="mission-info">
+              <div class="mission-name">다음에 같이 하고 싶은 것</div>
+              <div class="mission-meta"><span>⏱ 3분</span><span class="tag">talk</span><span class="tag">전체</span></div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            <div class="mission-actions-cell">
+              <div class="icon-btn-sm"><span class="mi" style="font-size:14px">edit</span></div>
+              <div class="icon-btn-sm danger"><span class="mi" style="font-size:14px">delete</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 언어 관리 ============ -->
+    <div class="page-section" id="page-languages">
+      <div class="page-header">
+        <div class="page-title">🌐 언어 관리</div>
+        <div class="page-actions">
+          <button class="btn btn-outline"><span class="mi" style="font-size:16px">download</span> JSON 내보내기</button>
+          <button class="btn btn-primary"><span class="mi" style="font-size:16px">save</span> 저장</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-lang="ko">🇰🇷 한국어</div>
+        <div class="tab" data-lang="en">🇬🇧 English</div>
+        <div class="tab" data-lang="ja">🇯🇵 日本語</div>
+      </div>
+
+      <div class="lang-grid" id="lang-editor">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+    </div>
+
+    <!-- ============ 사용자 관리 (플레이스홀더) ============ -->
+    <div class="page-section" id="page-users">
+      <div class="page-header"><div class="page-title">👥 사용자 관리</div></div>
+      <div style="text-align:center; padding:60px; color:var(--admin-text-muted);">
+        <span class="mi" style="font-size:48px; display:block; margin-bottom:12px;">construction</span>
+        서비스 런칭 후 활성화됩니다
+      </div>
+    </div>
+
+    <!-- ============ 이벤트 관리 (플레이스홀더) ============ -->
+    <div class="page-section" id="page-events">
+      <div class="page-header"><div class="page-title">📅 이벤트 관리</div></div>
+      <div style="text-align:center; padding:60px; color:var(--admin-text-muted);">
+        <span class="mi" style="font-size:48px; display:block; margin-bottom:12px;">construction</span>
+        서비스 런칭 후 활성화됩니다
+      </div>
+    </div>
+
+    <!-- ============ 커머스 (숨김) ============ -->
+    <div class="page-section" id="page-commerce">
+      <div class="page-header"><div class="page-title">🛒 커머스 (숨김 상태)</div></div>
+      <div style="text-align:center; padding:60px; color:var(--admin-text-muted);">
+        <span class="mi" style="font-size:48px; display:block; margin-bottom:12px;">visibility_off</span>
+        사용자에게 숨김 상태입니다<br><br>
+        <button class="btn btn-outline" style="margin:0 auto;">커머스 기능 활성화</button>
+      </div>
+    </div>
+
+    <!-- ============ 설정 ============ -->
+    <div class="page-section" id="page-settings">
+      <div class="page-header"><div class="page-title">⚙️ 시스템 설정</div></div>
+      <div style="text-align:center; padding:60px; color:var(--admin-text-muted);">
+        <span class="mi" style="font-size:48px; display:block; margin-bottom:12px;">settings</span>
+        서버 설정, API 키, Firebase 설정 등
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
