@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 한강 - 전체 앱</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    :root{--purple:#6C3CE1;--pink:#D63384;--orange:#E8590C;--cyan:#0EA5E9;--green:#059669;--font:'Noto Sans KR',-apple-system,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+    .mi{font-family:'Material Icons Round';font-size:22px;font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+
+    /* === PAGE CONTAINER === */
+    .page{display:none;animation:fadeIn 0.25s ease}
+    .page.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* === BOTTOM NAV === */
+    .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -2px 20px rgba(0,0,0,0.04)}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#C4B5FD;cursor:pointer;padding:6px 16px;text-decoration:none;transition:color 0.2s;border:none;background:none;font-family:var(--font)}
+    .bnav-item.active{color:var(--purple)}
+    .bnav-item .mi{font-size:24px;transition:all 0.2s}
+    .bnav-item.active .mi{background:linear-gradient(135deg,rgba(123,97,255,0.12),rgba(232,69,160,0.08));border-radius:12px;padding:4px 16px}
+    .bnav-label{font-weight:600}
+
+    /* === SHARED === */
+    .icon-btn{width:40px;height:40px;background:rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);color:white;border:none;font-family:var(--font)}
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px}
+    .handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 24px}
+    .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .sec-title{font-size:17px;font-weight:800;color:#1E1B4B}
+    .sec-more{font-size:13px;color:var(--purple);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:2px}
+
+    /* ===================== */
+    /* === PAGE: HOME ===   */
+    /* ===================== */
+    .home-top{padding:24px 24px 20px;color:white}
+    .home-top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+    .greeting{font-size:14px;opacity:0.9;margin-bottom:6px}
+    .main-title{font-size:24px;font-weight:800;line-height:1.35}
+
+    .status-card{margin:0 24px 28px;background:rgba(255,255,255,0.22);border-radius:20px;padding:16px 20px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;border:1px solid rgba(255,255,255,0.18)}
+    .status-icon{width:48px;height:48px;background:rgba(255,255,255,0.28);border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .status-icon .mi{font-size:26px}
+    .status-text{flex:1;color:white}
+    .status-num{font-size:22px;font-weight:800}
+    .status-label{font-size:11px;opacity:0.75}
+    .status-btn{background:var(--orange);color:white;border:none;padding:8px 18px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 4px 12px rgba(255,138,86,0.4)}
+
+    .act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 24px 28px}
+    .act-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
+    .act-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white}
+    .act-icon .mi{font-size:26px}
+    .act-icon.c1{background:linear-gradient(135deg,#F43F5E,#D63384)}
+    .act-icon.c2{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .act-icon.c3{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .act-icon.c4{background:linear-gradient(135deg,#F59E0B,#E8590C)}
+    .act-name{font-size:11px;font-weight:600;color:white;opacity:0.9}
+
+    .flash-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin-bottom:28px;padding-bottom:2px}
+    .flash-scroll::-webkit-scrollbar{display:none}
+    .fc{min-width:170px;background:#F9F7FF;border-radius:20px;padding:16px;border:1px solid #EDE9FE;cursor:pointer;transition:all 0.2s}
+    .fc:hover{box-shadow:0 4px 16px rgba(123,97,255,0.1);transform:translateY(-2px)}
+    .fc-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:white}
+    .fc-icon .mi{font-size:22px}
+    .fc-icon.f1{background:linear-gradient(135deg,#F43F5E,#D63384)}
+    .fc-icon.f2{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .fc-icon.f3{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .fc-name{font-size:13px;font-weight:700;color:#1E1B4B;margin-bottom:3px}
+    .fc-meta{font-size:10px;color:#9CA3AF}
+
+    .user-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #F3F4F6}
+    .user-item:last-child{border-bottom:none}
+    .uav{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .uav .mi{font-size:24px}
+    .uav.g1{background:linear-gradient(135deg,#F43F5E,#E8590C)}
+    .uav.g2{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .uav.g3{background:linear-gradient(135deg,#F59E0B,#E8590C)}
+    .uinfo{flex:1;min-width:0}
+    .uname{font-size:14px;font-weight:700;color:#1E1B4B}
+    .udesc{font-size:12px;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .uright{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .udist{font-size:10px;color:#D1D5DB;font-weight:500}
+    .ubtn{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;border:none;padding:7px 14px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(108,60,225,0.3)}
+    .ubtn .mi{font-size:14px}
+
+    /* ======================== */
+    /* === PAGE: MATCHING === */
+    /* ======================== */
+    .match-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .page-title{font-size:18px;font-weight:800}
+    .tabs{display:flex;gap:0;margin:0 24px 20px;background:rgba(255,255,255,0.22);border-radius:16px;padding:4px;backdrop-filter:blur(10px)}
+    .tab{flex:1;padding:10px 0;text-align:center;border-radius:13px;font-size:13px;font-weight:700;color:rgba(255,255,255,0.75);cursor:pointer;transition:all 0.25s}
+    .tab.active{background:white;color:var(--purple);box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+    .usage{margin:0 24px 24px;background:rgba(255,255,255,0.18);border-radius:16px;padding:14px 18px;backdrop-filter:blur(10px)}
+    .usage-row{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.9);margin-bottom:8px;font-weight:500}
+    .usage-bar{height:5px;background:rgba(255,255,255,0.2);border-radius:3px;overflow:hidden}
+    .usage-fill{height:100%;width:40%;background:linear-gradient(90deg,#36D1DC,var(--orange));border-radius:3px}
+
+    .card-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .card-avatar{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .card-avatar .mi{font-size:30px}
+    .card-avatar.g1{background:linear-gradient(135deg,#F43F5E,#E8590C)}
+    .card-avatar.g2{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .card-info{flex:1}
+    .card-name{font-size:18px;font-weight:800;color:#1E1B4B;margin-bottom:2px}
+    .card-sub{font-size:12px;color:#9CA3AF;display:flex;align-items:center;gap:4px}
+    .card-sub .mi{font-size:14px}
+    .card-badge{padding:5px 12px;background:linear-gradient(135deg,rgba(123,97,255,0.08),rgba(232,69,160,0.06));border-radius:10px;font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:3px}
+    .card-badge .mi{font-size:14px}
+    .card-quote{padding:16px 16px 16px 28px;background:#F9F7FF;border-radius:18px;font-size:14px;color:#4B5563;line-height:1.6;margin-bottom:18px;position:relative}
+    .card-quote::before{content:'\201C';position:absolute;top:8px;left:12px;font-size:28px;color:#C4B5FD;font-weight:800;line-height:1}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+    .tag{padding:8px 14px;border-radius:12px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:5px}
+    .tag .mi{font-size:15px}
+    .tag.t1{background:rgba(244,63,94,0.1);color:#E11D48}
+    .tag.t2{background:rgba(123,97,255,0.08);color:var(--purple)}
+    .tag.t3{background:rgba(54,209,220,0.08);color:#0EA5E9}
+    .temp{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F9F7FF;border-radius:16px;margin-bottom:24px}
+    .temp .mi{font-size:24px;color:var(--purple)}
+    .temp-info{flex:1}
+    .temp-label{font-size:11px;color:#9CA3AF;margin-bottom:4px}
+    .temp-bar{height:5px;background:#EDE9FE;border-radius:3px;overflow:hidden}
+    .temp-fill{height:100%;width:72%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:3px}
+    .temp-val{font-size:20px;font-weight:800;color:var(--orange)}
+    .actions{display:flex;gap:12px}
+    .abtn{flex:1;padding:15px;border-radius:16px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.2s}
+    .abtn .mi{font-size:20px}
+    .abtn.pass,.abtn.skip{background:#F3F4F6;color:#9CA3AF}
+    .abtn.wave,.abtn.done{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;box-shadow:0 4px 16px rgba(108,60,225,0.4)}
+    .abtn:active{transform:scale(0.97)}
+
+    /* ======================== */
+    /* === PAGE: MISSION ===  */
+    /* ======================== */
+    .mission-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .skip-text{font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;background:none;border:none;font-family:var(--font)}
+    .progress{padding:0 24px 24px}
+    .prog-labels{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,0.65);margin-bottom:8px;font-weight:600}
+    .prog-labels .done-label{color:var(--green)}
+    .prog-labels .active-label{color:white}
+    .prog-bar{display:flex;gap:5px}
+    .prog-seg{flex:1;height:4px;background:rgba(255,255,255,0.18);border-radius:2px}
+    .prog-seg.done{background:var(--green)}
+    .prog-seg.active{background:white}
+
+    .mission{text-align:center;margin-bottom:28px}
+    .mission-tag{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:rgba(123,97,255,0.08);border-radius:10px;font-size:11px;font-weight:700;color:var(--purple);margin-bottom:20px}
+    .mission-tag .mi{font-size:14px}
+    .mission-icon{width:80px;height:80px;border-radius:24px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:white}
+    .mission-icon .mi{font-size:40px}
+    .mission-icon.m1{background:linear-gradient(135deg,#F43F5E,#D63384)}
+    .mission-text{font-size:22px;font-weight:800;color:#1E1B4B;line-height:1.4;margin-bottom:6px}
+    .mission-sub{font-size:13px;color:#9CA3AF}
+
+    .timer-wrap{display:flex;justify-content:center;margin:24px 0 28px}
+    .timer-circle{width:120px;height:120px;position:relative}
+    .timer-svg{width:120px;height:120px;transform:rotate(-90deg)}
+    .timer-bg{fill:none;stroke:#EDE9FE;stroke-width:6}
+    .timer-prog{fill:none;stroke:url(#tg);stroke-width:6;stroke-linecap:round;stroke-dasharray:326;stroke-dashoffset:95}
+    .timer-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+    .timer-time{font-size:32px;font-weight:900;color:#1E1B4B}
+    .timer-label{font-size:10px;color:#9CA3AF;margin-top:2px}
+
+    .next-title{font-size:14px;font-weight:700;color:#1E1B4B;margin-bottom:14px;display:flex;align-items:center;gap:6px;margin-top:32px}
+    .next-title .mi{font-size:18px;color:var(--purple)}
+    .next-list{display:flex;flex-direction:column;gap:10px}
+    .next-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#F9F7FF;border-radius:16px;transition:all 0.2s}
+    .next-item.locked{opacity:0.4}
+    .ni-icon{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .ni-icon .mi{font-size:20px}
+    .ni-icon.i1{background:linear-gradient(135deg,#F43F5E,#E8590C)}
+    .ni-icon.i2{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .ni-icon.i3{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .ni-info{flex:1}
+    .ni-name{font-size:13px;font-weight:600;color:#1E1B4B}
+    .ni-meta{font-size:11px;color:#9CA3AF;margin-top:1px;display:flex;align-items:center;gap:3px}
+    .ni-meta .mi{font-size:13px}
+    .ni-arrow{color:#D1D5DB}
+    .ni-arrow .mi{font-size:18px}
+
+    /* ======================== */
+    /* === PAGE: CHAT ===     */
+    /* ======================== */
+    .chat-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .chat-list{padding:0 0 0 0}
+    .chat-item{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer;transition:background 0.15s}
+    .chat-item:active{background:#F9F7FF}
+    .chat-av{width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white;position:relative}
+    .chat-av .mi{font-size:26px}
+    .chat-av.ca1{background:linear-gradient(135deg,#F43F5E,#E8590C)}
+    .chat-av.ca2{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .chat-av.ca3{background:linear-gradient(135deg,#F59E0B,#E8590C)}
+    .chat-av.ca4{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .online-dot{position:absolute;bottom:2px;right:2px;width:10px;height:10px;background:#059669;border:2px solid white;border-radius:50%}
+    .chat-info{flex:1;min-width:0}
+    .chat-name{font-size:14px;font-weight:700;color:#1E1B4B}
+    .chat-msg{font-size:12px;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chat-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .chat-time{font-size:10px;color:#D1D5DB}
+    .chat-badge-num{background:var(--purple);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;min-width:18px;text-align:center}
+
+    /* ======================== */
+    /* === PAGE: PROFILE ===  */
+    /* ======================== */
+    .profile-top{padding:32px 24px 28px;color:white;text-align:center}
+    .profile-avatar{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#F43F5E,#E8590C);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:white;border:3px solid rgba(255,255,255,0.3)}
+    .profile-avatar .mi{font-size:40px}
+    .profile-name{font-size:20px;font-weight:800;margin-bottom:4px}
+    .profile-sub{font-size:12px;opacity:0.7}
+    .stat-row{display:flex;gap:12px;margin:0 24px 28px}
+    .stat-box{flex:1;background:rgba(255,255,255,0.2);border-radius:16px;padding:14px;text-align:center;backdrop-filter:blur(10px);color:white;border:1px solid rgba(255,255,255,0.15)}
+    .stat-num{font-size:22px;font-weight:800}
+    .stat-label{font-size:10px;opacity:0.7;margin-top:2px}
+    .menu-list{padding:0 24px}
+    .menu-item{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer}
+    .menu-item:last-child{border-bottom:none}
+    .menu-ic{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white}
+    .menu-ic .mi{font-size:22px}
+    .menu-ic.mc1{background:linear-gradient(135deg,#F43F5E,#D63384)}
+    .menu-ic.mc2{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .menu-ic.mc3{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .menu-ic.mc4{background:linear-gradient(135deg,#F59E0B,#E8590C)}
+    .menu-ic.mc5{background:linear-gradient(135deg,#059669,#0EA5E9)}
+    .menu-name{flex:1;font-size:14px;font-weight:600;color:#1E1B4B}
+    .menu-arrow{color:#D1D5DB}
+  </style>
+</head>
+<body>
+
+  <!-- ========== PAGE: HOME ========== -->
+  <div class="page active" id="page-home">
+    <div class="home-top">
+      <div class="home-top-row">
+        <button class="icon-btn"><span class="mi">menu</span></button>
+        <button class="icon-btn"><span class="mi">search</span></button>
+      </div>
+      <div class="greeting">안녕하세요 👋</div>
+      <div class="main-title">한강에서<br>새로운 인연을 만나세요</div>
+    </div>
+
+    <div class="status-card">
+      <div class="status-icon"><span class="mi">group</span></div>
+      <div class="status-text">
+        <div class="status-num">12명</div>
+        <div class="status-label">여의도 한강공원 접속 중</div>
+      </div>
+      <button class="status-btn" onclick="switchPage('matching')">둘러보기</button>
+    </div>
+
+    <div class="act-grid">
+      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c1"><span class="mi">sports_bar</span></div><div class="act-name">치맥</div></div>
+      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c2"><span class="mi">directions_run</span></div><div class="act-name">러닝</div></div>
+      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c3"><span class="mi">hiking</span></div><div class="act-name">산책</div></div>
+      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c4"><span class="mi">deck</span></div><div class="act-name">피크닉</div></div>
+    </div>
+
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="sec-head">
+        <div class="sec-title">번개 모임</div>
+        <span class="sec-more">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
+      </div>
+      <div class="flash-scroll">
+        <div class="fc">
+          <div class="fc-icon f1"><span class="mi">restaurant</span></div>
+          <div class="fc-name">치킨 같이 시켜요!</div>
+          <div class="fc-meta">여의도 · 지금 · 2/4명</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon f2"><span class="mi">directions_run</span></div>
+          <div class="fc-name">한강 러닝 5km</div>
+          <div class="fc-meta">뚝섬 · 19:30 · 1/5명</div>
+        </div>
+        <div class="fc">
+          <div class="fc-icon f3"><span class="mi">nightlight</span></div>
+          <div class="fc-name">야경 산책</div>
+          <div class="fc-meta">반포 · 20:00 · 3/6명</div>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <div class="sec-title">근처 사용자</div>
+        <span class="sec-more" onclick="switchPage('matching')">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
+      </div>
+      <div class="user-item">
+        <div class="uav g1"><span class="mi">directions_run</span></div>
+        <div class="uinfo"><div class="uname">뚝섬러닝러</div><div class="udesc">러닝 중 · "같이 달릴 사람~"</div></div>
+        <div class="uright"><span class="udist">120m</span><button class="ubtn" onclick="switchPage('matching')"><span class="mi">waving_hand</span>손흔들기</button></div>
+      </div>
+      <div class="user-item">
+        <div class="uav g2"><span class="mi">sports_bar</span></div>
+        <div class="uinfo"><div class="uname">여의도치맥왕</div><div class="udesc">치맥 중 · "합석 환영!"</div></div>
+        <div class="uright"><span class="udist">200m</span><button class="ubtn" onclick="switchPage('chat')"><span class="mi">waving_hand</span>손흔들기</button></div>
+      </div>
+      <div class="user-item">
+        <div class="uav g3"><span class="mi">photo_camera</span></div>
+        <div class="uinfo"><div class="uname">SakuraLover</div><div class="udesc">사진 촬영 · "한강 처음이에요!"</div></div>
+        <div class="uright"><span class="udist">350m</span><button class="ubtn" onclick="switchPage('chat')"><span class="mi">waving_hand</span>Wave</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: MATCHING ========== -->
+  <div class="page" id="page-matching">
+    <div class="match-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">매칭</div>
+      <button class="icon-btn"><span class="mi">tune</span></button>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="this.classList.add('active');this.nextElementSibling.classList.remove('active')">추천</div>
+      <div class="tab" onclick="this.classList.add('active');this.previousElementSibling.classList.remove('active')">근처</div>
+    </div>
+
+    <div class="usage">
+      <div class="usage-row"><span>오늘 손흔들기 2회</span><span>남은 3회</span></div>
+      <div class="usage-bar"><div class="usage-fill"></div></div>
+    </div>
+
+    <div class="sheet">
+      <div class="handle"></div>
+      <div id="match-cards">
+        <!-- Card 1 -->
+        <div class="match-card" style="margin-bottom:24px">
+          <div class="card-top">
+            <div class="card-avatar g1"><span class="mi">directions_run</span></div>
+            <div class="card-info">
+              <div class="card-name">뚝섬러닝러</div>
+              <div class="card-sub"><span class="mi">location_on</span>120m · 러닝 중</div>
+            </div>
+            <div class="card-badge"><span class="mi">verified</span>Lv.3</div>
+          </div>
+          <div class="card-quote">같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜</div>
+          <div class="tags">
+            <div class="tag t1"><span class="mi">schedule</span>시간 잘 지켜요</div>
+            <div class="tag t2"><span class="mi">chat</span>대화 재밌어요</div>
+            <div class="tag t3"><span class="mi">local_fire_department</span>분위기 메이커</div>
+          </div>
+          <div class="temp">
+            <span class="mi">thermostat</span>
+            <div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill"></div></div></div>
+            <span class="temp-val">38.5°</span>
+          </div>
+          <div class="actions">
+            <button class="abtn pass" onclick="nextCard(this)"><span class="mi">close</span>다음에</button>
+            <button class="abtn wave" onclick="switchPage('mission')"><span class="mi">waving_hand</span>손흔들기</button>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="match-card" style="margin-bottom:24px;display:none">
+          <div class="card-top">
+            <div class="card-avatar g2"><span class="mi">sports_bar</span></div>
+            <div class="card-info">
+              <div class="card-name">여의도치맥왕</div>
+              <div class="card-sub"><span class="mi">location_on</span>200m · 치맥 중</div>
+            </div>
+            <div class="card-badge"><span class="mi">verified</span>Lv.5</div>
+          </div>
+          <div class="card-quote">합석 환영합니다! 치킨 시켜놨어요 같이 먹어요~ 🍗🍺</div>
+          <div class="tags">
+            <div class="tag t1"><span class="mi">restaurant</span>맛집 마스터</div>
+            <div class="tag t2"><span class="mi">chat</span>유머 만렙</div>
+            <div class="tag t3"><span class="mi">local_fire_department</span>분위기 메이커</div>
+          </div>
+          <div class="temp">
+            <span class="mi">thermostat</span>
+            <div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" style="width:85%"></div></div></div>
+            <span class="temp-val">42.1°</span>
+          </div>
+          <div class="actions">
+            <button class="abtn pass" onclick="nextCard(this)"><span class="mi">close</span>다음에</button>
+            <button class="abtn wave" onclick="switchPage('chat')"><span class="mi">waving_hand</span>손흔들기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: MISSION ========== -->
+  <div class="page" id="page-mission">
+    <div class="mission-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">미션 타이머</div>
+      <button class="skip-text" onclick="switchPage('home')">나가기</button>
+    </div>
+
+    <div class="progress">
+      <div class="prog-labels">
+        <span class="done-label">워밍업 ✓</span>
+        <span class="active-label">액티비티</span>
+        <span>대화 심화</span>
+        <span>보너스</span>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-seg done"></div>
+        <div class="prog-seg active"></div>
+        <div class="prog-seg"></div>
+        <div class="prog-seg"></div>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="mission">
+        <div class="mission-tag"><span class="mi">bolt</span>Phase 2 · 액티비티</div>
+        <div class="mission-icon m1"><span class="mi">photo_camera</span></div>
+        <div class="mission-text">가장 웃긴 셀카<br>찍기!</div>
+        <div class="mission-sub">서로 찍어주고 가장 웃긴 사진 뽑기</div>
+      </div>
+
+      <div class="timer-wrap">
+        <div class="timer-circle">
+          <svg class="timer-svg" viewBox="0 0 120 120">
+            <defs><linearGradient id="tg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7B61FF"/><stop offset="100%" stop-color="#E845A0"/></linearGradient></defs>
+            <circle class="timer-bg" cx="60" cy="60" r="52"/>
+            <circle class="timer-prog" cx="60" cy="60" r="52" id="timerCircle"/>
+          </svg>
+          <div class="timer-center">
+            <div class="timer-time" id="timerDisplay">2:00</div>
+            <div class="timer-label">남은 시간</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="abtn skip"><span class="mi">refresh</span>다른 미션</button>
+        <button class="abtn done" onclick="switchPage('chat')"><span class="mi">check_circle</span>완료!</button>
+      </div>
+
+      <div class="next-title"><span class="mi">playlist_play</span>다음 미션</div>
+      <div class="next-list">
+        <div class="next-item">
+          <div class="ni-icon i1"><span class="mi">search</span></div>
+          <div class="ni-info"><div class="ni-name">주변 특이한 것 찾기</div><div class="ni-meta"><span class="mi">timer</span>5분</div></div>
+          <div class="ni-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+        <div class="next-item locked">
+          <div class="ni-icon i2"><span class="mi">chat</span></div>
+          <div class="ni-info"><div class="ni-name">감동/웃긴 일 공유</div><div class="ni-meta"><span class="mi">timer</span>5분 · Phase 3</div></div>
+          <div class="ni-arrow"><span class="mi">lock</span></div>
+        </div>
+        <div class="next-item locked">
+          <div class="ni-icon i3"><span class="mi">ramen_dining</span></div>
+          <div class="ni-info"><div class="ni-name">한강 음식 추천</div><div class="ni-meta"><span class="mi">timer</span>5분 · Phase 3</div></div>
+          <div class="ni-arrow"><span class="mi">lock</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: CHAT ========== -->
+  <div class="page" id="page-chat">
+    <div class="chat-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">채팅</div>
+      <button class="icon-btn"><span class="mi">edit</span></button>
+    </div>
+
+    <div class="sheet" style="border-radius:32px 32px 0 0">
+      <div class="handle"></div>
+      <div class="chat-list">
+        <div class="chat-item">
+          <div class="chat-av ca1"><span class="mi">directions_run</span><div class="online-dot"></div></div>
+          <div class="chat-info"><div class="chat-name">뚝섬러닝러</div><div class="chat-msg">오 좋아요! 뚝섬 입구에서 만날까요? 🏃</div></div>
+          <div class="chat-right"><span class="chat-time">방금</span><div class="chat-badge-num">2</div></div>
+        </div>
+        <div class="chat-item">
+          <div class="chat-av ca2"><span class="mi">sports_bar</span><div class="online-dot"></div></div>
+          <div class="chat-info"><div class="chat-name">여의도치맥왕</div><div class="chat-msg">치킨 주문했어요! 빨리 오세요~ 🍗</div></div>
+          <div class="chat-right"><span class="chat-time">5분 전</span><div class="chat-badge-num">1</div></div>
+        </div>
+        <div class="chat-item">
+          <div class="chat-av ca3"><span class="mi">photo_camera</span></div>
+          <div class="chat-info"><div class="chat-name">SakuraLover</div><div class="chat-msg">한강 사진 너무 잘 나왔어요! 공유할게요</div></div>
+          <div class="chat-right"><span class="chat-time">30분 전</span></div>
+        </div>
+        <div class="chat-item">
+          <div class="chat-av ca4"><span class="mi">hiking</span></div>
+          <div class="chat-info"><div class="chat-name">반포산책러</div><div class="chat-msg">다음에 같이 야경 보러 가요!</div></div>
+          <div class="chat-right"><span class="chat-time">1시간 전</span></div>
+        </div>
+        <div class="chat-item">
+          <div class="chat-av ca1"><span class="mi">deck</span></div>
+          <div class="chat-info"><div class="chat-name">피크닉메이트</div><div class="chat-msg">돗자리 가져왔는데 같이 앉을래요?</div></div>
+          <div class="chat-right"><span class="chat-time">어제</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: PROFILE ========== -->
+  <div class="page" id="page-profile">
+    <div class="profile-top">
+      <div class="profile-avatar"><span class="mi">person</span></div>
+      <div class="profile-name">경모님</div>
+      <div class="profile-sub">여의도 한강공원 · Lv.3</div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">38.5°</div><div class="stat-label">한강 온도</div></div>
+      <div class="stat-box"><div class="stat-num">12</div><div class="stat-label">미션 완료</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">매칭 성공</div></div>
+    </div>
+
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="menu-list">
+        <div class="menu-item">
+          <div class="menu-ic mc1"><span class="mi">emoji_events</span></div>
+          <div class="menu-name">내 배지</div>
+          <div class="menu-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-ic mc2"><span class="mi">history</span></div>
+          <div class="menu-name">활동 기록</div>
+          <div class="menu-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-ic mc3"><span class="mi">favorite</span></div>
+          <div class="menu-name">관심 목록</div>
+          <div class="menu-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-ic mc4"><span class="mi">store</span></div>
+          <div class="menu-name">크라우니 상점</div>
+          <div class="menu-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-ic mc5"><span class="mi">settings</span></div>
+          <div class="menu-name">설정</div>
+          <div class="menu-arrow"><span class="mi">chevron_right</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM NAV ========== -->
+  <nav class="bnav">
+    <button class="bnav-item active" data-page="home" onclick="switchPage('home')"><span class="mi">home</span><span class="bnav-label">홈</span></button>
+    <button class="bnav-item" data-page="matching" onclick="switchPage('matching')"><span class="mi">waving_hand</span><span class="bnav-label">매칭</span></button>
+    <button class="bnav-item" data-page="mission" onclick="switchPage('mission')"><span class="mi">timer</span><span class="bnav-label">미션</span></button>
+    <button class="bnav-item" data-page="chat" onclick="switchPage('chat')"><span class="mi">chat_bubble</span><span class="bnav-label">채팅</span></button>
+    <button class="bnav-item" data-page="profile" onclick="switchPage('profile')"><span class="mi">person</span><span class="bnav-label">프로필</span></button>
+  </nav>
+
+  <script>
+    function switchPage(name) {
+      // Hide all pages
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      // Show target
+      document.getElementById('page-' + name).classList.add('active');
+      // Update nav
+      document.querySelectorAll('.bnav-item').forEach(b => {
+        b.classList.toggle('active', b.dataset.page === name);
+      });
+      // Scroll to top
+      window.scrollTo(0, 0);
+      // Start timer if mission page
+      if (name === 'mission') startTimer();
+    }
+
+    // Match card swipe
+    function nextCard(btn) {
+      const card = btn.closest('.match-card');
+      card.style.transition = 'all 0.3s';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(-100%)';
+      setTimeout(() => {
+        card.style.display = 'none';
+        const next = card.nextElementSibling;
+        if (next && next.classList.contains('match-card')) {
+          next.style.display = 'block';
+          next.style.animation = 'fadeIn 0.3s ease';
+        }
+      }, 300);
+    }
+
+    // Mission timer
+    let timerInterval;
+    function startTimer() {
+      clearInterval(timerInterval);
+      let seconds = 120;
+      const circle = document.getElementById('timerCircle');
+      const display = document.getElementById('timerDisplay');
+      const circumference = 326;
+
+      timerInterval = setInterval(() => {
+        seconds--;
+        if (seconds <= 0) { clearInterval(timerInterval); seconds = 0; }
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        display.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+        const offset = circumference - (seconds / 120) * circumference;
+        circle.style.strokeDashoffset = offset;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
