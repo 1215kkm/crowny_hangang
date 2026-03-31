@@ -5,6 +5,7 @@ import 'screens/auth/auth_screen.dart';
 import 'screens/main_shell.dart';
 import 'screens/settings/settings_screen.dart';
 import 'screens/commerce/commerce_screen.dart';
+import 'screens/board/board_list_screen.dart';
 import 'services/map_service.dart';
 
 void main() {
@@ -29,6 +30,7 @@ class CrownyApp extends StatelessWidget {
         '/main': (_) => const MainShell(),
         '/settings': (_) => const SettingsScreen(),
         '/commerce': (_) => const CommerceScreen(),
+        '/board': (_) => const BoardListScreen(),
       },
     );
   }

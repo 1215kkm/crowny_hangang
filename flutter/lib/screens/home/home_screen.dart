@@ -106,6 +106,36 @@ class HomeScreen extends StatelessWidget {
           const HangangMap(height: 180, district: 'yeouido'),
           const SizedBox(height: 20),
 
+          // 한강 게시판 바로가기
+          GestureDetector(
+            onTap: () => Navigator.pushNamed(context, '/board'),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFFF3F0FF), Color(0xFFEDE9FE)]),
+                borderRadius: BorderRadius.circular(CrownyTheme.radiusMd),
+                border: Border.all(color: const Color(0xFFDDD6FE)),
+              ),
+              child: Row(
+                children: [
+                  const GradientIconBox(icon: Icons.forum_rounded, gradientType: 'purple', size: 42, iconSize: 22, borderRadius: 14),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('한강 게시판', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: CrownyTheme.primary)),
+                        const Text('지역별 커뮤니티 · 정보 · 맛집 · 사진', style: TextStyle(fontSize: 11, color: CrownyTheme.textMuted)),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded, color: CrownyTheme.primary, size: 20),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
           // 한강 주문 바로가기
           GestureDetector(
             onTap: () => Navigator.pushNamed(context, '/commerce'),
