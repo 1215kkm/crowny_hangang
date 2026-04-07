@@ -36,28 +36,15 @@
     /* ===================== */
     /* === PAGE: HOME ===   */
     /* ===================== */
-    .home-top{padding:24px 24px 20px;color:white}
-    .home-top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-    .greeting{font-size:14px;opacity:0.9;margin-bottom:6px}
-    .main-title{font-size:24px;font-weight:800;line-height:1.35}
-
-    .status-card{margin:0 24px 28px;background:rgba(255,255,255,0.22);border-radius:20px;padding:16px 20px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:14px;border:1px solid rgba(255,255,255,0.18)}
-    .status-icon{width:48px;height:48px;background:rgba(255,255,255,0.28);border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
-    .status-icon .mi{font-size:26px}
-    .status-text{flex:1;color:white}
-    .status-num{font-size:22px;font-weight:800}
-    .status-label{font-size:11px;opacity:0.75}
-    .status-btn{background:var(--orange);color:white;border:none;padding:8px 18px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 4px 12px rgba(255,138,86,0.4)}
-
-    .act-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:0 24px 28px}
-    .act-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
-    .act-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white}
-    .act-icon .mi{font-size:26px}
-    .act-icon.c1{background:linear-gradient(135deg,#F43F5E,#D63384)}
-    .act-icon.c2{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
-    .act-icon.c3{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
-    .act-icon.c4{background:linear-gradient(135deg,#F59E0B,#E8590C)}
-    .act-name{font-size:11px;font-weight:600;color:white;opacity:0.9}
+    .home-hero{position:relative;width:100%;height:570px;overflow:hidden}
+    .home-hero-img{width:100%;height:100%;object-fit:cover;display:block}
+    .home-hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.05) 30%,transparent 60%,rgba(255,255,255,0.4) 100%)}
+    .home-hero-btns{position:absolute;top:16px;left:24px;right:24px;display:flex;justify-content:space-between;z-index:10}
+    .home-hero-btns .icon-btn{background:rgba(0,0,0,0.2)}
+    .home-hero-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10}
+    .home-hero-title h1{font-family:'Paperlogy','Noto Sans KR',sans-serif;font-size:48px;font-weight:700;color:white;letter-spacing:-1px;text-shadow:0 4px 12px rgba(0,0,0,0.25);margin-bottom:4px}
+    .home-hero-title h2{font-family:'Paperlogy','Noto Sans KR',sans-serif;font-size:24px;font-weight:700;color:white;letter-spacing:1px;text-shadow:0 2px 8px rgba(0,0,0,0.2)}
+    .home-sheet{background:white;border-radius:32px 32px 0 0;margin-top:-32px;position:relative;z-index:5;padding:28px 24px 100px}
 
     .flash-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin-bottom:28px;padding-bottom:2px}
     .flash-scroll::-webkit-scrollbar{display:none}
@@ -232,33 +219,22 @@
 
   <!-- ========== PAGE: HOME ========== -->
   <div class="page active" id="page-home">
-    <div class="home-top">
-      <div class="home-top-row">
+    <!-- 히어로 배경 이미지 -->
+    <div class="home-hero">
+      <img class="home-hero-img" src="images/home_bg.jpg" alt="한강" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%)'">
+      <div class="home-hero-overlay"></div>
+      <div class="home-hero-btns">
         <button class="icon-btn"><span class="mi">menu</span></button>
         <button class="icon-btn"><span class="mi">search</span></button>
       </div>
-      <div class="greeting">안녕하세요 👋</div>
-      <div class="main-title">한강에서<br>새로운 인연을 만나세요</div>
-    </div>
-
-    <div class="status-card">
-      <div class="status-icon"><span class="mi">group</span></div>
-      <div class="status-text">
-        <div class="status-num">12명</div>
-        <div class="status-label">여의도 한강공원 접속 중</div>
+      <div class="home-hero-title">
+        <h1>한강앱</h1>
+        <h2>Hangang App</h2>
       </div>
-      <button class="status-btn" onclick="switchPage('matching')">둘러보기</button>
     </div>
 
-    <div class="act-grid">
-      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c1"><span class="mi">sports_bar</span></div><div class="act-name">치맥</div></div>
-      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c2"><span class="mi">directions_run</span></div><div class="act-name">러닝</div></div>
-      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c3"><span class="mi">hiking</span></div><div class="act-name">산책</div></div>
-      <div class="act-item" onclick="switchPage('matching')"><div class="act-icon c4"><span class="mi">deck</span></div><div class="act-name">피크닉</div></div>
-    </div>
-
-    <div class="sheet">
-      <div class="handle"></div>
+    <!-- 하단 흰색 콘텐츠 -->
+    <div class="home-sheet">
       <div class="sec-head">
         <div class="sec-title">번개 모임</div>
         <span class="sec-more">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
@@ -299,6 +275,20 @@
         <div class="uav g3"><span class="mi">photo_camera</span></div>
         <div class="uinfo"><div class="uname">SakuraLover</div><div class="udesc">사진 촬영 · "한강 처음이에요!"</div></div>
         <div class="uright"><span class="udist">350m</span><button class="ubtn" onclick="switchPage('chat')"><span class="mi">waving_hand</span>Wave</button></div>
+      </div>
+
+      <!-- 게시판 바로가기 -->
+      <div style="margin-top:24px;padding:16px;background:linear-gradient(135deg,#F3F0FF,#EDE9FE);border-radius:18px;border:1px solid #DDD6FE;cursor:pointer;display:flex;align-items:center;gap:14px" onclick="switchPage('chat')">
+        <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#7C4DFF,#5B2FD6);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0"><span class="mi">forum</span></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--purple)">한강 게시판</div><div style="font-size:11px;color:#9CA3AF">지역별 커뮤니티 · 정보 · 맛집 · 사진</div></div>
+        <span class="mi" style="color:var(--purple);font-size:20px">chevron_right</span>
+      </div>
+
+      <!-- 주문 바로가기 -->
+      <div style="margin-top:12px;padding:16px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:18px;border:1px solid #FDE68A;cursor:pointer;display:flex;align-items:center;gap:14px" onclick="switchPage('chat')">
+        <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#F59E0B,#E8590C);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0"><span class="mi">delivery_dining</span></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#92400E">한강 주문</div><div style="font-size:11px;color:#B45309">배달 · 편의점 · 선물하기</div></div>
+        <span class="mi" style="color:#D97706;font-size:20px">chevron_right</span>
       </div>
     </div>
   </div>
