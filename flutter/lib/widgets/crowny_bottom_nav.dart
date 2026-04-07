@@ -14,8 +14,7 @@ class CrownyBottomNav extends StatelessWidget {
   static const _items = [
     _NavItem(icon: Icons.home_rounded, label: '홈'),
     _NavItem(icon: Icons.waving_hand_rounded, label: '매칭'),
-    _NavItem(icon: Icons.timer_rounded, label: '미션'),
-    _NavItem(icon: Icons.chat_bubble_rounded, label: '채팅'),
+    _NavItem(icon: Icons.forum_rounded, label: '채팅'),
     _NavItem(icon: Icons.person_rounded, label: '프로필'),
   ];
 

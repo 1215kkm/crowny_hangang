@@ -1,20 +1,25 @@
 class UserModel {
   final String id;
   final String nickname;
-  final String activity; // 현재 활동: chimaek, running, walk, picnic, pet, bike, photo
+  final String activity;
   final String activityLabel;
   final String statusMessage;
   final int distanceMeters;
   final double latitude;
   final double longitude;
-  final int trustLevel; // 0~4
-  final double hangangTemp; // 한강 온도 (36.5 기본)
-  final List<String> languages; // ["KR", "EN", "JP"]
+  final int trustLevel;
+  final double hangangTemp;
+  final List<String> languages;
   final List<String> mannerTags;
   final int meetupCount;
   final bool isOnline;
-  final String? avatarIcon; // Material icon name
-  final String gradientType; // pink, purple, blue, orange
+  final String? avatarIcon;
+  final String gradientType;
+  // 매칭 필터용 추가 필드
+  final String mood; // play, alone
+  final List<String> hobbies;
+  final List<String> interests;
+  final String? recentMoimTitle; // 최근 참여 모임
 
   const UserModel({
     required this.id,
@@ -33,6 +38,10 @@ class UserModel {
     this.isOnline = true,
     this.avatarIcon,
     this.gradientType = 'purple',
+    this.mood = 'play',
+    this.hobbies = const [],
+    this.interests = const [],
+    this.recentMoimTitle,
   });
 }
 
