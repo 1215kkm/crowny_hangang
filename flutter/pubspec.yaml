@@ -40,7 +40,14 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  fonts:
+    - family: Paperlogy
+      fonts:
+        - asset: assets/fonts/Paperlogy-Bold.ttf
+          weight: 700
+
   assets:
     - assets/icons/
     - assets/images/
     - assets/missions/
+    - assets/fonts/
