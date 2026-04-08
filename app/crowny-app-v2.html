@@ -224,9 +224,9 @@
     .slider-val{font-size:14px;font-weight:700;color:var(--purple);min-width:36px}
 
     /* === CHAT ROOM === */
-    .chatroom-header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(165deg,#5B2FD6,#7C4DFF);color:white}
-    .chatroom-title{flex:1;font-size:15px;font-weight:700}
-    .chatroom-count{font-size:11px;opacity:.7}
+    .chatroom-header{position:relative;display:flex;align-items:center;justify-content:center;padding:16px 20px;background:linear-gradient(165deg,#5B2FD6,#7C4DFF);color:white;min-height:60px}
+    .chatroom-title{font-size:15px;font-weight:700;text-align:center}
+    .chatroom-count{font-size:11px;opacity:.7;text-align:center}
     .mission-card{margin:0 16px 12px;padding:14px;background:#FFF7ED;border:1px solid #FDE68A;border-radius:18px;display:flex;align-items:center;gap:12px}
     .mission-card .mc-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
     .mission-card .mc-icon .mi{font-size:22px}
@@ -353,6 +353,20 @@
     .poll-bar{height:4px;background:#EDE9FE;border-radius:2px;flex:1;overflow:hidden}
     .poll-fill{height:100%;background:var(--purple);border-radius:2px;transition:width .3s}
     .poll-count{font-size:11px;color:var(--purple);font-weight:700;min-width:24px;text-align:right}
+
+    /* === LOCATION PANEL (슬라이드) === */
+    .loc-panel{position:fixed;top:0;right:0;width:75%;max-width:300px;height:100%;background:white;z-index:180;transform:translateX(100%);transition:transform .3s ease;box-shadow:-4px 0 24px rgba(0,0,0,.15);display:flex;flex-direction:column}
+    .loc-panel.open{transform:translateX(0)}
+    .loc-panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid #F3F4F6}
+    .loc-panel-header h3{font-size:14px;font-weight:800;color:#1E1B4B}
+    .loc-panel-close{width:32px;height:32px;border-radius:10px;border:none;background:#F3F4F6;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#6B7280;font-family:var(--font)}
+    .loc-panel-map{flex:1;padding:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#F9FAFB}
+    .loc-panel-footer{padding:16px;border-top:1px solid #F3F4F6}
+    .loc-fab{position:fixed;right:16px;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;color:white;z-index:170;background:linear-gradient(135deg,#6C3CE1,#D63384);box-shadow:0 4px 16px rgba(108,60,225,.4)}
+    .loc-fab.active{display:flex}
+    .loc-fab .mi{font-size:22px}
+    @keyframes locPulse{0%,100%{box-shadow:0 4px 16px rgba(108,60,225,.4)}50%{box-shadow:0 4px 24px rgba(108,60,225,.7)}}
+    .loc-fab.active{animation:locPulse 2s infinite}
   </style>
 </head>
 <body>
@@ -706,12 +720,12 @@
   <!-- ========== PAGE: CHAT ROOM ========== -->
   <div class="page" id="page-chat-room" style="background:white;min-height:100vh;display:none;flex-direction:column">
     <div class="chatroom-header">
-      <button class="icon-btn" style="background:rgba(255,255,255,.15)" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
+      <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;left:20px" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
       <div>
         <div class="chatroom-title" id="croomTitle">여의도 치맥 모임</div>
         <div class="chatroom-count" id="croomCount">3/5명</div>
       </div>
-      <button class="icon-btn" style="background:rgba(255,255,255,.15)" onclick="showActivityLog()"><span class="mi">more_vert</span></button>
+      <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;right:20px" onclick="showActivityLog()"><span class="mi">more_vert</span></button>
     </div>
 
     <!-- 미션 카드 (있을 때만) -->
@@ -785,6 +799,33 @@
     <div class="shuffle-area" id="shuffleArea"></div>
     <div id="gameContent"></div>
     <button style="margin-top:20px;padding:12px 32px;border-radius:14px;border:none;background:rgba(255,255,255,.2);color:white;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer" onclick="closeGame()">닫기</button>
+  </div>
+
+  <!-- ========== LOCATION PANEL ========== -->
+  <button class="loc-fab" id="locFab" onclick="toggleLocPanel()"><span class="mi">location_on</span></button>
+  <div class="loc-panel" id="locPanel">
+    <div class="loc-panel-header">
+      <h3>📍 실시간 위치</h3>
+      <button class="loc-panel-close" onclick="toggleLocPanel()"><span class="mi">close</span></button>
+    </div>
+    <div class="loc-panel-map">
+      <svg viewBox="0 0 250 300" width="220" id="locMapSvg">
+        <rect width="250" height="300" fill="#F9FAFB" rx="16"/>
+        <path d="M10,150 C60,130 120,170 190,140 C220,130 240,145 250,140" stroke="#93C5FD" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.4"/>
+        <!-- 내 위치 (핑크) -->
+        <circle cx="120" cy="160" r="10" fill="#D63384" stroke="white" stroke-width="3"><animate attributeName="r" values="10;13;10" dur="1.5s" repeatCount="indefinite"/></circle>
+        <text x="120" y="145" text-anchor="middle" font-size="10" fill="#D63384" font-weight="800">나</text>
+        <!-- 상대 위치 (파란) -->
+        <circle cx="180" cy="130" r="8" fill="#2563EB" stroke="white" stroke-width="2" id="locPartner1"/>
+        <text x="180" y="118" text-anchor="middle" font-size="9" fill="#2563EB" font-weight="700" id="locPartnerName1">여의도치맥왕</text>
+        <circle cx="80" cy="180" r="8" fill="#0EA5E9" stroke="white" stroke-width="2" id="locPartner2"/>
+        <text x="80" y="168" text-anchor="middle" font-size="9" fill="#0EA5E9" font-weight="700" id="locPartnerName2">뚝섬러닝러</text>
+      </svg>
+    </div>
+    <div class="loc-panel-footer">
+      <div style="font-size:11px;color:#9CA3AF;margin-bottom:8px;text-align:center">10초마다 위치 업데이트</div>
+      <button style="width:100%;padding:12px;border-radius:12px;border:none;background:#FEF2F2;color:#DC2626;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer" onclick="stopLocationShare()">위치 공유 종료</button>
+    </div>
   </div>
 
   <!-- ========== PAGE: BOARD ========== -->
@@ -1637,6 +1678,9 @@
     }
 
     /* ===== SHUFFLE + COUNTDOWN ANIMATION ===== */
+    let activeTimers = [];
+    function addTimer(id) { activeTimers.push(id); return id; }
+
     function runShuffleAnimation(items, callback) {
       const overlay = document.getElementById('gameOverlay');
       const area = document.getElementById('shuffleArea');
@@ -1645,10 +1689,11 @@
       content.innerHTML = '';
       // Create shuffle items
       const colors = ['grd-pink','grd-blue','grd-orange','grd-purple'];
+      area.style.display = 'block';
       area.innerHTML = items.map((item,i) => `<div class="shuffle-item ${colors[i%4]}" style="left:${50+i*60}px;top:80px">${item}</div>`).join('');
       // Shuffle phase (1.5s)
       let shuffleCount = 0;
-      const shuffleInt = setInterval(() => {
+      const shuffleInt = addTimer(setInterval(() => {
         area.querySelectorAll('.shuffle-item').forEach(el => {
           el.style.left = Math.random()*240+'px';
           el.style.top = Math.random()*150+'px';
@@ -1656,32 +1701,75 @@
         });
         shuffleCount++;
         if (shuffleCount >= 5) clearInterval(shuffleInt);
-      }, 300);
-      // Countdown phase
-      setTimeout(() => {
-        area.innerHTML = '';
+      }, 300));
+      // Countdown phase — 화면 정가운데
+      addTimer(setTimeout(() => {
+        area.style.display = 'none';
         let count = 5;
-        const countInt = setInterval(() => {
+        const countEl = document.createElement('div');
+        countEl.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10';
+        overlay.appendChild(countEl);
+        const countInt = addTimer(setInterval(() => {
           playSound('countdown');
-          area.innerHTML = `<div class="countdown-num" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${count}</div>`;
+          countEl.innerHTML = `<div class="countdown-num">${count}</div>`;
           count--;
           if (count < 0) {
             clearInterval(countInt);
+            countEl.remove();
+            area.style.display = 'block';
             area.innerHTML = '';
             playSound('fanfare');
             callback(content);
           }
-        }, 800);
-      }, 1800);
+        }, 800));
+      }, 1800));
     }
 
-    function closeGame() { document.getElementById('gameOverlay').classList.remove('open'); }
+    function closeGame() {
+      document.getElementById('gameOverlay').classList.remove('open');
+      // 모든 타이머 정리
+      activeTimers.forEach(id => { clearInterval(id); clearTimeout(id); });
+      activeTimers = [];
+      document.getElementById('shuffleArea').innerHTML = '';
+      document.getElementById('gameContent').innerHTML = '';
+      // AudioContext도 정리
+      if (audioCtx && audioCtx.state === 'running') {
+        audioCtx.close().then(() => { audioCtx = null; }).catch(()=>{});
+      }
+    }
 
-    /* ===== LOCATION SHARE ===== */
+    /* ===== LOCATION SHARE (슬라이드 패널) ===== */
+    let locationSharing = false;
+    let locInterval = null;
+
     function shareLocation() {
+      locationSharing = true;
+      document.getElementById('locFab').classList.add('active');
       const now = new Date();
       const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-      MOCK.chatMessages.push({ sender:'나', isMe:true, text:'__LOCATION__', time, type:'location' });
+      MOCK.chatMessages.push({ sender:'system', text:'📍 위치 공유를 시작했습니다', time, isSystem:true });
+      renderMessages();
+      // Mock: 10초마다 상대방 위치 약간 이동
+      locInterval = addTimer(setInterval(() => {
+        const p1 = document.getElementById('locPartner1');
+        const p2 = document.getElementById('locPartner2');
+        if (p1) { p1.cx.baseVal.value = 160 + Math.random()*40; p1.cy.baseVal.value = 120 + Math.random()*30; }
+        if (p2) { p2.cx.baseVal.value = 60 + Math.random()*40; p2.cy.baseVal.value = 170 + Math.random()*30; }
+      }, 3000));
+    }
+
+    function toggleLocPanel() {
+      document.getElementById('locPanel').classList.toggle('open');
+    }
+
+    function stopLocationShare() {
+      locationSharing = false;
+      document.getElementById('locFab').classList.remove('active');
+      document.getElementById('locPanel').classList.remove('open');
+      if (locInterval) { clearInterval(locInterval); locInterval = null; }
+      const now = new Date();
+      const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'system', text:'📍 위치 공유를 종료했습니다', time, isSystem:true });
       renderMessages();
     }
 
@@ -1709,32 +1797,67 @@
       });
     }
 
-    /* ===== BALANCE GAME ===== */
-    const BALANCE_QS = [['치킨','피자'],['산','바다'],['여름','겨울'],['아침형','저녁형'],['강아지','고양이'],['짜장','짬뽕']];
+    /* ===== BALANCE GAME (7문제 연속 + 궁합) ===== */
+    const BALANCE_QS = [['치킨','피자'],['산','바다'],['여름','겨울'],['아침형','저녁형'],['강아지','고양이'],['짜장','짬뽕'],['민트초코 O','민트초코 X'],['소주','맥주'],['카페','편의점'],['드라마','영화'],['한강 낮','한강 밤'],['자전거','러닝']];
+    let balanceState = { round:0, questions:[], myAnswers:[], mockAnswers:[] };
+
     function balanceGame() {
-      const pair = BALANCE_QS[Math.floor(Math.random()*BALANCE_QS.length)];
-      document.getElementById('gameTitle').textContent = '😂 밸런스 게임';
-      document.getElementById('gameOverlay').classList.add('open');
-      document.getElementById('shuffleArea').innerHTML = '';
-      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>😂 ${pair[0]} vs ${pair[1]}</h3><div style="display:flex;gap:12px;margin-top:16px"><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--purple);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--purple);cursor:pointer" onclick="voteBalance(this,0)">${pair[0]}</button><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--pink);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--pink);cursor:pointer" onclick="voteBalance(this,1)">${pair[1]}</button></div><div id="balanceResult" style="margin-top:12px;font-size:13px;color:#9CA3AF"></div></div>`;
-      addGameResult('😂', '밸런스 "' + pair[0] + ' vs ' + pair[1] + '"');
-    }
-    let balanceVotes = [0,0];
-    function voteBalance(btn, idx) {
-      playSound('tap');
-      balanceVotes[idx]++;
-      document.getElementById('balanceResult').textContent = `${balanceVotes[0]}표 vs ${balanceVotes[1]}표`;
-      btn.style.background = idx===0 ? '#F3F0FF' : '#FDF2F8';
+      // 12개 중 7개 랜덤 선택 (중복 없이)
+      const shuffled = [...BALANCE_QS].sort(()=>Math.random()-0.5).slice(0,7);
+      balanceState = { round:0, questions:shuffled, myAnswers:[], mockAnswers:ROOM_MEMBERS.map(()=>[]) };
+      showBalanceRound();
     }
 
-    /* ===== ROLE ASSIGN ===== */
+    function showBalanceRound() {
+      const s = balanceState;
+      if (s.round >= 7) { showBalanceResult(); return; }
+      const pair = s.questions[s.round];
+      document.getElementById('gameTitle').textContent = `😂 밸런스 게임 (${s.round+1}/7)`;
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>${pair[0]} vs ${pair[1]}</h3><div style="display:flex;gap:12px;margin-top:16px"><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--purple);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--purple);cursor:pointer" onclick="answerBalance(0)">${pair[0]}</button><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--pink);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--pink);cursor:pointer" onclick="answerBalance(1)">${pair[1]}</button></div></div>`;
+    }
+
+    function answerBalance(idx) {
+      playSound('tap');
+      balanceState.myAnswers.push(idx);
+      // Mock: 다른 멤버들도 랜덤 답변
+      ROOM_MEMBERS.forEach((_,i) => { balanceState.mockAnswers[i].push(Math.random()<0.5?0:1); });
+      balanceState.mockAnswers[1] = balanceState.myAnswers; // #2(나)
+      balanceState.round++;
+      addTimer(setTimeout(showBalanceRound, 300));
+    }
+
+    function showBalanceResult() {
+      // 궁합 계산: 나(#2)와 각 멤버의 일치 수
+      const myIdx = 1;
+      let bestMatch = 0, bestPair = '';
+      ROOM_MEMBERS.forEach((m,i) => {
+        if (i === myIdx) return;
+        let match = 0;
+        for (let q=0; q<7; q++) { if (balanceState.mockAnswers[i][q] === balanceState.myAnswers[q]) match++; }
+        if (match > bestMatch) { bestMatch = match; bestPair = m.nickname; }
+      });
+      const pct = Math.round(bestMatch/7*100);
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>😂 밸런스 결과!</h3><div style="font-size:48px;font-weight:900;color:var(--purple);padding:12px 0">${pct}%</div><div style="font-size:14px;font-weight:700;color:#1E1B4B;margin-bottom:8px">🎯 ${bestPair}님과 ${bestMatch}/7 일치!</div><div style="font-size:12px;color:#9CA3AF">궁합이 가장 높은 사람입니다</div></div>`;
+      playSound('fanfare');
+      addGameResult('😂', `밸런스 궁합 — ${bestPair}과 ${pct}% 일치`);
+    }
+
+    /* ===== ROLE ASSIGN (직접 입력) ===== */
     function roleAssign() {
-      const roles = ['🍗 치킨 주문','🧃 음료 담당','📸 사진 담당','🎮 게임 진행자'];
       document.getElementById('gameTitle').textContent = '🎭 역할 배정';
-      const items = roles.slice(0, ROOM_MEMBERS.length);
-      runShuffleAnimation(items.map((_,i) => '🎭'), (content) => {
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      const defaults = ['🍗 치킨 주문','🧃 음료 담당','📸 사진 담당','🎮 게임 진행자','🧹 정리 담당','🎵 음악 담당'];
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>🎭 역할 배정 설정</h3><div style="font-size:12px;color:#9CA3AF;margin-bottom:12px">${ROOM_MEMBERS.length}명에게 역할을 배정합니다</div>${ROOM_MEMBERS.map((_,i) => `<input type="text" value="${defaults[i]||''}" placeholder="역할 ${i+1}" style="width:100%;padding:10px 14px;border:1px solid #E5E7EB;border-radius:10px;font-family:var(--font);font-size:13px;margin-bottom:8px;outline:none;box-sizing:border-box" id="roleInput${i}">`).join('')}<button style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;margin-top:8px" onclick="startRoleAssign()">시작</button></div>`;
+    }
+    function startRoleAssign() {
+      const roles = ROOM_MEMBERS.map((_,i) => document.getElementById('roleInput'+i)?.value || '역할 '+(i+1));
+      document.getElementById('gameContent').innerHTML = '';
+      runShuffleAnimation(roles.map(()=>'🎭'), (content) => {
         const shuffled = [...ROOM_MEMBERS].sort(() => Math.random()-0.5);
-        content.innerHTML = `<div class="result-card"><h3>🎭 역할 배정 결과!</h3>${items.map((role,i) => `<div class="result-item"><span style="min-width:100px">${role}</span>#${shuffled[i].num} ${shuffled[i].nickname}</div>`).join('')}</div>`;
+        content.innerHTML = `<div class="result-card"><h3>🎭 역할 배정 결과!</h3>${roles.map((role,i) => `<div class="result-item"><span style="min-width:100px">${role}</span>#${shuffled[i].num} ${shuffled[i].nickname}</div>`).join('')}</div>`;
         addGameResult('🎭', '역할 배정 완료');
       });
     }
@@ -1810,12 +1933,28 @@
     }
 
     /* ===== NUNCHI GAME ===== */
+    let nunchiTimerSec = 30;
     function nunchiGame() {
       document.getElementById('gameTitle').textContent = '👀 눈치 게임';
       document.getElementById('gameOverlay').classList.add('open');
       document.getElementById('shuffleArea').innerHTML = '';
+      // 설정 화면
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>👀 눈치 게임 설정</h3><div style="font-size:13px;color:#9CA3AF;margin-bottom:12px">제한 시간을 선택하세요</div><div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">${[10,20,30,60,180].map(s=>`<button style="padding:10px 18px;border-radius:12px;border:2px solid ${nunchiTimerSec===s?'var(--purple)':'#E5E7EB'};background:${nunchiTimerSec===s?'#F3F0FF':'white'};font-family:var(--font);font-size:13px;font-weight:700;color:${nunchiTimerSec===s?'var(--purple)':'#6B7280'};cursor:pointer" onclick="nunchiTimerSec=${s};nunchiGame()">${s<60?s+'초':s/60+'분'}</button>`).join('')}</div><button style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer" onclick="startNunchi()">시작</button></div>`;
+    }
+    function startNunchi() {
+      let timeLeft = nunchiTimerSec;
       let current = 1;
-      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>👀 눈치 게임</h3><div style="font-size:48px;font-weight:900;color:var(--purple);padding:16px 0" id="nunchiNum">${current}</div><button style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer" onclick="nunchiTap()">눌러!</button><div id="nunchiLog" style="margin-top:12px;font-size:12px;color:#9CA3AF;max-height:100px;overflow-y:auto"></div></div>`;
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>👀 눈치 게임</h3><div style="font-size:14px;color:var(--orange);font-weight:700;margin-bottom:8px">⏱ <span id="nunchiTimer">${timeLeft}</span>초</div><div style="font-size:48px;font-weight:900;color:var(--purple);padding:12px 0" id="nunchiNum">${current}</div><button style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer" onclick="nunchiTap()">눌러!</button><div id="nunchiLog" style="margin-top:12px;font-size:12px;color:#9CA3AF;max-height:80px;overflow-y:auto"></div></div>`;
+      const tid = addTimer(setInterval(() => {
+        timeLeft--;
+        const el = document.getElementById('nunchiTimer');
+        if (el) el.textContent = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(tid);
+          playSound('buzz');
+          document.getElementById('nunchiLog').innerHTML = '<div style="color:#DC2626;font-weight:700">⏱ 시간 종료!</div>' + (document.getElementById('nunchiLog')?.innerHTML||'');
+        }
+      }, 1000));
     }
     function nunchiTap() {
       playSound('ding');
