@@ -303,6 +303,56 @@
     .board-post-meta .mi{font-size:14px}
     .board-fab{position:fixed;bottom:80px;right:calc(50% - 170px);width:52px;height:52px;border-radius:18px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 4px 16px rgba(108,60,225,.4);z-index:50;background:linear-gradient(135deg,#6C3CE1,#D63384)}
     .board-fab .mi{font-size:26px}
+
+    /* === PLUS MENU (바텀시트) === */
+    .plus-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+    .plus-overlay.open{opacity:1;pointer-events:auto}
+    .plus-sheet{position:fixed;bottom:-100%;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;z-index:201;transition:bottom .35s ease;border-radius:24px 24px 0 0;max-height:70vh;overflow-y:auto}
+    .plus-sheet.open{bottom:0}
+    .plus-handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:12px auto}
+    .plus-section{padding:4px 20px;font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase}
+    .plus-item{display:flex;align-items:center;gap:14px;padding:14px 20px;cursor:pointer;transition:background .15s;font-size:calc(14px + var(--fs) * 1px);font-weight:600;color:#1E1B4B}
+    .plus-item:active{background:#F9F7FF}
+    .plus-item .pi-icon{font-size:20px;width:28px;text-align:center}
+    .plus-item .pi-sound{font-size:12px;color:#D1D5DB;margin-left:auto}
+
+    /* === GAME OVERLAY (전체화면 게임) === */
+    .game-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(30,27,75,.95);z-index:250;display:none;flex-direction:column;align-items:center;justify-content:center;max-width:390px;margin:0 auto}
+    .game-overlay.open{display:flex}
+    .game-title{font-size:18px;font-weight:800;color:white;margin-bottom:24px}
+    .shuffle-area{position:relative;width:300px;height:200px;margin-bottom:20px}
+    .shuffle-item{position:absolute;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:white;transition:all .3s ease}
+    .countdown-num{font-size:80px;font-weight:900;background:linear-gradient(135deg,#7C4DFF,#D63384);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:countdownPop .8s ease}
+    .result-card{background:white;border-radius:24px;padding:24px;width:300px;text-align:center;animation:bounceIn .5s cubic-bezier(.68,-.55,.27,1.55)}
+    .result-card h3{font-size:18px;font-weight:800;color:#1E1B4B;margin-bottom:16px}
+    .result-item{display:flex;align-items:center;gap:10px;padding:10px 0;font-size:calc(14px + var(--fs) * 1px);font-weight:600;color:#4B5563;border-bottom:1px solid #F3F4F6}
+    .result-item:last-child{border-bottom:none}
+    .result-rank{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:white;flex-shrink:0}
+    @keyframes countdownPop{0%{transform:scale(2);opacity:0}30%{transform:scale(1);opacity:1}70%{transform:scale(1);opacity:1}100%{transform:scale(.5);opacity:0}}
+    @keyframes bounceIn{0%{transform:scale(0)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+    /* === ROOM STATUS === */
+    .room-status{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+    .room-status.recruiting{background:#ECFDF5;color:#059669}
+    .room-status.starting{background:#FFFBEB;color:#D97706}
+    .room-status.active{background:#FEF2F2;color:#DC2626}
+    .room-status.ended{background:#F3F4F6;color:#6B7280}
+
+    /* === LOCATION CARD === */
+    .loc-card{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #BFDBFE;border-radius:16px;padding:14px;max-width:70%;cursor:pointer}
+    .loc-card .loc-title{font-size:12px;font-weight:700;color:#1E1B4B;display:flex;align-items:center;gap:4px}
+    .loc-card .loc-title .mi{font-size:16px;color:#2563EB}
+    .loc-card .loc-addr{font-size:11px;color:#6B7280;margin-top:4px}
+    .loc-card .loc-time{font-size:9px;color:#93C5FD;margin-top:4px}
+
+    /* === POLL CARD === */
+    .poll-card{background:#F9F7FF;border:1px solid #EDE9FE;border-radius:16px;padding:14px;max-width:80%}
+    .poll-q{font-size:14px;font-weight:700;color:#1E1B4B;margin-bottom:10px}
+    .poll-opt{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;margin-bottom:6px;border:1px solid #EDE9FE;transition:all .2s;font-size:13px;font-weight:600;color:#4B5563}
+    .poll-opt:active,.poll-opt.voted{background:#F3F0FF;border-color:var(--purple);color:var(--purple)}
+    .poll-bar{height:4px;background:#EDE9FE;border-radius:2px;flex:1;overflow:hidden}
+    .poll-fill{height:100%;background:var(--purple);border-radius:2px;transition:width .3s}
+    .poll-count{font-size:11px;color:var(--purple);font-weight:700;min-width:24px;text-align:right}
   </style>
 </head>
 <body>
@@ -661,7 +711,7 @@
         <div class="chatroom-title" id="croomTitle">여의도 치맥 모임</div>
         <div class="chatroom-count" id="croomCount">3/5명</div>
       </div>
-      <button class="icon-btn" style="background:rgba(255,255,255,.15)"><span class="mi">more_vert</span></button>
+      <button class="icon-btn" style="background:rgba(255,255,255,.15)" onclick="showActivityLog()"><span class="mi">more_vert</span></button>
     </div>
 
     <!-- 미션 카드 (있을 때만) -->
@@ -699,11 +749,42 @@
 
     <!-- 하단 입력바 -->
     <div class="input-bar">
-      <button class="input-icon"><span class="mi">add_circle</span></button>
+      <button class="input-icon" onclick="openPlusMenu()"><span class="mi">add_circle</span></button>
       <button class="input-icon"><span class="mi">photo_camera</span></button>
       <input class="input-field" type="text" placeholder="메시지 입력..." id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
       <button class="send-btn" onclick="sendMessage()"><span class="mi">send</span></button>
     </div>
+  </div>
+
+  <!-- ========== PLUS MENU (바텀시트) ========== -->
+  <div class="plus-overlay" id="plusOverlay" onclick="closePlusMenu()"></div>
+  <div class="plus-sheet" id="plusSheet">
+    <div class="plus-handle"></div>
+    <div class="plus-section">도구</div>
+    <div class="plus-item" onclick="closePlusMenu();shareLocation()"><span class="pi-icon">📍</span>위치 공유</div>
+    <div class="plus-item" onclick="closePlusMenu();createPoll()"><span class="pi-icon">📊</span>투표 만들기</div>
+    <div class="plus-item" onclick="closePlusMenu();dutchPay()"><span class="pi-icon">💰</span>더치페이</div>
+    <div class="plus-item" onclick="closePlusMenu()"><span class="pi-icon">📷</span>사진</div>
+    <div class="plus-section" style="margin-top:8px">게임</div>
+    <div class="plus-item" onclick="closePlusMenu();randomOrder()"><span class="pi-icon">🎲</span>랜덤 순서</div>
+    <div class="plus-item" onclick="closePlusMenu();randomQuestion()"><span class="pi-icon">❓</span>랜덤 질문</div>
+    <div class="plus-item" onclick="closePlusMenu();balanceGame()"><span class="pi-icon">😂</span>밸런스 게임</div>
+    <div class="plus-item" onclick="closePlusMenu();roleAssign()"><span class="pi-icon">🎭</span>역할 배정</div>
+    <div class="plus-item" onclick="closePlusMenu();seatShuffle()"><span class="pi-icon">💺</span>자리 정하기</div>
+    <div class="plus-item" onclick="closePlusMenu();drawLots()"><span class="pi-icon">🎫</span>제비뽑기</div>
+    <div class="plus-item" onclick="closePlusMenu();nunchiGame()"><span class="pi-icon">👀</span>눈치 게임<span class="pi-sound">🔊</span></div>
+    <div class="plus-item" onclick="closePlusMenu();choseongGame()"><span class="pi-icon">🔤</span>초성 게임<span class="pi-sound">🔊</span></div>
+    <div class="plus-item" onclick="closePlusMenu();updownGame()"><span class="pi-icon">⬆️</span>업다운 게임<span class="pi-sound">🔊</span></div>
+    <div class="plus-item" onclick="closePlusMenu();charades()"><span class="pi-icon">🎭</span>몸으로 말해요<span class="pi-sound">🔊</span></div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ========== GAME OVERLAY ========== -->
+  <div class="game-overlay" id="gameOverlay">
+    <div class="game-title" id="gameTitle"></div>
+    <div class="shuffle-area" id="shuffleArea"></div>
+    <div id="gameContent"></div>
+    <button style="margin-top:20px;padding:12px 32px;border-radius:14px;border:none;background:rgba(255,255,255,.2);color:white;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer" onclick="closeGame()">닫기</button>
   </div>
 
   <!-- ========== PAGE: BOARD ========== -->
@@ -1020,11 +1101,11 @@
     const MOCK = {
       totalOnline: 127,
       rooms: [
-        { id:'r1', title:'여의도 치맥 모임', creator:'여의도치맥왕', district:'여의도', icon:'sports_bar', gradient:'grd-blue', current:3, max:5, isJoined:true, unread:2, isPrivate:false, mission:null, trust:92, temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'], quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺' },
-        { id:'r2', title:'한강 러닝 크루', creator:'뚝섬러닝러', district:'뚝섬', icon:'directions_run', gradient:'grd-pink', current:2, max:4, isJoined:false, unread:0, isPrivate:true, mission:{type:'selfie',name:'가장 웃긴 셀카',time:180,icon:'photo_camera'}, trust:78, temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], quote:'같이 달릴 사람! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜' },
-        { id:'r3', title:'야경 사진 찍을 사람', creator:'SakuraLover', district:'반포', icon:'photo_camera', gradient:'grd-orange', current:1, max:3, isJoined:false, isPrivate:false, unread:0, mission:{type:'find',name:'주변 특이한 것 찾기',time:300,icon:'search'}, trust:45, temp:36.8, tags:['사진 잘 찍어줘요'], quote:'한강 처음이에요! 같이 사진 찍어요 📸' },
-        { id:'r4', title:'편의점 라면 파티', creator:'한강멍멍이', district:'잠실', icon:'ramen_dining', gradient:'grd-purple', current:4, max:6, isJoined:true, unread:0, isPrivate:false, mission:null, trust:65, temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'], quote:'라면 좋아하는 사람 모여라~ 🍜' },
-        { id:'r5', title:'자전거 한강 종주', creator:'망원자전거', district:'망원', icon:'pedal_bike', gradient:'grd-blue', current:2, max:3, isJoined:false, isPrivate:true, unread:0, mission:{type:'voice',name:'본인 소개 (10초 음성)',time:60,icon:'mic'}, trust:85, temp:39.5, tags:['시간 잘 지켜요','대화 재밌어요'], quote:'종주 같이 하실 분! 속도는 맞춰드려요 🚴' }
+        { id:'r1', title:'여의도 치맥 모임', creator:'여의도치맥왕', district:'여의도', icon:'sports_bar', gradient:'grd-blue', current:3, max:5, isJoined:true, unread:2, isPrivate:false, mission:null, trust:92, status:'active', temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'], quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺' },
+        { id:'r2', title:'한강 러닝 크루', creator:'뚝섬러닝러', district:'뚝섬', icon:'directions_run', gradient:'grd-pink', current:2, max:4, isJoined:false, unread:0, isPrivate:true, status:'recruiting', mission:{type:'selfie',name:'가장 웃긴 셀카',time:180,icon:'photo_camera'}, trust:78, temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], quote:'같이 달릴 사람! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜' },
+        { id:'r3', title:'야경 사진 찍을 사람', creator:'SakuraLover', district:'반포', icon:'photo_camera', gradient:'grd-orange', current:1, max:3, isJoined:false, isPrivate:false, unread:0, status:'starting', mission:{type:'find',name:'주변 특이한 것 찾기',time:300,icon:'search'}, trust:45, temp:36.8, tags:['사진 잘 찍어줘요'], quote:'한강 처음이에요! 같이 사진 찍어요 📸' },
+        { id:'r4', title:'편의점 라면 파티', creator:'한강멍멍이', district:'잠실', icon:'ramen_dining', gradient:'grd-purple', current:4, max:6, isJoined:true, unread:0, isPrivate:false, mission:null, trust:65, status:'active', temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'], quote:'라면 좋아하는 사람 모여라~ 🍜' },
+        { id:'r5', title:'자전거 한강 종주', creator:'망원자전거', district:'망원', icon:'pedal_bike', gradient:'grd-blue', current:2, max:3, isJoined:false, isPrivate:true, unread:0, status:'recruiting', mission:{type:'voice',name:'본인 소개 (10초 음성)',time:60,icon:'mic'}, trust:85, temp:39.5, tags:['시간 잘 지켜요','대화 재밌어요'], quote:'종주 같이 하실 분! 속도는 맞춰드려요 🚴' }
       ],
       users: [
         { id:'u1', nickname:'뚝섬러닝러', icon:'directions_run', gradient:'grd-pink', trust:78, dist:120, activity:'러닝 중', mood:'play', hobbies:['러닝','산책'], interests:['운동'], district:'뚝섬', recentMoim:'한강 러닝 크루', quote:'같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜', temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], nearHangang:true },
@@ -1203,8 +1284,20 @@
       const area = document.getElementById('msgArea');
       area.innerHTML = MOCK.chatMessages.map(m => {
         if (m.isSystem) return `<div class="msg-system">${m.text}</div>`;
+        // 위치 카드
+        if (m.text === '__LOCATION__') {
+          const card = `<div class="loc-card"><div class="loc-title"><span class="mi">location_on</span>내 위치 공유</div><div class="loc-addr">여의도 한강공원 근처</div><div class="loc-time">${m.time}</div></div>`;
+          return m.isMe ? `<div class="msg-me"><div class="msg-content">${card}<div class="msg-time">${m.time}</div></div></div>` : `<div class="msg-other"><div class="msg-av ${m.gradient||'grd-purple'}"><span class="mi">${m.icon||'person'}</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div>${card}<div class="msg-time">${m.time}</div></div></div>`;
+        }
+        // 투표 카드
+        if (m.text && m.text.startsWith('__POLL__')) {
+          const parts = m.text.replace('__POLL__','').split('|');
+          const q = parts[0]; const opts = parts.slice(1);
+          const pollId = 'poll_'+Math.random().toString(36).slice(2);
+          return `<div class="msg-me"><div class="msg-content"><div class="poll-card"><div class="poll-q">📊 ${q}</div>${opts.map((o,i) => `<div class="poll-opt" onclick="votePoll(this)"><span>${o}</span><div class="poll-bar"><div class="poll-fill" style="width:0%"></div></div><span class="poll-count">0</span></div>`).join('')}</div><div class="msg-time">${m.time}</div></div></div>`;
+        }
         if (m.isMe) return `<div class="msg-me"><div class="msg-content"><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
-        return `<div class="msg-other"><div class="msg-av ${m.gradient||'grd-purple'}"><span class="mi">${m.icon||'person'}</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+        return `<div class="msg-other"><div class="msg-av ${m.gradient||'grd-purple'}"><span class="mi">${m.icon||'person'}</span></div><div class="msg-content"><div class="msg-sender">#${ROOM_MEMBERS.find(rm=>rm.nickname===m.sender)?.num||'?'} ${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
       }).join('');
       area.scrollTop = area.scrollHeight;
     }
@@ -1325,7 +1418,7 @@
           <div class="room-item" onclick="${onclick}">
             <div class="room-top">
               <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
-              <div class="room-info"><div class="room-title">${lockIcon}${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
+              <div class="room-info"><div class="room-title">${lockIcon}${r.title} ${r.status==='recruiting'?'<span class="room-status recruiting">🟢 모집중</span>':r.status==='starting'?'<span class="room-status starting">🟡 곧시작</span>':r.status==='active'?'<span class="room-status active">🔴 진행중</span>':'<span class="room-status ended">⚫ 종료</span>'}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
               <div class="room-right">${badge}${missionTag}</div>
             </div>
           </div>
@@ -1503,6 +1596,343 @@
       const toggle = document.getElementById('anonToggle');
       toggle.className = 'toggle ' + (isAnon ? 'on' : 'off');
       document.getElementById('anonDesc').textContent = isAnon ? '익명으로 표시됩니다' : '게시판 별명으로 표시됩니다';
+    }
+
+    /* ===== AUDIO ===== */
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx;
+    function playSound(type) {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      const t = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      switch(type) {
+        case 'tap': osc.frequency.value=800; gain.gain.value=0.3; osc.start(t); osc.stop(t+0.08); break;
+        case 'ding': osc.frequency.value=1200; gain.gain.value=0.4; osc.start(t); osc.stop(t+0.15); break;
+        case 'buzz': osc.type='sawtooth'; osc.frequency.value=200; gain.gain.value=0.5; osc.start(t); osc.stop(t+0.3); break;
+        case 'up': osc.frequency.setValueAtTime(400,t); osc.frequency.linearRampToValueAtTime(800,t+0.15); gain.gain.value=0.3; osc.start(t); osc.stop(t+0.15); break;
+        case 'down': osc.frequency.setValueAtTime(800,t); osc.frequency.linearRampToValueAtTime(300,t+0.2); gain.gain.value=0.3; osc.start(t); osc.stop(t+0.2); break;
+        case 'countdown': osc.frequency.value=600; gain.gain.value=0.2; osc.start(t); osc.stop(t+0.05); break;
+        case 'correct': [523,659,784].forEach((f,i)=>{const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;g.gain.value=0.3;o.start(t+i*0.15);o.stop(t+i*0.15+0.15);}); return;
+        case 'fanfare': [523,659,784,1047].forEach((f,i)=>{const o=audioCtx.createOscillator();const g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;g.gain.value=0.25;o.start(t+i*0.1);o.stop(t+i*0.1+0.2);}); return;
+      }
+    }
+
+    /* ===== PLUS MENU ===== */
+    function openPlusMenu() { document.getElementById('plusOverlay').classList.add('open'); document.getElementById('plusSheet').classList.add('open'); }
+    function closePlusMenu() { document.getElementById('plusOverlay').classList.remove('open'); document.getElementById('plusSheet').classList.remove('open'); }
+
+    /* ===== ROOM MEMBERS (번호 시스템) ===== */
+    const ROOM_MEMBERS = [
+      { num:1, nickname:'여의도치맥왕', icon:'sports_bar', gradient:'grd-blue', isHost:true },
+      { num:2, nickname:'나', icon:'person', gradient:'grd-pink', isHost:false },
+      { num:3, nickname:'뚝섬러닝러', icon:'directions_run', gradient:'grd-pink', isHost:false },
+    ];
+    let activityLog = [];
+
+    function logActivity(icon, text) {
+      const now = new Date();
+      activityLog.push({ time: now.getHours()+':'+String(now.getMinutes()).padStart(2,'0'), icon, text });
+    }
+
+    /* ===== SHUFFLE + COUNTDOWN ANIMATION ===== */
+    function runShuffleAnimation(items, callback) {
+      const overlay = document.getElementById('gameOverlay');
+      const area = document.getElementById('shuffleArea');
+      const content = document.getElementById('gameContent');
+      overlay.classList.add('open');
+      content.innerHTML = '';
+      // Create shuffle items
+      const colors = ['grd-pink','grd-blue','grd-orange','grd-purple'];
+      area.innerHTML = items.map((item,i) => `<div class="shuffle-item ${colors[i%4]}" style="left:${50+i*60}px;top:80px">${item}</div>`).join('');
+      // Shuffle phase (1.5s)
+      let shuffleCount = 0;
+      const shuffleInt = setInterval(() => {
+        area.querySelectorAll('.shuffle-item').forEach(el => {
+          el.style.left = Math.random()*240+'px';
+          el.style.top = Math.random()*150+'px';
+          el.style.transform = 'rotate('+((Math.random()-0.5)*60)+'deg)';
+        });
+        shuffleCount++;
+        if (shuffleCount >= 5) clearInterval(shuffleInt);
+      }, 300);
+      // Countdown phase
+      setTimeout(() => {
+        area.innerHTML = '';
+        let count = 5;
+        const countInt = setInterval(() => {
+          playSound('countdown');
+          area.innerHTML = `<div class="countdown-num" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${count}</div>`;
+          count--;
+          if (count < 0) {
+            clearInterval(countInt);
+            area.innerHTML = '';
+            playSound('fanfare');
+            callback(content);
+          }
+        }, 800);
+      }, 1800);
+    }
+
+    function closeGame() { document.getElementById('gameOverlay').classList.remove('open'); }
+
+    /* ===== LOCATION SHARE ===== */
+    function shareLocation() {
+      const now = new Date();
+      const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'나', isMe:true, text:'__LOCATION__', time, type:'location' });
+      renderMessages();
+    }
+
+    /* ===== RANDOM ORDER ===== */
+    function randomOrder() {
+      document.getElementById('gameTitle').textContent = '🎲 랜덤 순서';
+      const nums = ROOM_MEMBERS.map(m => '#'+m.num);
+      runShuffleAnimation(nums, (content) => {
+        const shuffled = [...ROOM_MEMBERS].sort(() => Math.random()-0.5);
+        const colors = ['#F59E0B','#9CA3AF','#CD7F32'];
+        content.innerHTML = `<div class="result-card"><h3>🎲 랜덤 순서 결과!</h3>${shuffled.map((m,i) => `<div class="result-item"><div class="result-rank" style="background:${colors[i]||'var(--purple)'}">${i+1}</div>#${m.num} ${m.nickname}</div>`).join('')}</div>`;
+        const resultText = shuffled.map((m,i)=>`${i+1}등:#${m.num} ${m.nickname}`).join(', ');
+        addGameResult('🎲', '랜덤 순서 — ' + resultText);
+      });
+    }
+
+    /* ===== RANDOM QUESTION ===== */
+    const PRESET_QUESTIONS = ['요즘 가장 많이 듣는 노래?','한강 오면 꼭 하는 것?','인생 맛집은?','최근 빠진 취미?','무인도에 하나만 가져간다면?','어릴 때 꿈은?','지금 가장 하고 싶은 것?'];
+    function randomQuestion() {
+      document.getElementById('gameTitle').textContent = '❓ 랜덤 질문';
+      runShuffleAnimation(['?','?','?'], (content) => {
+        const q = PRESET_QUESTIONS[Math.floor(Math.random()*PRESET_QUESTIONS.length)];
+        content.innerHTML = `<div class="result-card"><h3>❓ 랜덤 질문</h3><div style="font-size:18px;font-weight:800;color:var(--purple);padding:16px 0">${q}</div><div style="font-size:11px;color:#9CA3AF">프리셋</div></div>`;
+        addGameResult('❓', '랜덤 질문 — "' + q + '"');
+      });
+    }
+
+    /* ===== BALANCE GAME ===== */
+    const BALANCE_QS = [['치킨','피자'],['산','바다'],['여름','겨울'],['아침형','저녁형'],['강아지','고양이'],['짜장','짬뽕']];
+    function balanceGame() {
+      const pair = BALANCE_QS[Math.floor(Math.random()*BALANCE_QS.length)];
+      document.getElementById('gameTitle').textContent = '😂 밸런스 게임';
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>😂 ${pair[0]} vs ${pair[1]}</h3><div style="display:flex;gap:12px;margin-top:16px"><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--purple);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--purple);cursor:pointer" onclick="voteBalance(this,0)">${pair[0]}</button><button style="flex:1;padding:16px;border-radius:14px;border:2px solid var(--pink);background:white;font-family:var(--font);font-size:16px;font-weight:800;color:var(--pink);cursor:pointer" onclick="voteBalance(this,1)">${pair[1]}</button></div><div id="balanceResult" style="margin-top:12px;font-size:13px;color:#9CA3AF"></div></div>`;
+      addGameResult('😂', '밸런스 "' + pair[0] + ' vs ' + pair[1] + '"');
+    }
+    let balanceVotes = [0,0];
+    function voteBalance(btn, idx) {
+      playSound('tap');
+      balanceVotes[idx]++;
+      document.getElementById('balanceResult').textContent = `${balanceVotes[0]}표 vs ${balanceVotes[1]}표`;
+      btn.style.background = idx===0 ? '#F3F0FF' : '#FDF2F8';
+    }
+
+    /* ===== ROLE ASSIGN ===== */
+    function roleAssign() {
+      const roles = ['🍗 치킨 주문','🧃 음료 담당','📸 사진 담당','🎮 게임 진행자'];
+      document.getElementById('gameTitle').textContent = '🎭 역할 배정';
+      const items = roles.slice(0, ROOM_MEMBERS.length);
+      runShuffleAnimation(items.map((_,i) => '🎭'), (content) => {
+        const shuffled = [...ROOM_MEMBERS].sort(() => Math.random()-0.5);
+        content.innerHTML = `<div class="result-card"><h3>🎭 역할 배정 결과!</h3>${items.map((role,i) => `<div class="result-item"><span style="min-width:100px">${role}</span>#${shuffled[i].num} ${shuffled[i].nickname}</div>`).join('')}</div>`;
+        addGameResult('🎭', '역할 배정 완료');
+      });
+    }
+
+    /* ===== DUTCH PAY ===== */
+    function dutchPay() {
+      const amount = prompt('총 금액을 입력하세요 (원)');
+      if (!amount) return;
+      const total = parseInt(amount.replace(/,/g,''));
+      if (isNaN(total)) return;
+      const perPerson = Math.ceil(total / ROOM_MEMBERS.length);
+      const now = new Date();
+      const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'시스템', text:`💰 더치페이: 총 ${total.toLocaleString()}원 ÷ ${ROOM_MEMBERS.length}명 = 1인 ${perPerson.toLocaleString()}원`, time, isSystem:true });
+      renderMessages();
+      addGameResult('💰', `더치페이 ${total.toLocaleString()}원 ÷ ${ROOM_MEMBERS.length}명`);
+    }
+
+    /* ===== DRAW LOTS ===== */
+    function drawLots() {
+      document.getElementById('gameTitle').textContent = '🎫 제비뽑기';
+      runShuffleAnimation(ROOM_MEMBERS.map(m=>'#'+m.num), (content) => {
+        const winner = ROOM_MEMBERS[Math.floor(Math.random()*ROOM_MEMBERS.length)];
+        content.innerHTML = `<div class="result-card"><h3>🎫 제비뽑기</h3><div style="font-size:24px;font-weight:900;color:var(--purple);padding:16px 0">🎉 #${winner.num} ${winner.nickname}</div></div>`;
+        addGameResult('🎫', '제비뽑기 — #' + winner.num + ' ' + winner.nickname);
+      });
+    }
+
+    /* ===== SEAT SHUFFLE ===== */
+    function seatShuffle() {
+      document.getElementById('gameTitle').textContent = '💺 자리 정하기';
+      runShuffleAnimation(ROOM_MEMBERS.map(m=>'#'+m.num), (content) => {
+        const shuffled = [...ROOM_MEMBERS].sort(()=>Math.random()-0.5);
+        // 원형 배치
+        const size = 200, cx = 100, cy = 80;
+        let svg = `<svg viewBox="0 0 200 180" width="200"><circle cx="${cx}" cy="${cy}" r="60" fill="none" stroke="#EDE9FE" stroke-width="2" stroke-dasharray="4"/>`;
+        shuffled.forEach((m,i) => {
+          const angle = (i/shuffled.length)*Math.PI*2 - Math.PI/2;
+          const x = cx + 60*Math.cos(angle);
+          const y = cy + 60*Math.sin(angle);
+          svg += `<circle cx="${x}" cy="${y}" r="18" fill="#7C4DFF"/><text x="${x}" y="${y-3}" text-anchor="middle" font-size="9" fill="white" font-weight="800">#${m.num}</text><text x="${x}" y="${y+8}" text-anchor="middle" font-size="7" fill="white">${m.nickname.slice(0,4)}</text>`;
+        });
+        svg += '</svg>';
+        content.innerHTML = `<div class="result-card"><h3>💺 자리 배치</h3>${svg}</div>`;
+        addGameResult('💺', '자리 정하기 완료');
+      });
+    }
+
+    /* ===== POLL ===== */
+    function createPoll() {
+      const question = prompt('투표 질문을 입력하세요');
+      if (!question) return;
+      const opt1 = prompt('선택지 1');
+      const opt2 = prompt('선택지 2');
+      if (!opt1 || !opt2) return;
+      const now = new Date();
+      const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'나', isMe:true, text:`__POLL__${question}|${opt1}|${opt2}`, time, type:'poll' });
+      renderMessages();
+      addGameResult('📊', '투표 "' + question + '"');
+    }
+
+    function votePoll(el) {
+      playSound('tap');
+      el.classList.add('voted');
+      const count = el.querySelector('.poll-count');
+      count.textContent = parseInt(count.textContent) + 1;
+      const total = Array.from(el.parentElement.querySelectorAll('.poll-count')).reduce((s,c) => s+parseInt(c.textContent), 0);
+      el.parentElement.querySelectorAll('.poll-opt').forEach(opt => {
+        const c = parseInt(opt.querySelector('.poll-count').textContent);
+        opt.querySelector('.poll-fill').style.width = (total > 0 ? (c/total*100) : 0) + '%';
+      });
+    }
+
+    /* ===== NUNCHI GAME ===== */
+    function nunchiGame() {
+      document.getElementById('gameTitle').textContent = '👀 눈치 게임';
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      let current = 1;
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>👀 눈치 게임</h3><div style="font-size:48px;font-weight:900;color:var(--purple);padding:16px 0" id="nunchiNum">${current}</div><button style="width:100%;padding:16px;border-radius:14px;border:none;background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;font-family:var(--font);font-size:16px;font-weight:800;cursor:pointer" onclick="nunchiTap()">눌러!</button><div id="nunchiLog" style="margin-top:12px;font-size:12px;color:#9CA3AF;max-height:100px;overflow-y:auto"></div></div>`;
+    }
+    function nunchiTap() {
+      playSound('ding');
+      const numEl = document.getElementById('nunchiNum');
+      const log = document.getElementById('nunchiLog');
+      const current = parseInt(numEl.textContent);
+      // Mock: 랜덤으로 다른 사람이 동시에 눌렀는지
+      if (Math.random() < 0.2) {
+        playSound('buzz');
+        log.innerHTML = `<div style="color:#DC2626;font-weight:700">💥 동시에 눌렸습니다! 탈락!</div>` + log.innerHTML;
+        return;
+      }
+      log.innerHTML = `<div>#2 나 → ${current}</div>` + log.innerHTML;
+      numEl.textContent = current + 1;
+    }
+
+    /* ===== CHOSEONG GAME ===== */
+    const CHOSEONG_LIST = ['ㅎㄱ','ㅊㅁ','ㅍㅋㄴ','ㅂㅅ','ㄱㅂ','ㅅㅂ','ㅎㄴ','ㅇㅅ','ㅋㅍ','ㄴㅁ'];
+    function choseongGame() {
+      const cho = CHOSEONG_LIST[Math.floor(Math.random()*CHOSEONG_LIST.length)];
+      document.getElementById('gameTitle').textContent = '🔤 초성 게임';
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      let timeLeft = 10;
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>🔤 초성 게임</h3><div style="font-size:48px;font-weight:900;color:var(--purple);padding:16px 0;letter-spacing:16px">${cho}</div><div style="font-size:14px;color:#9CA3AF;margin-bottom:12px">⏱ <span id="choTimer">${timeLeft}</span>초</div><div style="display:flex;gap:8px"><input type="text" id="choInput" placeholder="정답 입력..." style="flex:1;padding:10px 14px;border:1px solid #E5E7EB;border-radius:10px;font-family:var(--font);font-size:14px;outline:none"><button style="padding:10px 16px;border-radius:10px;border:none;background:var(--purple);color:white;font-family:var(--font);font-weight:700;cursor:pointer" onclick="choSubmit()">제출</button></div><div id="choLog" style="margin-top:12px;font-size:12px;color:#9CA3AF"></div></div>`;
+      const timer = setInterval(() => {
+        timeLeft--;
+        playSound('countdown');
+        document.getElementById('choTimer').textContent = timeLeft;
+        if (timeLeft <= 0) { clearInterval(timer); playSound('buzz'); document.getElementById('choLog').innerHTML = '<div style="color:#DC2626;font-weight:700">⏱ 시간 초과!</div>' + document.getElementById('choLog').innerHTML; }
+      }, 1000);
+    }
+    function choSubmit() {
+      playSound('tap');
+      const input = document.getElementById('choInput');
+      const text = input.value.trim();
+      if (!text) return;
+      document.getElementById('choLog').innerHTML = `<div>#2 나: ${text}</div>` + document.getElementById('choLog').innerHTML;
+      input.value = '';
+    }
+
+    /* ===== UPDOWN GAME ===== */
+    function updownGame() {
+      const answer = Math.floor(Math.random()*100)+1;
+      let attempts = 0;
+      document.getElementById('gameTitle').textContent = '⬆️ 업다운 게임';
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>⬆️ 업다운 (1~100)</h3><div style="font-size:14px;color:#9CA3AF;margin-bottom:12px">숫자를 맞춰보세요!</div><div style="display:flex;gap:8px"><input type="number" id="udInput" placeholder="숫자" min="1" max="100" style="flex:1;padding:10px 14px;border:1px solid #E5E7EB;border-radius:10px;font-family:var(--font);font-size:16px;outline:none;text-align:center"><button style="padding:10px 16px;border-radius:10px;border:none;background:var(--purple);color:white;font-family:var(--font);font-weight:700;cursor:pointer" onclick="udGuess(${answer})">제출</button></div><div id="udLog" style="margin-top:12px;font-size:13px;max-height:120px;overflow-y:auto"></div></div>`;
+      window._udAttempts = 0;
+    }
+    function udGuess(answer) {
+      const input = document.getElementById('udInput');
+      const guess = parseInt(input.value);
+      if (isNaN(guess)) return;
+      window._udAttempts++;
+      input.value = '';
+      const log = document.getElementById('udLog');
+      if (guess === answer) {
+        playSound('correct');
+        log.innerHTML = `<div style="color:#059669;font-weight:800">🎉 정답! ${answer}! (${window._udAttempts}번 만에)</div>` + log.innerHTML;
+        addGameResult('⬆️', `업다운 — ${window._udAttempts}번 만에 정답!`);
+      } else if (guess < answer) {
+        playSound('up');
+        log.innerHTML = `<div>${guess} → <span style="color:#2563EB;font-weight:700">⬆️ UP</span></div>` + log.innerHTML;
+      } else {
+        playSound('down');
+        log.innerHTML = `<div>${guess} → <span style="color:#DC2626;font-weight:700">⬇️ DOWN</span></div>` + log.innerHTML;
+      }
+    }
+
+    /* ===== CHARADES ===== */
+    const CHARADE_WORDS = {동물:['강아지','고양이','펭귄','코끼리','토끼'],음식:['치킨','피자','라면','김치찌개','떡볶이'],한강:['자전거','러닝','치맥','피크닉','야경']};
+    function charades() {
+      const cats = Object.keys(CHARADE_WORDS);
+      const cat = cats[Math.floor(Math.random()*cats.length)];
+      const word = CHARADE_WORDS[cat][Math.floor(Math.random()*CHARADE_WORDS[cat].length)];
+      document.getElementById('gameTitle').textContent = '🎭 몸으로 말해요';
+      document.getElementById('gameOverlay').classList.add('open');
+      document.getElementById('shuffleArea').innerHTML = '';
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>🎭 몸으로 말해요</h3><div style="font-size:12px;color:#9CA3AF;margin-bottom:8px">[${cat}]</div><div style="font-size:32px;font-weight:900;color:var(--purple);padding:16px 0">${word}</div><div style="font-size:11px;color:#D1D5DB;margin-bottom:12px">출제자만 보세요! 다른 사람에게 보여주지 마세요</div><div style="display:flex;gap:8px"><input type="text" id="charInput" placeholder="정답 입력..." style="flex:1;padding:10px 14px;border:1px solid #E5E7EB;border-radius:10px;font-family:var(--font);font-size:14px;outline:none"><button style="padding:10px 16px;border-radius:10px;border:none;background:var(--purple);color:white;font-family:var(--font);font-weight:700;cursor:pointer" onclick="charGuess('${word}')">제출</button></div><div id="charLog" style="margin-top:12px;font-size:12px"></div></div>`;
+    }
+    function charGuess(answer) {
+      playSound('tap');
+      const input = document.getElementById('charInput');
+      const guess = input.value.trim();
+      if (!guess) return;
+      input.value = '';
+      const log = document.getElementById('charLog');
+      if (guess === answer) {
+        playSound('correct');
+        log.innerHTML = `<div style="color:#059669;font-weight:700">🎉 정답! "${answer}"</div>` + log.innerHTML;
+        addGameResult('🎭', '몸으로 말해요 — 정답: ' + answer);
+      } else {
+        playSound('buzz');
+        log.innerHTML = `<div style="color:#DC2626">"${guess}" ❌</div>` + log.innerHTML;
+      }
+    }
+
+    /* ===== ACTIVITY LOG ===== */
+    function addGameResult(icon, text) {
+      logActivity(icon, text);
+      const now = new Date();
+      const time = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'system', text: icon + ' ' + text, time, isSystem:true });
+    }
+
+    function showActivityLog() {
+      const overlay = document.getElementById('gameOverlay');
+      document.getElementById('gameTitle').textContent = '📋 활동 기록';
+      document.getElementById('shuffleArea').innerHTML = '';
+      overlay.classList.add('open');
+      if (activityLog.length === 0) {
+        document.getElementById('gameContent').innerHTML = '<div class="result-card"><h3>📋 활동 기록</h3><div style="color:#9CA3AF;padding:20px 0">아직 활동이 없습니다</div></div>';
+        return;
+      }
+      document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>📋 활동 기록</h3>${activityLog.map(a => `<div class="result-item"><span style="font-size:11px;color:#9CA3AF;min-width:40px">${a.time}</span><span>${a.icon}</span><span style="flex:1">${a.text}</span></div>`).join('')}</div>`;
     }
 
     /* ===== MAP ===== */
