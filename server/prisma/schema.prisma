@@ -50,6 +50,9 @@ model User {
   chatTranslation    Boolean @default(false) @map("chat_translation")
   language           String  @default("ko")
 
+  // 게시판 별명 (매칭 닉네임과 별도)
+  boardNickname   String?  @map("board_nickname")
+
   // 매칭 필터용
   mood            String?  // play, alone
   hobbies         String[]
@@ -309,9 +312,10 @@ model BoardPost {
   id        String   @id @default(uuid())
   authorId  String   @map("author_id")
   district  String   // yeouido, ttukseom, banpo, etc.
-  category  String   @default("free") // free, info, food, photo, question
-  title     String
-  content   String
+  category    String   @default("free") // free, info, food, photo, question
+  title       String
+  content     String
+  isAnonymous Boolean  @default(false) @map("is_anonymous")
   imageUrls String[] @map("image_urls")
   viewCount Int      @default(0) @map("view_count")
   createdAt DateTime @default(now()) @map("created_at")
@@ -329,6 +333,7 @@ model BoardComment {
   postId    String   @map("post_id")
   authorId  String   @map("author_id")
   content   String
+  isAnonymous Boolean  @default(false) @map("is_anonymous")
   parentId  String?  @map("parent_id") // 대댓글
   createdAt DateTime @default(now()) @map("created_at")
 
