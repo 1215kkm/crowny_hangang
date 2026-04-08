@@ -157,21 +157,6 @@ class _DetailCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(color: CrownyTheme.bgCard, borderRadius: BorderRadius.circular(18)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // 방장 프로필
-        Row(children: [
-          GradientIconBox(icon: Icons.person_rounded, gradientType: room.creatorGradient, size: 48, iconSize: 24, borderRadius: 16),
-          const SizedBox(width: 12),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(room.creatorNickname, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: CrownyTheme.textPrimary)),
-            Text('${room.district} · ${room.currentPeople}/${room.maxPeople}명', style: const TextStyle(fontSize: 11, color: CrownyTheme.textMuted)),
-          ])),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(color: CrownyTheme.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-            child: Text('Lv.${room.creatorLv}', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: CrownyTheme.primary)),
-          ),
-        ]),
-        const SizedBox(height: 14),
         if (room.description != null) Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(28, 14, 14, 14),

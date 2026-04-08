@@ -410,7 +410,7 @@
     <div class="profile-top">
       <div class="profile-avatar"><span class="mi">person</span></div>
       <div class="profile-name">경모님</div>
-      <div class="profile-sub">여의도 한강공원 · Lv.3</div>
+      <div class="profile-sub">여의도 한강공원 · 신뢰도 78</div>
     </div>
     <div class="stat-row">
       <div class="stat-box"><div class="stat-num">38.5°</div><div class="stat-label">한강 온도</div></div>
@@ -441,7 +441,7 @@
         <div class="up-name" id="upName">뚝섬러닝러</div>
         <div class="up-sub"><span class="mi">location_on</span><span id="upDist">120m</span> · <span id="upActivity">러닝 중</span></div>
       </div>
-      <div class="up-badge" id="upBadge"><span class="mi">verified</span>Lv.<span id="upLv">3</span></div>
+      <div class="up-badge" id="upBadge"><span class="mi">shield</span>신뢰 <span id="upTrust">78</span></div>
     </div>
     <div class="sheet">
       <div class="handle"></div>
@@ -630,18 +630,18 @@
     const MOCK = {
       totalOnline: 127,
       rooms: [
-        { id:'r1', title:'여의도 치맥 모임', creator:'여의도치맥왕', district:'여의도', icon:'sports_bar', gradient:'grd-blue', current:3, max:5, isJoined:true, unread:2, isPrivate:false, mission:null, creatorLv:5, temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'], quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺' },
-        { id:'r2', title:'한강 러닝 크루', creator:'뚝섬러닝러', district:'뚝섬', icon:'directions_run', gradient:'grd-pink', current:2, max:4, isJoined:false, unread:0, isPrivate:true, mission:{type:'selfie',name:'가장 웃긴 셀카',time:180,icon:'photo_camera'}, creatorLv:3, temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], quote:'같이 달릴 사람! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜' },
-        { id:'r3', title:'야경 사진 찍을 사람', creator:'SakuraLover', district:'반포', icon:'photo_camera', gradient:'grd-orange', current:1, max:3, isJoined:false, isPrivate:false, unread:0, mission:{type:'find',name:'주변 특이한 것 찾기',time:300,icon:'search'}, creatorLv:1, temp:36.8, tags:['사진 잘 찍어줘요'], quote:'한강 처음이에요! 같이 사진 찍어요 📸' },
-        { id:'r4', title:'편의점 라면 파티', creator:'한강멍멍이', district:'잠실', icon:'ramen_dining', gradient:'grd-purple', current:4, max:6, isJoined:true, unread:0, isPrivate:false, mission:null, creatorLv:2, temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'], quote:'라면 좋아하는 사람 모여라~ 🍜' },
-        { id:'r5', title:'자전거 한강 종주', creator:'망원자전거', district:'망원', icon:'pedal_bike', gradient:'grd-blue', current:2, max:3, isJoined:false, isPrivate:true, unread:0, mission:{type:'voice',name:'본인 소개 (10초 음성)',time:60,icon:'mic'}, creatorLv:4, temp:39.5, tags:['시간 잘 지켜요','대화 재밌어요'], quote:'종주 같이 하실 분! 속도는 맞춰드려요 🚴' }
+        { id:'r1', title:'여의도 치맥 모임', creator:'여의도치맥왕', district:'여의도', icon:'sports_bar', gradient:'grd-blue', current:3, max:5, isJoined:true, unread:2, isPrivate:false, mission:null, trust:92, temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'], quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺' },
+        { id:'r2', title:'한강 러닝 크루', creator:'뚝섬러닝러', district:'뚝섬', icon:'directions_run', gradient:'grd-pink', current:2, max:4, isJoined:false, unread:0, isPrivate:true, mission:{type:'selfie',name:'가장 웃긴 셀카',time:180,icon:'photo_camera'}, trust:78, temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], quote:'같이 달릴 사람! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜' },
+        { id:'r3', title:'야경 사진 찍을 사람', creator:'SakuraLover', district:'반포', icon:'photo_camera', gradient:'grd-orange', current:1, max:3, isJoined:false, isPrivate:false, unread:0, mission:{type:'find',name:'주변 특이한 것 찾기',time:300,icon:'search'}, trust:45, temp:36.8, tags:['사진 잘 찍어줘요'], quote:'한강 처음이에요! 같이 사진 찍어요 📸' },
+        { id:'r4', title:'편의점 라면 파티', creator:'한강멍멍이', district:'잠실', icon:'ramen_dining', gradient:'grd-purple', current:4, max:6, isJoined:true, unread:0, isPrivate:false, mission:null, trust:65, temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'], quote:'라면 좋아하는 사람 모여라~ 🍜' },
+        { id:'r5', title:'자전거 한강 종주', creator:'망원자전거', district:'망원', icon:'pedal_bike', gradient:'grd-blue', current:2, max:3, isJoined:false, isPrivate:true, unread:0, mission:{type:'voice',name:'본인 소개 (10초 음성)',time:60,icon:'mic'}, trust:85, temp:39.5, tags:['시간 잘 지켜요','대화 재밌어요'], quote:'종주 같이 하실 분! 속도는 맞춰드려요 🚴' }
       ],
       users: [
-        { id:'u1', nickname:'뚝섬러닝러', icon:'directions_run', gradient:'grd-pink', lv:3, dist:120, activity:'러닝 중', mood:'play', hobbies:['러닝','산책'], interests:['운동'], district:'뚝섬', recentMoim:'한강 러닝 크루', quote:'같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜', temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'] },
-        { id:'u2', nickname:'여의도치맥왕', icon:'sports_bar', gradient:'grd-blue', lv:5, dist:200, activity:'치맥 중', mood:'play', hobbies:['치맥','맛집'], interests:['맛집탐방'], district:'여의도', recentMoim:'여의도 치맥 모임', quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺', temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'] },
-        { id:'u3', nickname:'SakuraLover', icon:'photo_camera', gradient:'grd-orange', lv:1, dist:350, activity:'사진 촬영', mood:'play', hobbies:['사진','산책'], interests:['야경'], district:'반포', recentMoim:'야경 사진 찍을 사람', quote:'한강 처음이에요! 같이 사진 찍어요 📸', temp:36.8, tags:['사진 잘 찍어줘요'] },
-        { id:'u4', nickname:'한강멍멍이', icon:'pets', gradient:'grd-purple', lv:2, dist:450, activity:'산책 중', mood:'alone', hobbies:['반려동물','산책'], interests:['운동'], district:'잠실', recentMoim:'편의점 라면 파티', quote:'멍멍이와 산책 중~ 🐶', temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'] },
-        { id:'u5', nickname:'망원카페러', icon:'local_cafe', gradient:'grd-blue', lv:3, dist:500, activity:'카페', mood:'alone', hobbies:['카페','독서'], interests:['독서'], district:'망원', recentMoim:null, quote:'카페에서 책 읽는 중 ☕📖', temp:37.8, tags:['조용히 함께해요','배려심 넘쳐요'] }
+        { id:'u1', nickname:'뚝섬러닝러', icon:'directions_run', gradient:'grd-pink', trust:78, dist:120, activity:'러닝 중', mood:'play', hobbies:['러닝','산책'], interests:['운동'], district:'뚝섬', recentMoim:'한강 러닝 크루', quote:'같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜', temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'] },
+        { id:'u2', nickname:'여의도치맥왕', icon:'sports_bar', gradient:'grd-blue', trust:92, dist:200, activity:'치맥 중', mood:'play', hobbies:['치맥','맛집'], interests:['맛집탐방'], district:'여의도', recentMoim:'여의도 치맥 모임', quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺', temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'] },
+        { id:'u3', nickname:'SakuraLover', icon:'photo_camera', gradient:'grd-orange', trust:45, dist:350, activity:'사진 촬영', mood:'play', hobbies:['사진','산책'], interests:['야경'], district:'반포', recentMoim:'야경 사진 찍을 사람', quote:'한강 처음이에요! 같이 사진 찍어요 📸', temp:36.8, tags:['사진 잘 찍어줘요'] },
+        { id:'u4', nickname:'한강멍멍이', icon:'pets', gradient:'grd-purple', trust:65, dist:450, activity:'산책 중', mood:'alone', hobbies:['반려동물','산책'], interests:['운동'], district:'잠실', recentMoim:'편의점 라면 파티', quote:'멍멍이와 산책 중~ 🐶', temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'] },
+        { id:'u5', nickname:'망원카페러', icon:'local_cafe', gradient:'grd-blue', trust:72, dist:500, activity:'카페', mood:'alone', hobbies:['카페','독서'], interests:['독서'], district:'망원', recentMoim:null, quote:'카페에서 책 읽는 중 ☕📖', temp:37.8, tags:['조용히 함께해요','배려심 넘쳐요'] }
       ],
       chatMessages: [
         { sender:'여의도치맥왕', isMe:false, text:'치킨 주문했어요! 빨리 오세요~ 🍗', time:'19:30', icon:'sports_bar', gradient:'grd-blue' },
@@ -732,7 +732,7 @@
         <div class="mu-item" onclick="viewUser('${u.id}')">
           <div class="uav ${u.gradient}"><span class="mi">${u.icon}</span></div>
           <div class="uinfo">
-            <div class="uname">${u.nickname} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:4px">Lv.${u.lv}</span></div>
+            <div class="uname">${u.nickname} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:4px">신뢰 ${u.trust}</span></div>
             <div class="udesc">${u.activity} · ${u.dist}m</div>
             ${u.recentMoim ? `<div class="mu-moim"><span class="mi">groups</span>${u.recentMoim}</div>` : ''}
           </div>
@@ -752,7 +752,7 @@
       document.getElementById('upName').textContent = u.nickname;
       document.getElementById('upDist').textContent = u.dist + 'm';
       document.getElementById('upActivity').textContent = u.activity;
-      document.getElementById('upLv').textContent = u.lv;
+      document.getElementById('upTrust').textContent = u.trust;
       document.getElementById('upQuote').textContent = u.quote;
       document.getElementById('upTemp').textContent = u.temp + '°';
       document.getElementById('upTempBar').style.width = Math.min((u.temp - 36) / 10 * 100, 100) + '%';
@@ -786,11 +786,6 @@
             </div>
           </div>
           <div class="moim-detail" id="moim-detail-${r.id}">
-            <div class="md-profile">
-              <div class="md-avatar ${r.gradient}"><span class="mi">${r.icon}</span></div>
-              <div><div class="md-name">${r.creator}</div><div class="md-sub">${r.district} · ${r.current}/${r.max}명</div></div>
-              <div class="md-badge">Lv.${r.creatorLv}</div>
-            </div>
             <div class="card-quote">${r.quote}</div>
             <div class="tags">${r.tags.map((t,i) => `<div class="tag ${'t'+(i%3+1)}"><span class="mi">${['schedule','chat','local_fire_department'][i%3]}</span>${t}</div>`).join('')}</div>
             <div class="temp"><span class="mi">thermostat</span><div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" style="width:${Math.min((r.temp-36)/10*100,100)}%"></div></div></div><span class="temp-val">${r.temp}°</span></div>

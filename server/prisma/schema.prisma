@@ -17,7 +17,7 @@ model User {
   avatarIcon    String   @default("person") @map("avatar_icon")
   gradientType  String   @default("purple") @map("gradient_type")
   oneLiner      String?  @map("one_liner")
-  trustLevel    Int      @default(0) @map("trust_level")
+  trustScore    Int      @default(50) @map("trust_score") // 신뢰도 0~100 (참여자가 +/- 평가)
   hangangTemp   Float    @default(36.5) @map("hangang_temp")
   meetupCount   Int      @default(0) @map("meetup_count")
   languages     String[] @default(["KR"])
@@ -81,6 +81,8 @@ model User {
   createdMoimRooms  MoimRoom[]         @relation("MoimCreator")
   moimMemberships   MoimRoomMember[]
   missionSubmissions MissionSubmission[]
+  trustVotesGiven    TrustVote[]       @relation("TrustVoter")
+  trustVotesReceived TrustVote[]       @relation("TrustTarget")
 
   @@map("users")
 }
@@ -245,6 +247,23 @@ model MissionSubmission {
   user    User        @relation(fields: [userId], references: [id])
 
   @@map("mission_submissions")
+}
+
+// ── 신뢰도 투표 (같은 방 참여자/대화 상대가 +/- 평가) ──
+model TrustVote {
+  id         String   @id @default(uuid())
+  voterId    String   @map("voter_id")
+  targetId   String   @map("target_id")
+  moimRoomId String?  @map("moim_room_id") // 어떤 모임에서 함께했는지
+  value      Int      // +1 (신뢰 올림) or -1 (신뢰 내림)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  voter  User @relation("TrustVoter", fields: [voterId], references: [id])
+  target User @relation("TrustTarget", fields: [targetId], references: [id])
+
+  // 같은 사람에게 같은 모임에서 한 번만 투표 가능
+  @@unique([voterId, targetId, moimRoomId])
+  @@map("trust_votes")
 }
 
 // ── 이벤트/번개 모임 ──

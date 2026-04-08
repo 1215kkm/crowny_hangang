@@ -250,7 +250,7 @@ class _UserItem extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(color: CrownyTheme.primary.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(6)),
-                            child: Text('Lv.${user.trustLevel}', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: CrownyTheme.primary)),
+                            child: Text('신뢰 ${user.trustScore}', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: CrownyTheme.primary)),
                           ),
                         ],
                       ),
