@@ -94,6 +94,11 @@
     .room-item{padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer;transition:background .15s}
     .room-item:active{background:#F9F7FF}
     .room-item:last-child{border-bottom:none}
+
+    /* SWIPE TO LEAVE */
+    .swipe-wrap{position:relative;overflow:hidden}
+    .swipe-content{position:relative;background:white;transition:transform .25s ease;z-index:1}
+    .swipe-leave{position:absolute;top:0;right:0;height:100%;width:80px;display:flex;align-items:center;justify-content:center;background:#DC2626;color:white;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;z-index:0}
     .room-top{display:flex;align-items:center;gap:14px}
     .room-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
     .room-icon .mi{font-size:24px}
@@ -1435,13 +1440,19 @@
       const list = document.getElementById('roomList');
       if (chatFilter === 'dm') {
         list.innerHTML = MOCK_DMS.map(dm => `
-          <div class="room-item" onclick="openDm('${dm.id}')">
-            <div class="room-top">
-              <div class="room-icon ${dm.partner.gradient}"><span class="mi">${dm.partner.icon}</span></div>
-              <div class="room-info"><div class="room-title">${dm.partner.nickname}</div><div class="room-meta">${dm.lastMessage}</div></div>
-              <div class="room-right"><span style="font-size:10px;color:#D1D5DB">${dm.time}</span>${dm.unread>0?`<div class="room-badge">${dm.unread}</div>`:''}</div>
+          <div class="swipe-wrap">
+            <div class="swipe-leave" onclick="event.stopPropagation();leaveDm('${dm.id}')">나가기</div>
+            <div class="swipe-content">
+              <div class="room-item" onclick="openDm('${dm.id}')">
+                <div class="room-top">
+                  <div class="room-icon ${dm.partner.gradient}"><span class="mi">${dm.partner.icon}</span></div>
+                  <div class="room-info"><div class="room-title">${dm.partner.nickname}</div><div class="room-meta">${dm.lastMessage}</div></div>
+                  <div class="room-right"><span style="font-size:10px;color:#D1D5DB">${dm.time}</span>${dm.unread>0?`<div class="room-badge">${dm.unread}</div>`:''}</div>
+                </div>
+              </div>
             </div>
           </div>`).join('');
+        setTimeout(initSwipe, 50);
         return;
       }
       const filtered = chatFilter === 'joined' ? MOCK.rooms.filter(r => r.isJoined) : MOCK.rooms;
@@ -1456,11 +1467,16 @@
         const missionTag = r.mission ? `<div class="room-mission-tag"><span class="mi">timer</span>${r.mission.name}</div>` : '';
         const onclick = r.isPrivate && !r.isJoined ? `toggleMoimDetail('${r.id}')` : `openRoom('${r.id}')`;
         return `
-          <div class="room-item" onclick="${onclick}">
-            <div class="room-top">
-              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
-              <div class="room-info"><div class="room-title">${lockIcon}${r.title} ${r.status==='recruiting'?'<span class="room-status recruiting">🟢 모집중</span>':r.status==='starting'?'<span class="room-status starting">🟡 곧시작</span>':r.status==='active'?'<span class="room-status active">🔴 진행중</span>':'<span class="room-status ended">⚫ 종료</span>'}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
-              <div class="room-right">${badge}${missionTag}</div>
+          <div class="swipe-wrap">
+            <div class="swipe-leave" onclick="event.stopPropagation();leaveRoom('${r.id}')">나가기</div>
+            <div class="swipe-content">
+              <div class="room-item" onclick="${onclick}">
+                <div class="room-top">
+                  <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+                  <div class="room-info"><div class="room-title">${lockIcon}${r.title} ${r.status==='recruiting'?'<span class="room-status recruiting">🟢 모집중</span>':r.status==='starting'?'<span class="room-status starting">🟡 곧시작</span>':r.status==='active'?'<span class="room-status active">🔴 진행중</span>':'<span class="room-status ended">⚫ 종료</span>'}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
+                  <div class="room-right">${badge}${missionTag}</div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="moim-detail" id="moim-detail-${r.id}">
@@ -1474,6 +1490,7 @@
             </div>
           </div>`;
       }).join('');
+      setTimeout(initSwipe, 50);
     }
 
     function openDm(dmId) {
@@ -2072,6 +2089,58 @@
         return;
       }
       document.getElementById('gameContent').innerHTML = `<div class="result-card"><h3>📋 활동 기록</h3>${activityLog.map(a => `<div class="result-item"><span style="font-size:11px;color:#9CA3AF;min-width:40px">${a.time}</span><span>${a.icon}</span><span style="flex:1">${a.text}</span></div>`).join('')}</div>`;
+    }
+
+    /* ===== SWIPE TO LEAVE ===== */
+    function initSwipe() {
+      document.querySelectorAll('.swipe-wrap').forEach(wrap => {
+        const content = wrap.querySelector('.swipe-content');
+        if (!content || wrap.dataset.swipeInit) return;
+        wrap.dataset.swipeInit = '1';
+        let startX = 0, currentX = 0, swiping = false;
+        content.addEventListener('touchstart', e => { startX = e.touches[0].clientX; swiping = true; }, {passive:true});
+        content.addEventListener('touchmove', e => {
+          if (!swiping) return;
+          currentX = e.touches[0].clientX;
+          const diff = startX - currentX;
+          if (diff > 0 && diff < 100) content.style.transform = `translateX(-${diff}px)`;
+        }, {passive:true});
+        content.addEventListener('touchend', () => {
+          swiping = false;
+          const diff = startX - currentX;
+          content.style.transform = diff > 50 ? 'translateX(-80px)' : 'translateX(0)';
+        });
+        // 마우스 (PC 테스트용)
+        content.addEventListener('mousedown', e => { startX = e.clientX; swiping = true; content.style.transition = 'none'; });
+        document.addEventListener('mousemove', e => {
+          if (!swiping) return;
+          currentX = e.clientX;
+          const diff = startX - currentX;
+          if (diff > 0 && diff < 100) content.style.transform = `translateX(-${diff}px)`;
+        });
+        document.addEventListener('mouseup', () => {
+          if (!swiping) return;
+          swiping = false;
+          content.style.transition = 'transform .25s ease';
+          const diff = startX - currentX;
+          content.style.transform = diff > 50 ? 'translateX(-80px)' : 'translateX(0)';
+        });
+      });
+    }
+
+    function leaveRoom(roomId) {
+      if (!confirm('이 방을 나가시겠습니까?')) return;
+      // Mock: 목록에서 제거
+      const idx = MOCK.rooms.findIndex(r => r.id === roomId);
+      if (idx >= 0) { MOCK.rooms[idx].isJoined = false; }
+      renderRoomsFiltered();
+    }
+
+    function leaveDm(dmId) {
+      if (!confirm('대화를 나가시겠습니까?')) return;
+      const idx = MOCK_DMS.findIndex(d => d.id === dmId);
+      if (idx >= 0) MOCK_DMS.splice(idx, 1);
+      renderRoomsFiltered();
     }
 
     /* ===== MAP ===== */
