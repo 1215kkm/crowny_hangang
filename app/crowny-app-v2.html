@@ -256,6 +256,51 @@
     .send-btn .mi{font-size:20px}
     .input-icon{width:36px;height:36px;border-radius:50%;border:none;background:#F3F4F6;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9CA3AF}
     .input-icon .mi{font-size:20px}
+
+    /* === DRAWER === */
+    .drawer-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s}
+    .drawer-overlay.open{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;top:0;left:-280px;width:280px;height:100%;background:white;z-index:201;transition:left .3s;display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.15)}
+    .drawer.open{left:0}
+    .drawer-header{padding:32px 24px 20px;background:linear-gradient(165deg,#5B2FD6,#7C4DFF);color:white}
+    .drawer-avatar{width:56px;height:56px;border-radius:18px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;border:2px solid rgba(255,255,255,.3)}
+    .drawer-avatar .mi{font-size:28px}
+    .drawer-name{font-size:16px;font-weight:800}
+    .drawer-trust{font-size:12px;opacity:.8;margin-top:2px;display:flex;align-items:center;gap:4px}
+    .drawer-trust .mi{font-size:14px}
+    .drawer-menu{flex:1;padding:12px 0;overflow-y:auto}
+    .drawer-item{display:flex;align-items:center;gap:14px;padding:14px 24px;cursor:pointer;transition:background .15s;font-size:14px;font-weight:600;color:#1E1B4B}
+    .drawer-item:active{background:#F9F7FF}
+    .drawer-item .mi{font-size:22px;color:var(--purple)}
+    .drawer-divider{height:1px;background:#F3F4F6;margin:8px 24px}
+    .drawer-footer{padding:16px 24px;border-top:1px solid #F3F4F6}
+    .drawer-footer .drawer-item{padding:14px 0;color:#9CA3AF}
+    .drawer-footer .drawer-item .mi{color:#9CA3AF}
+
+    /* === SEARCH OVERLAY === */
+    .search-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:white;z-index:150;transform:translateY(-100%);transition:transform .3s;max-width:390px;margin:0 auto}
+    .search-overlay.open{transform:translateY(0)}
+    .search-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid #F3F4F6}
+    .search-back{width:36px;height:36px;border:none;background:#F3F4F6;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6B7280;font-family:var(--font)}
+    .search-input{flex:1;border:none;outline:none;font-family:var(--font);font-size:15px;color:#1E1B4B;padding:8px 0}
+    .search-input::placeholder{color:#D1D5DB}
+    .search-tabs{display:flex;border-bottom:1px solid #F3F4F6}
+    .search-tab{flex:1;padding:12px;text-align:center;font-size:13px;font-weight:700;color:#9CA3AF;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+    .search-tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+    .search-results{padding:12px 20px;overflow-y:auto;max-height:calc(100vh - 120px)}
+
+    /* === BOARD === */
+    .board-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .board-item{padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer}
+    .board-item:active{background:#F9F7FF}
+    .board-title-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+    .board-anon{font-size:10px;padding:2px 8px;border-radius:6px;background:#F3F4F6;color:#9CA3AF;font-weight:600}
+    .board-post-title{font-size:14px;font-weight:700;color:#1E1B4B}
+    .board-post-preview{font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .board-post-meta{font-size:11px;color:#9CA3AF;display:flex;align-items:center;gap:8px}
+    .board-post-meta .mi{font-size:14px}
+    .board-fab{position:fixed;bottom:80px;right:calc(50% - 170px);width:52px;height:52px;border-radius:18px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 4px 16px rgba(108,60,225,.4);z-index:50;background:linear-gradient(135deg,#6C3CE1,#D63384)}
+    .board-fab .mi{font-size:26px}
   </style>
 </head>
 <body>
@@ -266,8 +311,8 @@
       <img class="home-hero-img" src="images/home_bg.jpg" alt="한강" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%)'">
       <div class="home-hero-overlay"></div>
       <div class="home-hero-btns">
-        <button class="icon-btn"><span class="mi">menu</span></button>
-        <button class="icon-btn"><span class="mi">search</span></button>
+        <button class="icon-btn" onclick="openDrawer()"><span class="mi">menu</span></button>
+        <button class="icon-btn" onclick="openSearch()"><span class="mi">search</span></button>
       </div>
       <div class="home-hero-title"><h1>한강앱</h1><h2>Hangang App</h2></div>
     </div>
@@ -314,7 +359,7 @@
         <div class="uright"><span class="udist">350m</span><button class="ubtn" onclick="viewUser('u3')"><span class="mi">waving_hand</span>Wave</button></div>
       </div>
 
-      <div style="margin-top:24px;padding:16px;background:linear-gradient(135deg,#F3F0FF,#EDE9FE);border-radius:18px;border:1px solid #DDD6FE;cursor:pointer;display:flex;align-items:center;gap:14px">
+      <div style="margin-top:24px;padding:16px;background:linear-gradient(135deg,#F3F0FF,#EDE9FE);border-radius:18px;border:1px solid #DDD6FE;cursor:pointer;display:flex;align-items:center;gap:14px" onclick="switchPage('board')">
         <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#7C4DFF,#5B2FD6);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0"><span class="mi">forum</span></div>
         <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--purple)">한강 게시판</div><div style="font-size:11px;color:#9CA3AF">지역별 커뮤니티 · 정보 · 맛집 · 사진</div></div>
         <span class="mi" style="color:var(--purple);font-size:20px">chevron_right</span>
@@ -397,6 +442,11 @@
       <div class="page-title">모임방</div>
       <button class="icon-btn" onclick="switchPage('create-room')"><span class="mi">add</span></button>
     </div>
+    <div style="display:flex;gap:0;margin:0 24px 16px;background:rgba(255,255,255,.15);border-radius:14px;padding:3px;backdrop-filter:blur(10px)">
+      <button class="mode-btn active" id="chatFilterAll" onclick="setChatFilter('all')">📋 전체</button>
+      <button class="mode-btn" id="chatFilterJoined" onclick="setChatFilter('joined')">✅ 참여중</button>
+      <button class="mode-btn" id="chatFilterDm" onclick="setChatFilter('dm')">💬 1:1</button>
+    </div>
     <div class="sheet" style="border-radius:32px 32px 0 0">
       <div class="handle"></div>
       <div id="roomList">
@@ -473,6 +523,7 @@
         <button class="abtn skip" onclick="goBack()"><span class="mi">close</span>다음에</button>
         <button class="abtn wave" onclick="alert('손흔들기를 보냈습니다! 👋')"><span class="mi">waving_hand</span>손흔들기</button>
       </div>
+      <button style="width:100%;margin-top:10px;padding:13px;border-radius:14px;border:1px solid #E5E7EB;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:white;color:#1E1B4B" onclick="startDmFromProfile()"><span class="mi" style="font-size:18px">chat</span>1:1 메시지 보내기</button>
     </div>
   </div>
 
@@ -617,12 +668,168 @@
     </div>
   </div>
 
+  <!-- ========== PAGE: BOARD ========== -->
+  <div class="page" id="page-board">
+    <div class="board-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">한강 게시판</div>
+      <button class="icon-btn"><span class="mi">search</span></button>
+    </div>
+    <div class="chip-scroll" style="padding-top:4px;padding-bottom:16px" id="boardDistrictChips">
+      <div class="chip active" onclick="selectChip(this,'boardDistrictChips')">전체</div>
+      <div class="chip" onclick="selectChip(this,'boardDistrictChips')">여의도</div>
+      <div class="chip" onclick="selectChip(this,'boardDistrictChips')">뚝섬</div>
+      <div class="chip" onclick="selectChip(this,'boardDistrictChips')">반포</div>
+      <div class="chip" onclick="selectChip(this,'boardDistrictChips')">잠실</div>
+      <div class="chip" onclick="selectChip(this,'boardDistrictChips')">망원</div>
+    </div>
+    <div class="sheet" style="border-radius:32px 32px 0 0">
+      <div class="handle"></div>
+      <div id="boardList"></div>
+    </div>
+    <button class="board-fab" onclick="switchPage('board-write')"><span class="mi">edit</span></button>
+  </div>
+
+  <!-- ========== PAGE: BOARD WRITE ========== -->
+  <div class="page" id="page-board-write" style="background:white;min-height:100vh">
+    <div class="cr-header">
+      <button class="cr-close" onclick="goBack()"><span class="mi">close</span></button>
+      <div class="cr-title">글쓰기</div>
+      <button class="cr-submit" onclick="alert('게시글이 등록되었습니다!');switchPage('board')">등록</button>
+    </div>
+    <div class="cr-body">
+      <input class="cr-input" type="text" placeholder="제목을 입력하세요">
+      <textarea class="cr-textarea" placeholder="내용을 입력하세요..." style="min-height:200px"></textarea>
+      <div class="toggle-row" style="margin-top:16px">
+        <div class="toggle-label">익명으로 쓰기</div>
+        <button class="toggle off" id="anonToggle" onclick="toggleAnon()"></button>
+      </div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:4px" id="anonDesc">게시판 별명으로 표시됩니다</div>
+      <div class="cr-label">지역 태그</div>
+      <div class="cr-chips" id="boardWriteChips">
+        <div class="cr-chip active" onclick="selectCrChip(this,'boardWriteChips')">여의도</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'boardWriteChips')">뚝섬</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'boardWriteChips')">반포</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'boardWriteChips')">잠실</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'boardWriteChips')">망원</div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <button class="input-icon" style="width:48px;height:48px;border-radius:14px"><span class="mi">photo_camera</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: AUTH (로그인) ========== -->
+  <div class="page" id="page-auth" style="background:linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%);min-height:100vh">
+    <div style="padding:60px 32px 40px;text-align:center;color:white">
+      <div style="width:80px;height:80px;border-radius:24px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;backdrop-filter:blur(10px)"><span class="mi" style="font-size:40px;color:white">water</span></div>
+      <div style="font-size:28px;font-weight:900;margin-bottom:4px">한강앱</div>
+      <div style="font-size:14px;opacity:.7">한강에서 새로운 인연을 만나세요</div>
+    </div>
+    <div class="sheet" style="padding:32px 24px 60px">
+      <div class="handle"></div>
+      <div style="font-size:20px;font-weight:800;color:#1E1B4B;margin-bottom:24px;text-align:center">로그인</div>
+      <button style="width:100%;padding:14px;border-radius:14px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;background:#FEE500;color:#3C1E1E" onclick="switchPage('home')"><span class="mi">chat_bubble</span>카카오로 시작하기</button>
+      <button style="width:100%;padding:14px;border-radius:14px;border:1px solid #E5E7EB;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;background:white;color:#1E1B4B" onclick="switchPage('home')"><span class="mi" style="color:#4285F4">g_translate</span>Google로 시작하기</button>
+      <button style="width:100%;padding:14px;border-radius:14px;border:none;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:20px;background:#000;color:white" onclick="switchPage('home')"><span class="mi">apple</span>Apple로 시작하기</button>
+      <div style="text-align:center;font-size:12px;color:#9CA3AF;margin-bottom:16px">또는</div>
+      <input style="width:100%;padding:12px 16px;border:1px solid #E5E7EB;border-radius:12px;font-family:var(--font);font-size:14px;outline:none;margin-bottom:10px;box-sizing:border-box" type="email" placeholder="이메일">
+      <input style="width:100%;padding:12px 16px;border:1px solid #E5E7EB;border-radius:12px;font-family:var(--font);font-size:14px;outline:none;margin-bottom:16px;box-sizing:border-box" type="password" placeholder="비밀번호">
+      <button class="cr-submit" style="width:100%;padding:14px;font-size:14px" onclick="switchPage('home')">로그인</button>
+      <div style="text-align:center;margin-top:16px;font-size:13px;color:#9CA3AF">계정이 없으신가요? <span style="color:var(--purple);font-weight:700;cursor:pointer" onclick="switchPage('signup')">회원가입</span></div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: SIGNUP (회원가입) ========== -->
+  <div class="page" id="page-signup" style="background:white;min-height:100vh">
+    <div class="cr-header">
+      <button class="cr-close" onclick="switchPage('auth')"><span class="mi">arrow_back</span></button>
+      <div class="cr-title">회원가입</div>
+      <div></div>
+    </div>
+    <div class="cr-body" style="padding:24px">
+      <div class="cr-label" style="margin-top:0">닉네임 (매칭/채팅용)</div>
+      <input class="cr-input" type="text" placeholder="한강에서 사용할 닉네임">
+      <div class="cr-label">게시판 별명</div>
+      <input class="cr-input" type="text" placeholder="게시판에서 사용할 별명">
+      <div class="cr-label">이메일</div>
+      <input class="cr-input" type="email" placeholder="example@email.com">
+      <div class="cr-label">비밀번호</div>
+      <input class="cr-input" type="password" placeholder="8자 이상">
+      <div class="cr-label">비밀번호 확인</div>
+      <input class="cr-input" type="password" placeholder="비밀번호 재입력">
+      <div style="margin-top:20px;font-size:11px;color:#9CA3AF;line-height:1.6">가입 시 <span style="color:var(--purple);cursor:pointer">이용약관</span> 및 <span style="color:var(--purple);cursor:pointer">개인정보처리방침</span>에 동의하게 됩니다.</div>
+      <button class="cr-submit" style="width:100%;padding:14px;font-size:14px;margin-top:16px" onclick="alert('가입 완료!');switchPage('auth')">가입하기</button>
+      <div style="text-align:center;margin-top:20px;font-size:12px;color:#9CA3AF">또는 소셜 계정으로 가입</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:12px">
+        <button style="width:48px;height:48px;border-radius:14px;border:none;cursor:pointer;background:#FEE500;display:flex;align-items:center;justify-content:center" onclick="alert('카카오 가입 (Mock)')"><span class="mi" style="color:#3C1E1E">chat_bubble</span></button>
+        <button style="width:48px;height:48px;border-radius:14px;border:1px solid #E5E7EB;cursor:pointer;background:white;display:flex;align-items:center;justify-content:center" onclick="alert('Google 가입 (Mock)')"><span class="mi" style="color:#4285F4">g_translate</span></button>
+        <button style="width:48px;height:48px;border-radius:14px;border:none;cursor:pointer;background:#000;display:flex;align-items:center;justify-content:center" onclick="alert('Apple 가입 (Mock)')"><span class="mi" style="color:white">apple</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: DM ROOM (1:1 채팅) ========== -->
+  <div class="page" id="page-dm-room" style="background:white;min-height:100vh;display:none;flex-direction:column">
+    <div class="chatroom-header">
+      <button class="icon-btn" style="background:rgba(255,255,255,.15)" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
+      <div>
+        <div class="chatroom-title" id="dmTitle">뚝섬러닝러</div>
+        <div class="chatroom-count" id="dmStatus">온라인</div>
+      </div>
+      <button class="icon-btn" style="background:rgba(255,255,255,.15)"><span class="mi">more_vert</span></button>
+    </div>
+    <div class="msg-area" id="dmMsgArea"></div>
+    <div class="input-bar">
+      <button class="input-icon"><span class="mi">photo_camera</span></button>
+      <input class="input-field" type="text" placeholder="메시지 입력..." id="dmInput" onkeydown="if(event.key==='Enter')sendDm()">
+      <button class="send-btn" onclick="sendDm()"><span class="mi">send</span></button>
+    </div>
+  </div>
+
+  <!-- ========== DRAWER ========== -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-avatar"><span class="mi">person</span></div>
+      <div class="drawer-name">한강탐험가</div>
+      <div class="drawer-trust"><span class="mi">shield</span>신뢰도 78</div>
+    </div>
+    <div class="drawer-menu">
+      <div class="drawer-item" onclick="closeDrawer();switchPage('profile')"><span class="mi">person</span>프로필</div>
+      <div class="drawer-item" onclick="closeDrawer();switchPage('map')"><span class="mi">map</span>한강 지도</div>
+      <div class="drawer-divider"></div>
+      <div class="drawer-item" onclick="closeDrawer();switchPage('auth')"><span class="mi">login</span>로그인</div>
+      <div class="drawer-item" onclick="closeDrawer();switchPage('signup')"><span class="mi">person_add</span>회원가입</div>
+      <div class="drawer-divider"></div>
+      <div class="drawer-item" onclick="closeDrawer()"><span class="mi">settings</span>설정</div>
+    </div>
+    <div class="drawer-footer">
+      <div class="drawer-item" onclick="closeDrawer()"><span class="mi">logout</span>로그아웃</div>
+    </div>
+  </div>
+
+  <!-- ========== SEARCH OVERLAY ========== -->
+  <div class="search-overlay" id="searchOverlay">
+    <div class="search-header">
+      <button class="search-back" onclick="closeSearch()"><span class="mi">arrow_back</span></button>
+      <input class="search-input" type="text" placeholder="채팅방, 사용자 검색..." id="searchInput" oninput="doSearch()">
+    </div>
+    <div class="search-tabs">
+      <div class="search-tab active" onclick="switchSearchTab(this,'rooms')">채팅방</div>
+      <div class="search-tab" onclick="switchSearchTab(this,'users')">사용자</div>
+    </div>
+    <div class="search-results" id="searchResults">
+      <div style="text-align:center;padding:40px;color:#D1D5DB"><span class="mi" style="font-size:48px;display:block;margin-bottom:12px">search</span>검색어를 입력하세요</div>
+    </div>
+  </div>
+
   <!-- ========== BOTTOM NAV ========== -->
   <nav class="bnav" id="mainNav">
     <button class="bnav-item active" data-page="home" onclick="switchPage('home')"><span class="mi">home</span><span class="bnav-label">홈</span></button>
     <button class="bnav-item" data-page="matching" onclick="switchPage('matching')"><span class="mi">waving_hand</span><span class="bnav-label">매칭</span></button>
     <button class="bnav-item" data-page="chat" onclick="switchPage('chat')"><span class="mi">forum</span><span class="bnav-label">채팅</span></button>
-    <button class="bnav-item" data-page="profile" onclick="switchPage('profile')"><span class="mi">person</span><span class="bnav-label">프로필</span></button>
+    <button class="bnav-item" data-page="board" onclick="switchPage('board')"><span class="mi">article</span><span class="bnav-label">게시판</span></button>
   </nav>
 
   <script>
@@ -662,14 +869,14 @@
     function switchPage(name) {
       document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
       const target = document.getElementById('page-' + name);
-      if (name === 'chat-room') {
+      if (name === 'chat-room' || name === 'dm-room') {
         target.style.display = 'flex';
       } else {
         target.classList.add('active');
         target.style.display = 'block';
       }
       // Nav
-      const mainPages = ['home','matching','chat','profile'];
+      const mainPages = ['home','matching','chat','board'];
       const nav = document.getElementById('mainNav');
       if (mainPages.includes(name)) {
         nav.style.display = 'flex';
@@ -683,6 +890,7 @@
       if (name === 'matching') renderUsers();
       if (name === 'chat') renderRooms();
       if (name === 'chat-room') renderMessages();
+      if (name === 'board') renderBoard();
     }
 
     function goBack() {
@@ -764,39 +972,19 @@
       switchPage('user-profile');
     }
 
+    function startDmFromProfile() {
+      const name = document.getElementById('upName').textContent;
+      const u = MOCK.users.find(x => x.nickname === name);
+      if (!u) return;
+      document.getElementById('dmTitle').textContent = u.nickname;
+      currentDmMessages = [{ sender:'시스템', text:'대화를 시작하세요!', time:'지금', isSystem:true }];
+      renderDmMessages();
+      switchPage('dm-room');
+    }
+
     /* ===== ROOMS ===== */
     function renderRooms() {
-      const list = document.getElementById('roomList');
-      list.innerHTML = MOCK.rooms.map(r => {
-        const lockIcon = r.isPrivate && !r.isJoined ? '<span class="mi" style="font-size:16px;color:#9CA3AF">lock</span>' : '';
-        const badge = r.unread > 0 ? `<div class="room-badge">${r.unread}</div>` : '';
-        const missionTag = r.mission ? `<div class="room-mission-tag"><span class="mi">timer</span>${r.mission.name}</div>` : '';
-        const onclick = r.isPrivate && !r.isJoined
-          ? `toggleMoimDetail('${r.id}')`
-          : `openRoom('${r.id}')`;
-        return `
-          <div class="room-item" onclick="${onclick}">
-            <div class="room-top">
-              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
-              <div class="room-info">
-                <div class="room-title">${lockIcon}${r.title}</div>
-                <div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div>
-              </div>
-              <div class="room-right">${badge}${missionTag}</div>
-            </div>
-          </div>
-          <div class="moim-detail" id="moim-detail-${r.id}">
-            <div class="card-quote">${r.quote}</div>
-            <div class="tags">${r.tags.map((t,i) => `<div class="tag ${'t'+(i%3+1)}"><span class="mi">${['schedule','chat','local_fire_department'][i%3]}</span>${t}</div>`).join('')}</div>
-            <div class="temp"><span class="mi">thermostat</span><div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" style="width:${Math.min((r.temp-36)/10*100,100)}%"></div></div></div><span class="temp-val">${r.temp}°</span></div>
-            ${r.mission ? `<div class="md-mission"><span class="mi">${r.mission.icon}</span>${r.mission.name} · ${Math.floor(r.mission.time/60)}분</div>` : ''}
-            <div class="actions">
-              <button class="abtn skip" onclick="event.stopPropagation();toggleMoimDetail('${r.id}')"><span class="mi">close</span>닫기</button>
-              <button class="abtn wave" onclick="event.stopPropagation();alert('손흔들기를 보냈습니다! 👋')"><span class="mi">waving_hand</span>손흔들기</button>
-            </div>
-          </div>
-        `;
-      }).join('');
+      renderRoomsFiltered();
     }
 
     function toggleMoimDetail(id) {
@@ -908,6 +1096,189 @@
     function selectCrChip(el, containerId) {
       document.getElementById(containerId).querySelectorAll('.cr-chip').forEach(c => c.classList.remove('active'));
       el.classList.add('active');
+    }
+
+    /* ===== CHAT FILTER ===== */
+    let chatFilter = 'all';
+    const MOCK_DMS = [
+      { id:'dm1', partner:MOCK.users[0], lastMessage:'내일 뚝섬에서 봐요!', time:'19:30', unread:1 },
+      { id:'dm2', partner:MOCK.users[2], lastMessage:'사진 공유해주세요!', time:'어제', unread:0 },
+    ];
+    let currentDmMessages = [];
+
+    function setChatFilter(filter) {
+      chatFilter = filter;
+      document.getElementById('chatFilterAll').classList.toggle('active', filter==='all');
+      document.getElementById('chatFilterJoined').classList.toggle('active', filter==='joined');
+      document.getElementById('chatFilterDm').classList.toggle('active', filter==='dm');
+      renderRoomsFiltered();
+    }
+
+    function renderRoomsFiltered() {
+      const list = document.getElementById('roomList');
+      if (chatFilter === 'dm') {
+        list.innerHTML = MOCK_DMS.map(dm => `
+          <div class="room-item" onclick="openDm('${dm.id}')">
+            <div class="room-top">
+              <div class="room-icon ${dm.partner.gradient}"><span class="mi">${dm.partner.icon}</span></div>
+              <div class="room-info"><div class="room-title">${dm.partner.nickname}</div><div class="room-meta">${dm.lastMessage}</div></div>
+              <div class="room-right"><span style="font-size:10px;color:#D1D5DB">${dm.time}</span>${dm.unread>0?`<div class="room-badge">${dm.unread}</div>`:''}</div>
+            </div>
+          </div>`).join('');
+        return;
+      }
+      const filtered = chatFilter === 'joined' ? MOCK.rooms.filter(r => r.isJoined) : MOCK.rooms;
+      renderRoomsList(filtered);
+    }
+
+    function renderRoomsList(rooms) {
+      const list = document.getElementById('roomList');
+      list.innerHTML = rooms.map(r => {
+        const lockIcon = r.isPrivate && !r.isJoined ? '<span class="mi" style="font-size:16px;color:#9CA3AF">lock</span>' : '';
+        const badge = r.unread > 0 ? `<div class="room-badge">${r.unread}</div>` : '';
+        const missionTag = r.mission ? `<div class="room-mission-tag"><span class="mi">timer</span>${r.mission.name}</div>` : '';
+        const onclick = r.isPrivate && !r.isJoined ? `toggleMoimDetail('${r.id}')` : `openRoom('${r.id}')`;
+        return `
+          <div class="room-item" onclick="${onclick}">
+            <div class="room-top">
+              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+              <div class="room-info"><div class="room-title">${lockIcon}${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
+              <div class="room-right">${badge}${missionTag}</div>
+            </div>
+          </div>
+          <div class="moim-detail" id="moim-detail-${r.id}">
+            <div class="card-quote">${r.quote}</div>
+            <div class="tags">${r.tags.map((t,i) => `<div class="tag ${'t'+(i%3+1)}"><span class="mi">${['schedule','chat','local_fire_department'][i%3]}</span>${t}</div>`).join('')}</div>
+            <div class="temp"><span class="mi">thermostat</span><div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" style="width:${Math.min((r.temp-36)/10*100,100)}%"></div></div></div><span class="temp-val">${r.temp}°</span></div>
+            ${r.mission ? `<div class="md-mission"><span class="mi">${r.mission.icon}</span>${r.mission.name} · ${Math.floor(r.mission.time/60)}분</div>` : ''}
+            <div class="actions">
+              <button class="abtn skip" onclick="event.stopPropagation();toggleMoimDetail('${r.id}')"><span class="mi">close</span>닫기</button>
+              <button class="abtn wave" onclick="event.stopPropagation();alert('손흔들기를 보냈습니다! 👋')"><span class="mi">waving_hand</span>손흔들기</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function openDm(dmId) {
+      const dm = MOCK_DMS.find(d => d.id === dmId);
+      if (!dm) return;
+      document.getElementById('dmTitle').textContent = dm.partner.nickname;
+      currentDmMessages = [
+        { sender:dm.partner.nickname, isMe:false, text:'안녕하세요! 반갑습니다 👋', time:'19:00', icon:dm.partner.icon, gradient:dm.partner.gradient },
+        { sender:'나', isMe:true, text:'안녕하세요! 한강 자주 오시나요?', time:'19:05' },
+        { sender:dm.partner.nickname, isMe:false, text:dm.lastMessage, time:dm.time, icon:dm.partner.icon, gradient:dm.partner.gradient },
+      ];
+      renderDmMessages();
+      switchPage('dm-room');
+    }
+
+    function renderDmMessages() {
+      const area = document.getElementById('dmMsgArea');
+      area.innerHTML = currentDmMessages.map(m => {
+        if (m.isSystem) return `<div class="msg-system">${m.text}</div>`;
+        if (m.isMe) return `<div class="msg-me"><div class="msg-content"><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+        return `<div class="msg-other"><div class="msg-av ${m.gradient||'grd-purple'}"><span class="mi">${m.icon||'person'}</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+      }).join('');
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function sendDm() {
+      const input = document.getElementById('dmInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const now = new Date();
+      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+      currentDmMessages.push({ sender:'나', isMe:true, text, time });
+      input.value = '';
+      renderDmMessages();
+    }
+
+    /* ===== DRAWER ===== */
+    function openDrawer() {
+      document.getElementById('drawer').classList.add('open');
+      document.getElementById('drawerOverlay').classList.add('open');
+    }
+    function closeDrawer() {
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('drawerOverlay').classList.remove('open');
+    }
+
+    /* ===== SEARCH ===== */
+    let searchTab = 'rooms';
+    function openSearch() {
+      document.getElementById('searchOverlay').classList.add('open');
+      document.getElementById('searchInput').focus();
+    }
+    function closeSearch() {
+      document.getElementById('searchOverlay').classList.remove('open');
+      document.getElementById('searchInput').value = '';
+    }
+    function switchSearchTab(el, tab) {
+      searchTab = tab;
+      document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      doSearch();
+    }
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const results = document.getElementById('searchResults');
+      if (!q) {
+        results.innerHTML = '<div style="text-align:center;padding:40px;color:#D1D5DB"><span class="mi" style="font-size:48px;display:block;margin-bottom:12px">search</span>검색어를 입력하세요</div>';
+        return;
+      }
+      if (searchTab === 'rooms') {
+        const matched = MOCK.rooms.filter(r => r.title.toLowerCase().includes(q) || r.creator.toLowerCase().includes(q));
+        if (matched.length === 0) { results.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF">결과 없음</div>'; return; }
+        results.innerHTML = matched.map(r => `
+          <div class="room-item" onclick="closeSearch();openRoom('${r.id}')">
+            <div class="room-top">
+              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+              <div class="room-info"><div class="room-title">${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
+            </div>
+          </div>`).join('');
+      } else {
+        const matched = MOCK.users.filter(u => u.nickname.toLowerCase().includes(q));
+        if (matched.length === 0) { results.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF">결과 없음</div>'; return; }
+        results.innerHTML = matched.map(u => `
+          <div class="mu-item" onclick="closeSearch();viewUser('${u.id}')">
+            <div class="uav ${u.gradient}"><span class="mi">${u.icon}</span></div>
+            <div class="uinfo"><div class="uname">${u.nickname} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:4px">신뢰 ${u.trust}</span></div><div class="udesc">${u.activity} · ${u.dist}m</div></div>
+          </div>`).join('');
+      }
+    }
+
+    /* ===== BOARD ===== */
+    const MOCK_POSTS = [
+      { id:'p1', title:'여의도 벚꽃 명소 추천!', preview:'올해 벚꽃이 정말 예쁘게 폈어요. 여의도 윤중로 근처가 최고입니다.', author:'한강벚꽃러', district:'여의도', isAnon:false, likes:12, comments:5, time:'30분 전' },
+      { id:'p2', title:'뚝섬 편의점 라면 후기', preview:'CU 뚝섬점 라면이 진짜 맛있어요. 한강 보면서 먹으면 꿀맛!', author:'익명', district:'뚝섬', isAnon:true, likes:8, comments:3, time:'1시간 전' },
+      { id:'p3', title:'반포 무지개분수 시간표 아시는 분?', preview:'올해 반포대교 무지개분수 언제 시작하나요? 작년에는 4월이었는데...', author:'반포야경러', district:'반포', isAnon:false, likes:5, comments:7, time:'2시간 전' },
+      { id:'p4', title:'한강에서 강아지 산책 팁', preview:'한강공원에서 강아지 산책할 때 꼭 알아야 할 것들 정리했어요. 리드줄 필수!', author:'익명', district:'잠실', isAnon:true, likes:15, comments:4, time:'3시간 전' },
+      { id:'p5', title:'오늘 한강 치맥 후기 🍗', preview:'여의도에서 치킨 시켜서 한강에서 먹었는데 역시 한강 치맥은 최고...', author:'치맥마스터', district:'여의도', isAnon:false, likes:23, comments:8, time:'어제' },
+    ];
+
+    function renderBoard() {
+      document.getElementById('boardList').innerHTML = MOCK_POSTS.map(p => `
+        <div class="board-item" onclick="alert('게시글 상세 (Mock)')">
+          <div class="board-title-row">
+            ${p.isAnon ? '<span class="board-anon">익명</span>' : ''}
+            <span class="board-post-title">${p.title}</span>
+          </div>
+          <div class="board-post-preview">${p.preview}</div>
+          <div class="board-post-meta">
+            <span>${p.isAnon ? '익명' : p.author}</span> · <span>${p.district}</span> · <span>${p.time}</span>
+            <span style="margin-left:auto;display:flex;align-items:center;gap:2px"><span class="mi">favorite</span>${p.likes}</span>
+            <span style="display:flex;align-items:center;gap:2px"><span class="mi">chat_bubble</span>${p.comments}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    let isAnon = false;
+    function toggleAnon() {
+      isAnon = !isAnon;
+      const toggle = document.getElementById('anonToggle');
+      toggle.className = 'toggle ' + (isAnon ? 'on' : 'off');
+      document.getElementById('anonDesc').textContent = isAnon ? '익명으로 표시됩니다' : '게시판 별명으로 표시됩니다';
     }
 
     /* ===== INIT ===== */
