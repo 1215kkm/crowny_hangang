@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>크라우니 한강 v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    :root{--purple:#6C3CE1;--pink:#D63384;--orange:#E8590C;--cyan:#0EA5E9;--green:#059669;--font:'Noto Sans KR',-apple-system,sans-serif}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:var(--font);max-width:390px;margin:0 auto;min-height:100vh;background:linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%);overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+    .mi{font-family:'Material Icons Round';font-size:22px;font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;text-transform:none;display:inline-block;white-space:nowrap;direction:ltr;-webkit-font-smoothing:antialiased}
+    .page{display:none;animation:fadeIn .25s ease}.page.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* BOTTOM NAV */
+    .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:white;display:flex;justify-content:space-around;padding:6px 0 max(6px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -2px 20px rgba(0,0,0,.04)}
+    .bnav-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;color:#C4B5FD;cursor:pointer;padding:6px 16px;border:none;background:none;font-family:var(--font);text-decoration:none;transition:color .2s}
+    .bnav-item.active{color:var(--purple)}
+    .bnav-item .mi{font-size:24px;transition:all .2s}
+    .bnav-item.active .mi{background:linear-gradient(135deg,rgba(123,97,255,.12),rgba(232,69,160,.08));border-radius:12px;padding:4px 16px}
+    .bnav-label{font-weight:600}
+
+    /* SHARED */
+    .icon-btn{width:40px;height:40px;background:rgba(255,255,255,.2);border-radius:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);color:white;border:none;font-family:var(--font)}
+    .sheet{background:white;border-radius:32px 32px 0 0;padding:28px 24px 100px}
+    .handle{width:36px;height:4px;background:#E5E7EB;border-radius:2px;margin:0 auto 24px}
+    .sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .sec-title{font-size:17px;font-weight:800;color:#1E1B4B}
+    .sec-more{font-size:13px;color:var(--purple);font-weight:600;cursor:pointer;display:flex;align-items:center;gap:2px}
+    .page-title{font-size:18px;font-weight:800;color:white}
+
+    /* GRADIENT HELPERS */
+    .grd-pink{background:linear-gradient(135deg,#F43F5E,#E8590C)}
+    .grd-blue{background:linear-gradient(135deg,#0EA5E9,#2563EB)}
+    .grd-orange{background:linear-gradient(135deg,#F59E0B,#E8590C)}
+    .grd-purple{background:linear-gradient(135deg,#7C4DFF,#5B2FD6)}
+    .grd-main{background:linear-gradient(135deg,#6C3CE1,#D63384)}
+
+    /* === HOME === */
+    .home-hero{position:relative;width:100%;height:570px;overflow:hidden}
+    .home-hero-img{width:100%;height:100%;object-fit:cover;display:block}
+    .home-hero-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.05) 30%,transparent 60%,rgba(255,255,255,.4) 100%)}
+    .home-hero-btns{position:absolute;top:16px;left:24px;right:24px;display:flex;justify-content:space-between;z-index:10}
+    .home-hero-btns .icon-btn{background:rgba(0,0,0,.2)}
+    .home-hero-title{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10}
+    .home-hero-title h1{font-family:'Paperlogy','Noto Sans KR',sans-serif;font-size:48px;font-weight:700;color:white;letter-spacing:-1px;text-shadow:0 4px 12px rgba(0,0,0,.25);margin-bottom:4px}
+    .home-hero-title h2{font-family:'Paperlogy','Noto Sans KR',sans-serif;font-size:24px;font-weight:700;color:white;letter-spacing:1px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+    .home-sheet{background:white;border-radius:32px 32px 0 0;margin-top:-32px;position:relative;z-index:5;padding:28px 24px 100px}
+    .flash-scroll{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin-bottom:28px;padding-bottom:2px}
+    .flash-scroll::-webkit-scrollbar{display:none}
+    .fc{min-width:170px;background:#F9F7FF;border-radius:20px;padding:16px;border:1px solid #EDE9FE;cursor:pointer;transition:all .2s}
+    .fc:hover{box-shadow:0 4px 16px rgba(123,97,255,.1);transform:translateY(-2px)}
+    .fc-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:white}
+    .fc-icon .mi{font-size:22px}
+    .fc-name{font-size:13px;font-weight:700;color:#1E1B4B;margin-bottom:3px}
+    .fc-meta{font-size:10px;color:#9CA3AF}
+    .user-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #F3F4F6}
+    .user-item:last-child{border-bottom:none}
+    .uav{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .uav .mi{font-size:24px}
+    .uinfo{flex:1;min-width:0}
+    .uname{font-size:14px;font-weight:700;color:#1E1B4B}
+    .udesc{font-size:12px;color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .uright{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .udist{font-size:10px;color:#D1D5DB;font-weight:500}
+    .ubtn{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;border:none;padding:7px 14px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(108,60,225,.3)}
+    .ubtn .mi{font-size:14px}
+
+    /* === MATCHING (사람 찾기) === */
+    .match-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .glass-card{background:rgba(255,255,255,.18);border-radius:16px;padding:16px 20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15);margin:0 24px 16px;color:white;text-align:center}
+    .glass-card .big-num{font-size:36px;font-weight:900;letter-spacing:-1px}
+    .glass-card .sub{font-size:12px;opacity:.7;margin-top:2px}
+    .chip-scroll{display:flex;gap:8px;overflow-x:auto;padding:0 24px 12px;scrollbar-width:none}
+    .chip-scroll::-webkit-scrollbar{display:none}
+    .chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);background:rgba(255,255,255,.1);flex-shrink:0}
+    .chip.active{background:white;color:var(--purple);border-color:white}
+    .filter-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);padding:0 24px;margin-bottom:6px}
+    .mode-toggle{display:flex;margin:4px 24px 20px;background:rgba(255,255,255,.15);border-radius:14px;padding:3px}
+    .mode-btn{flex:1;padding:10px;text-align:center;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;color:rgba(255,255,255,.7);border:none;background:none;font-family:var(--font)}
+    .mode-btn.active{background:white;color:var(--purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .filtered-count{font-size:12px;color:#9CA3AF;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:4px}
+    .filtered-count strong{color:var(--purple)}
+    .mu-item{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer;transition:background .15s}
+    .mu-item:active{background:#F9F7FF}
+    .mu-item:last-child{border-bottom:none}
+    .mu-moim{margin-top:4px;padding:4px 10px;background:#F3F0FF;border-radius:8px;font-size:10px;color:var(--purple);font-weight:600;display:inline-flex;align-items:center;gap:3px}
+    .mu-moim .mi{font-size:12px}
+
+    /* === CHAT/MOIM ROOMS === */
+    .chat-header{padding:24px 24px 16px;color:white;display:flex;justify-content:space-between;align-items:center}
+    .room-item{padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer;transition:background .15s}
+    .room-item:active{background:#F9F7FF}
+    .room-item:last-child{border-bottom:none}
+    .room-top{display:flex;align-items:center;gap:14px}
+    .room-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .room-icon .mi{font-size:24px}
+    .room-info{flex:1;min-width:0}
+    .room-title{font-size:14px;font-weight:700;color:#1E1B4B;display:flex;align-items:center;gap:6px}
+    .room-title .mi{font-size:16px;color:#9CA3AF}
+    .room-meta{font-size:12px;color:#9CA3AF;margin-top:2px}
+    .room-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+    .room-badge{background:var(--purple);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;min-width:18px;text-align:center}
+    .room-mission-tag{font-size:10px;color:var(--orange);font-weight:600;display:flex;align-items:center;gap:2px}
+    .room-mission-tag .mi{font-size:13px}
+
+    /* MOIM DETAIL ACCORDION */
+    .moim-detail{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 16px;background:#F9F7FF;border-radius:0 0 18px 18px;margin-top:-4px}
+    .moim-detail.open{max-height:600px;padding:20px 16px}
+    .md-profile{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .md-avatar{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .md-avatar .mi{font-size:24px}
+    .md-name{font-size:15px;font-weight:700;color:#1E1B4B}
+    .md-sub{font-size:11px;color:#9CA3AF}
+    .md-badge{padding:4px 10px;background:rgba(123,97,255,.08);border-radius:8px;font-size:11px;font-weight:700;color:var(--purple);margin-left:auto;flex-shrink:0}
+
+    /* PROFILE CARD PARTS (shared) */
+    .card-quote{padding:16px 16px 16px 28px;background:#F3F0FF;border-radius:18px;font-size:14px;color:#4B5563;line-height:1.6;margin-bottom:14px;position:relative}
+    .card-quote::before{content:'\201C';position:absolute;top:8px;left:12px;font-size:28px;color:#C4B5FD;font-weight:800;line-height:1}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .tag{padding:7px 12px;border-radius:12px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px}
+    .tag .mi{font-size:14px}
+    .tag.t1{background:rgba(244,63,94,.1);color:#E11D48}
+    .tag.t2{background:rgba(123,97,255,.08);color:var(--purple)}
+    .tag.t3{background:rgba(54,209,220,.08);color:#0EA5E9}
+    .temp{display:flex;align-items:center;gap:12px;padding:12px 14px;background:#F9F7FF;border-radius:14px;margin-bottom:14px}
+    .temp .mi{font-size:22px;color:var(--purple)}
+    .temp-info{flex:1}
+    .temp-label{font-size:10px;color:#9CA3AF;margin-bottom:4px}
+    .temp-bar{height:5px;background:#EDE9FE;border-radius:3px;overflow:hidden}
+    .temp-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:3px}
+    .temp-val{font-size:18px;font-weight:800;color:var(--orange)}
+    .md-mission{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(232,89,12,.06);border-radius:12px;margin-bottom:14px;font-size:12px;color:var(--orange);font-weight:600}
+    .md-mission .mi{font-size:18px}
+    .actions{display:flex;gap:10px}
+    .abtn{flex:1;padding:13px;border-radius:14px;border:none;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+    .abtn .mi{font-size:18px}
+    .abtn.skip{background:#F3F4F6;color:#9CA3AF}
+    .abtn.wave{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;box-shadow:0 4px 16px rgba(108,60,225,.4)}
+    .abtn:active{transform:scale(.97)}
+
+    /* === PROFILE === */
+    .profile-top{padding:32px 24px 28px;color:white;text-align:center}
+    .profile-avatar{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#F43F5E,#E8590C);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:white;border:3px solid rgba(255,255,255,.3)}
+    .profile-avatar .mi{font-size:40px}
+    .profile-name{font-size:20px;font-weight:800;margin-bottom:4px}
+    .profile-sub{font-size:12px;opacity:.7}
+    .stat-row{display:flex;gap:12px;margin:0 24px 28px}
+    .stat-box{flex:1;background:rgba(255,255,255,.2);border-radius:16px;padding:14px;text-align:center;backdrop-filter:blur(10px);color:white;border:1px solid rgba(255,255,255,.15)}
+    .stat-num{font-size:22px;font-weight:800}
+    .stat-label{font-size:10px;opacity:.7;margin-top:2px}
+    .menu-list{padding:0 24px}
+    .menu-item{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid #F3F4F6;cursor:pointer}
+    .menu-item:last-child{border-bottom:none}
+    .menu-ic{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white}
+    .menu-ic .mi{font-size:22px}
+    .menu-name{flex:1;font-size:14px;font-weight:600;color:#1E1B4B}
+    .menu-arrow{color:#D1D5DB}
+
+    /* === USER PROFILE DETAIL === */
+    .up-header{padding:24px 24px 0;color:white;display:flex;align-items:center;gap:12px}
+    .up-top{display:flex;align-items:center;gap:16px;padding:20px 24px 28px;color:white}
+    .up-avatar{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .up-avatar .mi{font-size:30px}
+    .up-name{font-size:18px;font-weight:800;margin-bottom:2px}
+    .up-sub{font-size:12px;opacity:.8;display:flex;align-items:center;gap:4px}
+    .up-sub .mi{font-size:14px}
+    .up-badge{padding:5px 12px;background:rgba(255,255,255,.2);border-radius:10px;font-size:11px;font-weight:700;backdrop-filter:blur(10px);display:flex;align-items:center;gap:3px;margin-left:auto;flex-shrink:0}
+    .up-badge .mi{font-size:14px}
+    .contact-stages{display:flex;flex-direction:column;gap:8px;margin:20px 0}
+    .stage{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;font-size:13px;font-weight:600}
+    .stage .mi{font-size:20px}
+    .stage.unlocked{background:#F0FDF4;color:#059669}
+    .stage.locked{background:#F9FAFB;color:#D1D5DB}
+    .stage-val{margin-left:auto;font-weight:700}
+    .stage-lock{margin-left:auto}
+
+    /* === CREATE ROOM === */
+    .cr-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #F3F4F6;background:white}
+    .cr-close{width:36px;height:36px;border:none;background:#F3F4F6;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6B7280;font-family:var(--font)}
+    .cr-title{font-size:16px;font-weight:800;color:#1E1B4B}
+    .cr-submit{padding:8px 18px;border-radius:12px;border:none;font-family:var(--font);font-size:13px;font-weight:700;color:white;cursor:pointer;background:linear-gradient(135deg,#6C3CE1,#D63384)}
+    .cr-body{background:white;padding:20px;min-height:100vh}
+    .cr-input{width:100%;border:none;outline:none;font-family:var(--font);font-size:16px;font-weight:700;color:#1E1B4B;padding:12px 0;border-bottom:1px solid #F3F4F6}
+    .cr-input::placeholder{color:#D1D5DB;font-weight:500}
+    .cr-textarea{width:100%;border:none;outline:none;font-family:var(--font);font-size:14px;color:#4B5563;padding:12px 0;resize:none;min-height:80px;border-bottom:1px solid #F3F4F6}
+    .cr-textarea::placeholder{color:#D1D5DB}
+    .cr-label{font-size:13px;font-weight:700;color:#1E1B4B;margin:20px 0 10px}
+    .cr-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+    .cr-chip{padding:8px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid #E5E7EB;color:#6B7280;background:white}
+    .cr-chip.active{border-color:var(--purple);background:#F3F0FF;color:var(--purple)}
+    .stepper{display:flex;align-items:center;gap:16px;margin:8px 0 16px}
+    .stepper-btn{width:36px;height:36px;border-radius:12px;border:1px solid #E5E7EB;background:white;font-size:18px;font-weight:700;color:#6B7280;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font);transition:all .2s}
+    .stepper-btn:active{background:#F3F0FF;border-color:var(--purple);color:var(--purple)}
+    .stepper-val{font-size:20px;font-weight:800;color:#1E1B4B;min-width:40px;text-align:center}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F3F4F6}
+    .toggle-label{font-size:14px;font-weight:600;color:#1E1B4B}
+    .toggle{width:48px;height:28px;border-radius:14px;border:none;cursor:pointer;position:relative;transition:background .2s}
+    .toggle.on{background:var(--purple)}
+    .toggle.off{background:#D1D5DB}
+    .toggle::after{content:'';position:absolute;top:3px;width:22px;height:22px;border-radius:11px;background:white;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+    .toggle.on::after{left:23px}
+    .toggle.off::after{left:3px}
+    .mission-option{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;cursor:pointer;transition:all .2s;margin-bottom:6px;border:1px solid transparent}
+    .mission-option.active{background:#F3F0FF;border-color:#EDE9FE}
+    .mission-option .mo-radio{width:20px;height:20px;border-radius:50%;border:2px solid #D1D5DB;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+    .mission-option.active .mo-radio{border-color:var(--purple);background:var(--purple)}
+    .mission-option.active .mo-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:white}
+    .mo-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .mo-icon .mi{font-size:18px}
+    .mo-name{font-size:13px;font-weight:600;color:#1E1B4B}
+    .mo-desc{font-size:11px;color:#9CA3AF}
+    .custom-opts{padding:12px 16px;background:#F9F7FF;border-radius:14px;margin:-2px 0 8px 32px}
+    .custom-opts label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:#4B5563;padding:6px 0;cursor:pointer}
+    .custom-opts input[type=checkbox]{accent-color:var(--purple);width:16px;height:16px}
+    .custom-opts input[type=text]{width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:8px 12px;font-size:12px;margin-top:6px;font-family:var(--font);outline:none}
+    .custom-opts input[type=text]:focus{border-color:var(--purple)}
+    .slider-row{display:flex;align-items:center;gap:12px;margin:8px 0 20px}
+    .slider-row input[type=range]{flex:1;accent-color:var(--purple)}
+    .slider-val{font-size:14px;font-weight:700;color:var(--purple);min-width:36px}
+
+    /* === CHAT ROOM === */
+    .chatroom-header{display:flex;align-items:center;gap:12px;padding:16px 20px;background:linear-gradient(165deg,#5B2FD6,#7C4DFF);color:white}
+    .chatroom-title{flex:1;font-size:15px;font-weight:700}
+    .chatroom-count{font-size:11px;opacity:.7}
+    .mission-card{margin:0 16px 12px;padding:14px;background:#FFF7ED;border:1px solid #FDE68A;border-radius:18px;display:flex;align-items:center;gap:12px}
+    .mission-card .mc-icon{width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .mission-card .mc-icon .mi{font-size:22px}
+    .mc-info{flex:1}
+    .mc-name{font-size:13px;font-weight:700;color:#92400E}
+    .mc-time{font-size:11px;color:#B45309;margin-top:2px}
+    .mc-timer{position:relative;width:48px;height:48px;flex-shrink:0}
+    .mc-timer svg{width:48px;height:48px;transform:rotate(-90deg)}
+    .mc-timer-bg{fill:none;stroke:#FDE68A;stroke-width:4}
+    .mc-timer-prog{fill:none;stroke:var(--orange);stroke-width:4;stroke-linecap:round;stroke-dasharray:132;stroke-dashoffset:38}
+    .mc-timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:11px;font-weight:800;color:#92400E}
+    .mc-join{padding:8px 14px;border-radius:10px;border:none;font-family:var(--font);font-size:11px;font-weight:700;color:white;cursor:pointer;background:linear-gradient(135deg,#F59E0B,#E8590C);box-shadow:0 2px 8px rgba(232,89,12,.3)}
+    .msg-area{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+    .msg-system{text-align:center;font-size:11px;color:#9CA3AF;padding:6px 16px;background:#F9FAFB;border-radius:20px;align-self:center}
+    .msg-other{display:flex;gap:8px;align-items:flex-start}
+    .msg-av{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+    .msg-av .mi{font-size:16px}
+    .msg-content{max-width:70%}
+    .msg-sender{font-size:10px;font-weight:700;color:#6B7280;margin-bottom:2px}
+    .msg-bubble{padding:10px 14px;font-size:13px;line-height:1.5;color:#1E1B4B;border-radius:18px 18px 18px 4px;background:#F3F4F6}
+    .msg-time{font-size:9px;color:#D1D5DB;margin-top:2px}
+    .msg-me{display:flex;justify-content:flex-end}
+    .msg-me .msg-bubble{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white;border-radius:18px 18px 4px 18px}
+    .msg-me .msg-time{text-align:right}
+    .input-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid #F3F4F6;background:white}
+    .input-field{flex:1;border:1px solid #E5E7EB;border-radius:20px;padding:10px 16px;font-size:13px;outline:none;font-family:var(--font)}
+    .input-field:focus{border-color:var(--purple)}
+    .send-btn{width:36px;height:36px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;background:linear-gradient(135deg,#6C3CE1,#D63384)}
+    .send-btn .mi{font-size:20px}
+    .input-icon{width:36px;height:36px;border-radius:50%;border:none;background:#F3F4F6;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#9CA3AF}
+    .input-icon .mi{font-size:20px}
+  </style>
+</head>
+<body>
+
+  <!-- ========== PAGE: HOME ========== -->
+  <div class="page active" id="page-home">
+    <div class="home-hero">
+      <img class="home-hero-img" src="images/home_bg.jpg" alt="한강" onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(165deg,#5B2FD6 0%,#7C4DFF 35%,#9B72FF 100%)'">
+      <div class="home-hero-overlay"></div>
+      <div class="home-hero-btns">
+        <button class="icon-btn"><span class="mi">menu</span></button>
+        <button class="icon-btn"><span class="mi">search</span></button>
+      </div>
+      <div class="home-hero-title"><h1>한강앱</h1><h2>Hangang App</h2></div>
+    </div>
+    <div class="home-sheet">
+      <div class="sec-head">
+        <div class="sec-title">번개 모임</div>
+        <span class="sec-more" onclick="switchPage('chat')">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
+      </div>
+      <div class="flash-scroll">
+        <div class="fc" onclick="switchPage('chat')">
+          <div class="fc-icon grd-pink"><span class="mi">restaurant</span></div>
+          <div class="fc-name">치킨 같이 시켜요!</div>
+          <div class="fc-meta">여의도 · 지금 · 2/4명</div>
+        </div>
+        <div class="fc" onclick="switchPage('chat')">
+          <div class="fc-icon grd-purple"><span class="mi">directions_run</span></div>
+          <div class="fc-name">한강 러닝 5km</div>
+          <div class="fc-meta">뚝섬 · 19:30 · 1/5명</div>
+        </div>
+        <div class="fc" onclick="switchPage('chat')">
+          <div class="fc-icon grd-blue"><span class="mi">nightlight</span></div>
+          <div class="fc-name">야경 산책</div>
+          <div class="fc-meta">반포 · 20:00 · 3/6명</div>
+        </div>
+      </div>
+
+      <div class="sec-head">
+        <div class="sec-title">근처 사용자</div>
+        <span class="sec-more" onclick="switchPage('matching')">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
+      </div>
+      <div class="user-item">
+        <div class="uav grd-pink"><span class="mi">directions_run</span></div>
+        <div class="uinfo"><div class="uname">뚝섬러닝러</div><div class="udesc">러닝 중 · "같이 달릴 사람~"</div></div>
+        <div class="uright"><span class="udist">120m</span><button class="ubtn" onclick="viewUser('u1')"><span class="mi">waving_hand</span>손흔들기</button></div>
+      </div>
+      <div class="user-item">
+        <div class="uav grd-blue"><span class="mi">sports_bar</span></div>
+        <div class="uinfo"><div class="uname">여의도치맥왕</div><div class="udesc">치맥 중 · "합석 환영!"</div></div>
+        <div class="uright"><span class="udist">200m</span><button class="ubtn" onclick="viewUser('u2')"><span class="mi">waving_hand</span>손흔들기</button></div>
+      </div>
+      <div class="user-item">
+        <div class="uav grd-orange"><span class="mi">photo_camera</span></div>
+        <div class="uinfo"><div class="uname">SakuraLover</div><div class="udesc">사진 촬영 · "한강 처음이에요!"</div></div>
+        <div class="uright"><span class="udist">350m</span><button class="ubtn" onclick="viewUser('u3')"><span class="mi">waving_hand</span>Wave</button></div>
+      </div>
+
+      <div style="margin-top:24px;padding:16px;background:linear-gradient(135deg,#F3F0FF,#EDE9FE);border-radius:18px;border:1px solid #DDD6FE;cursor:pointer;display:flex;align-items:center;gap:14px">
+        <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#7C4DFF,#5B2FD6);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0"><span class="mi">forum</span></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--purple)">한강 게시판</div><div style="font-size:11px;color:#9CA3AF">지역별 커뮤니티 · 정보 · 맛집 · 사진</div></div>
+        <span class="mi" style="color:var(--purple);font-size:20px">chevron_right</span>
+      </div>
+      <div style="margin-top:12px;padding:16px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:18px;border:1px solid #FDE68A;cursor:pointer;display:flex;align-items:center;gap:14px">
+        <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#F59E0B,#E8590C);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0"><span class="mi">delivery_dining</span></div>
+        <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#92400E">한강 주문</div><div style="font-size:11px;color:#B45309">배달 · 편의점 · 선물하기</div></div>
+        <span class="mi" style="color:#D97706;font-size:20px">chevron_right</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: MATCHING (사람 찾기) ========== -->
+  <div class="page" id="page-matching">
+    <div class="match-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">매칭</div>
+      <button class="icon-btn"><span class="mi">tune</span></button>
+    </div>
+
+    <div class="glass-card">
+      <div class="big-num" id="totalCount">127</div>
+      <div class="sub">현재 한강에 접속 중</div>
+    </div>
+
+    <div class="filter-label">지역</div>
+    <div class="chip-scroll" id="districtChips">
+      <div class="chip active" onclick="selectChip(this,'districtChips')">전체</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">여의도</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">뚝섬</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">반포</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">잠실</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">망원</div>
+      <div class="chip" onclick="selectChip(this,'districtChips')">이촌</div>
+    </div>
+
+    <div class="filter-label">취미</div>
+    <div class="chip-scroll" id="hobbyChips">
+      <div class="chip active" onclick="selectChip(this,'hobbyChips')">전체</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">치맥</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">러닝</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">산책</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">피크닉</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">반려동물</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">자전거</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">사진</div>
+      <div class="chip" onclick="selectChip(this,'hobbyChips')">카페</div>
+    </div>
+
+    <div class="filter-label">관심사</div>
+    <div class="chip-scroll" id="interestChips">
+      <div class="chip active" onclick="selectChip(this,'interestChips')">전체</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">맛집탐방</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">야경</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">음악</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">언어교환</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">독서</div>
+      <div class="chip" onclick="selectChip(this,'interestChips')">운동</div>
+    </div>
+
+    <div class="filter-label">모드</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modePlay" onclick="selectMode('play')">같이 놀래요 🎉</button>
+      <button class="mode-btn" id="modeAlone" onclick="selectMode('alone')">혼자 있을래요 😌</button>
+    </div>
+
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="filtered-count">필터 결과 <strong id="filteredNum">5</strong>명</div>
+      <div id="userList">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: CHAT / MOIM ROOMS ========== -->
+  <div class="page" id="page-chat">
+    <div class="chat-header">
+      <button class="icon-btn" onclick="switchPage('home')"><span class="mi">arrow_back</span></button>
+      <div class="page-title">모임방</div>
+      <button class="icon-btn" onclick="switchPage('create-room')"><span class="mi">add</span></button>
+    </div>
+    <div class="sheet" style="border-radius:32px 32px 0 0">
+      <div class="handle"></div>
+      <div id="roomList">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: PROFILE ========== -->
+  <div class="page" id="page-profile">
+    <div class="profile-top">
+      <div class="profile-avatar"><span class="mi">person</span></div>
+      <div class="profile-name">경모님</div>
+      <div class="profile-sub">여의도 한강공원 · Lv.3</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">38.5°</div><div class="stat-label">한강 온도</div></div>
+      <div class="stat-box"><div class="stat-num">12</div><div class="stat-label">미션 완료</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">매칭 성공</div></div>
+    </div>
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="menu-list">
+        <div class="menu-item"><div class="menu-ic grd-pink"><span class="mi">emoji_events</span></div><div class="menu-name">내 배지</div><div class="menu-arrow"><span class="mi">chevron_right</span></div></div>
+        <div class="menu-item"><div class="menu-ic grd-purple"><span class="mi">history</span></div><div class="menu-name">활동 기록</div><div class="menu-arrow"><span class="mi">chevron_right</span></div></div>
+        <div class="menu-item"><div class="menu-ic grd-blue"><span class="mi">favorite</span></div><div class="menu-name">관심 목록</div><div class="menu-arrow"><span class="mi">chevron_right</span></div></div>
+        <div class="menu-item"><div class="menu-ic grd-orange"><span class="mi">store</span></div><div class="menu-name">크라우니 상점</div><div class="menu-arrow"><span class="mi">chevron_right</span></div></div>
+        <div class="menu-item"><div class="menu-ic" style="background:linear-gradient(135deg,#059669,#0EA5E9)"><span class="mi">settings</span></div><div class="menu-name">설정</div><div class="menu-arrow"><span class="mi">chevron_right</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: USER PROFILE DETAIL ========== -->
+  <div class="page" id="page-user-profile">
+    <div class="up-header">
+      <button class="icon-btn" onclick="goBack()"><span class="mi">arrow_back</span></button>
+      <div class="page-title">프로필</div>
+    </div>
+    <div class="up-top">
+      <div class="up-avatar grd-pink" id="upAvatar"><span class="mi">directions_run</span></div>
+      <div>
+        <div class="up-name" id="upName">뚝섬러닝러</div>
+        <div class="up-sub"><span class="mi">location_on</span><span id="upDist">120m</span> · <span id="upActivity">러닝 중</span></div>
+      </div>
+      <div class="up-badge" id="upBadge"><span class="mi">verified</span>Lv.<span id="upLv">3</span></div>
+    </div>
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="card-quote" id="upQuote">같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜</div>
+      <div class="tags" id="upTags">
+        <div class="tag t1"><span class="mi">schedule</span>시간 잘 지켜요</div>
+        <div class="tag t2"><span class="mi">chat</span>대화 재밌어요</div>
+        <div class="tag t3"><span class="mi">local_fire_department</span>분위기 메이커</div>
+      </div>
+      <div class="temp">
+        <span class="mi">thermostat</span>
+        <div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" id="upTempBar" style="width:72%"></div></div></div>
+        <span class="temp-val" id="upTemp">38.5°</span>
+      </div>
+
+      <div id="upMoim" style="margin-bottom:14px">
+        <div class="mu-moim"><span class="mi">groups</span>한강 러닝 크루 참여 중</div>
+      </div>
+
+      <div class="sec-title" style="font-size:14px;margin-bottom:12px">연락처 단계</div>
+      <div class="contact-stages">
+        <div class="stage unlocked"><span class="mi">badge</span><div>Stage 1: 닉네임</div><span class="stage-val" id="upNickStage">뚝섬러닝러</span></div>
+        <div class="stage unlocked"><span class="mi">chat</span><div>Stage 2: 앱 내 채팅</div><span class="mi stage-lock" style="color:#059669">check_circle</span></div>
+        <div class="stage locked"><span class="mi">share</span><div>Stage 3: SNS 교환</div><span class="mi stage-lock">lock</span></div>
+        <div class="stage locked"><span class="mi">person</span><div>Stage 4: 상세 프로필</div><span class="mi stage-lock">lock</span></div>
+      </div>
+
+      <div class="actions" style="margin-top:20px">
+        <button class="abtn skip" onclick="goBack()"><span class="mi">close</span>다음에</button>
+        <button class="abtn wave" onclick="alert('손흔들기를 보냈습니다! 👋')"><span class="mi">waving_hand</span>손흔들기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: CREATE ROOM ========== -->
+  <div class="page" id="page-create-room" style="background:white;min-height:100vh">
+    <div class="cr-header">
+      <button class="cr-close" onclick="goBack()"><span class="mi">close</span></button>
+      <div class="cr-title">모집글 작성</div>
+      <button class="cr-submit" onclick="alert('모집글이 등록되었습니다!');switchPage('chat')">등록</button>
+    </div>
+    <div class="cr-body">
+      <input class="cr-input" type="text" placeholder="제목을 입력하세요">
+      <textarea class="cr-textarea" placeholder="어떤 모임인지 설명해주세요..."></textarea>
+
+      <div class="cr-label">지역 선택</div>
+      <div class="cr-chips" id="crDistrictChips">
+        <div class="cr-chip active" onclick="selectCrChip(this,'crDistrictChips')">여의도</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crDistrictChips')">뚝섬</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crDistrictChips')">반포</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crDistrictChips')">잠실</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crDistrictChips')">망원</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crDistrictChips')">이촌</div>
+      </div>
+
+      <div class="cr-label">모집 인원</div>
+      <div class="stepper">
+        <button class="stepper-btn" onclick="addPeople(-1)">−</button>
+        <div class="stepper-val" id="peopleCount">3</div>
+        <button class="stepper-btn" onclick="addPeople(1)">+</button>
+        <span style="font-size:13px;color:#9CA3AF">명</span>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">공개방</div>
+        <button class="toggle on" id="privacyToggle" onclick="togglePrivacy()"></button>
+      </div>
+      <div style="font-size:11px;color:#9CA3AF;margin-top:4px;margin-bottom:16px" id="privacyDesc">누구나 바로 입장할 수 있어요</div>
+
+      <div class="cr-label">미션 선택 (선택사항)</div>
+      <div id="missionOptions">
+        <div class="mission-option active" onclick="selectMission(this,'none')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon" style="background:#E5E7EB"><span class="mi" style="color:#9CA3AF">block</span></div>
+          <div><div class="mo-name">미션 없음</div><div class="mo-desc">미션 없이 자유롭게</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'selfie')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon grd-pink"><span class="mi">photo_camera</span></div>
+          <div><div class="mo-name">가장 웃긴 셀카 📸</div><div class="mo-desc">서로 찍어주고 가장 웃긴 사진 뽑기</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'find')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon grd-blue"><span class="mi">search</span></div>
+          <div><div class="mo-name">주변 특이한 것 찾기 🔍</div><div class="mo-desc">가장 특이한 것을 발견하세요</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'story')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon grd-purple"><span class="mi">chat</span></div>
+          <div><div class="mo-name">감동/웃긴 일 공유 💬</div><div class="mo-desc">최근에 있었던 이야기 하나씩</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'today')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon grd-orange"><span class="mi">edit</span></div>
+          <div><div class="mo-name">오늘 일 공유 📝</div><div class="mo-desc">오늘 하루를 공유해보세요</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'voice')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon" style="background:linear-gradient(135deg,#059669,#0EA5E9)"><span class="mi">mic</span></div>
+          <div><div class="mo-name">본인 소개 (10초 음성) 🎙</div><div class="mo-desc">10초 안에 자기소개!</div></div>
+        </div>
+        <div class="mission-option" onclick="selectMission(this,'custom')">
+          <div class="mo-radio"></div>
+          <div class="mo-icon" style="background:linear-gradient(135deg,#6B7280,#374151)"><span class="mi">tune</span></div>
+          <div><div class="mo-name">직접 정하기 ✏️</div><div class="mo-desc">사진/음성/글 중 선택</div></div>
+        </div>
+      </div>
+      <div class="custom-opts" id="customOpts" style="display:none">
+        <label><input type="checkbox" checked> 사진 첨부</label>
+        <label><input type="checkbox"> 음성 첨부</label>
+        <label><input type="checkbox" checked> 글 첨부</label>
+        <input type="text" placeholder="미션 설명을 입력하세요">
+      </div>
+
+      <div class="cr-label">미션 시간</div>
+      <div class="slider-row">
+        <input type="range" min="1" max="10" value="3" oninput="document.getElementById('sliderVal').textContent=this.value+'분'">
+        <div class="slider-val" id="sliderVal">3분</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: CHAT ROOM ========== -->
+  <div class="page" id="page-chat-room" style="background:white;min-height:100vh;display:none;flex-direction:column">
+    <div class="chatroom-header">
+      <button class="icon-btn" style="background:rgba(255,255,255,.15)" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
+      <div>
+        <div class="chatroom-title" id="croomTitle">여의도 치맥 모임</div>
+        <div class="chatroom-count" id="croomCount">3/5명</div>
+      </div>
+      <button class="icon-btn" style="background:rgba(255,255,255,.15)"><span class="mi">more_vert</span></button>
+    </div>
+
+    <!-- 미션 카드 (있을 때만) -->
+    <div class="mission-card" id="roomMissionCard" style="display:none">
+      <div class="mc-icon grd-pink" id="mcIcon"><span class="mi">photo_camera</span></div>
+      <div class="mc-info">
+        <div class="mc-name" id="mcName">가장 웃긴 셀카</div>
+        <div class="mc-time" id="mcTime">남은 시간 2:30</div>
+      </div>
+      <div class="mc-timer">
+        <svg viewBox="0 0 48 48">
+          <circle class="mc-timer-bg" cx="24" cy="24" r="21"/>
+          <circle class="mc-timer-prog" cx="24" cy="24" r="21" id="roomTimerCircle"/>
+        </svg>
+        <div class="mc-timer-text" id="roomTimerText">2:30</div>
+      </div>
+      <button class="mc-join" onclick="showMissionSubmit()">참여</button>
+    </div>
+
+    <!-- 미션 제출 영역 -->
+    <div id="missionSubmitArea" style="display:none;padding:12px 16px;background:#FFF7ED;border-bottom:1px solid #FDE68A">
+      <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px">미션 제출</div>
+      <div style="display:flex;gap:8px">
+        <button class="input-icon" style="background:#FEF3C7" onclick="alert('사진 업로드 (Mock)')"><span class="mi" style="color:#D97706">photo_camera</span></button>
+        <button class="input-icon" style="background:#FEF3C7" onclick="alert('음성 녹음 (Mock)')"><span class="mi" style="color:#D97706">mic</span></button>
+        <input type="text" placeholder="텍스트로 제출..." style="flex:1;border:1px solid #FDE68A;border-radius:12px;padding:8px 12px;font-size:12px;font-family:var(--font);outline:none" id="missionTextInput">
+        <button style="padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#F59E0B,#E8590C);color:white;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)" onclick="submitMission()">제출</button>
+      </div>
+    </div>
+
+    <!-- 채팅 메시지 -->
+    <div class="msg-area" id="msgArea">
+      <!-- JS로 동적 렌더링 -->
+    </div>
+
+    <!-- 하단 입력바 -->
+    <div class="input-bar">
+      <button class="input-icon"><span class="mi">add_circle</span></button>
+      <button class="input-icon"><span class="mi">photo_camera</span></button>
+      <input class="input-field" type="text" placeholder="메시지 입력..." id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="send-btn" onclick="sendMessage()"><span class="mi">send</span></button>
+    </div>
+  </div>
+
+  <!-- ========== BOTTOM NAV ========== -->
+  <nav class="bnav" id="mainNav">
+    <button class="bnav-item active" data-page="home" onclick="switchPage('home')"><span class="mi">home</span><span class="bnav-label">홈</span></button>
+    <button class="bnav-item" data-page="matching" onclick="switchPage('matching')"><span class="mi">waving_hand</span><span class="bnav-label">매칭</span></button>
+    <button class="bnav-item" data-page="chat" onclick="switchPage('chat')"><span class="mi">forum</span><span class="bnav-label">채팅</span></button>
+    <button class="bnav-item" data-page="profile" onclick="switchPage('profile')"><span class="mi">person</span><span class="bnav-label">프로필</span></button>
+  </nav>
+
+  <script>
+    /* ===== MOCK DATA ===== */
+    const MOCK = {
+      totalOnline: 127,
+      rooms: [
+        { id:'r1', title:'여의도 치맥 모임', creator:'여의도치맥왕', district:'여의도', icon:'sports_bar', gradient:'grd-blue', current:3, max:5, isJoined:true, unread:2, isPrivate:false, mission:null, creatorLv:5, temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'], quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺' },
+        { id:'r2', title:'한강 러닝 크루', creator:'뚝섬러닝러', district:'뚝섬', icon:'directions_run', gradient:'grd-pink', current:2, max:4, isJoined:false, unread:0, isPrivate:true, mission:{type:'selfie',name:'가장 웃긴 셀카',time:180,icon:'photo_camera'}, creatorLv:3, temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'], quote:'같이 달릴 사람! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜' },
+        { id:'r3', title:'야경 사진 찍을 사람', creator:'SakuraLover', district:'반포', icon:'photo_camera', gradient:'grd-orange', current:1, max:3, isJoined:false, isPrivate:false, unread:0, mission:{type:'find',name:'주변 특이한 것 찾기',time:300,icon:'search'}, creatorLv:1, temp:36.8, tags:['사진 잘 찍어줘요'], quote:'한강 처음이에요! 같이 사진 찍어요 📸' },
+        { id:'r4', title:'편의점 라면 파티', creator:'한강멍멍이', district:'잠실', icon:'ramen_dining', gradient:'grd-purple', current:4, max:6, isJoined:true, unread:0, isPrivate:false, mission:null, creatorLv:2, temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'], quote:'라면 좋아하는 사람 모여라~ 🍜' },
+        { id:'r5', title:'자전거 한강 종주', creator:'망원자전거', district:'망원', icon:'pedal_bike', gradient:'grd-blue', current:2, max:3, isJoined:false, isPrivate:true, unread:0, mission:{type:'voice',name:'본인 소개 (10초 음성)',time:60,icon:'mic'}, creatorLv:4, temp:39.5, tags:['시간 잘 지켜요','대화 재밌어요'], quote:'종주 같이 하실 분! 속도는 맞춰드려요 🚴' }
+      ],
+      users: [
+        { id:'u1', nickname:'뚝섬러닝러', icon:'directions_run', gradient:'grd-pink', lv:3, dist:120, activity:'러닝 중', mood:'play', hobbies:['러닝','산책'], interests:['운동'], district:'뚝섬', recentMoim:'한강 러닝 크루', quote:'같이 달릴 사람 찾아요! 5km 가볍게 뛰고 편의점 라면 ㄱㄱ 🍜', temp:38.5, tags:['시간 잘 지켜요','대화 재밌어요','분위기 메이커'] },
+        { id:'u2', nickname:'여의도치맥왕', icon:'sports_bar', gradient:'grd-blue', lv:5, dist:200, activity:'치맥 중', mood:'play', hobbies:['치맥','맛집'], interests:['맛집탐방'], district:'여의도', recentMoim:'여의도 치맥 모임', quote:'합석 환영합니다! 치킨 시켜놨어요 🍗🍺', temp:42.1, tags:['맛집 마스터','유머 만렙','분위기 메이커'] },
+        { id:'u3', nickname:'SakuraLover', icon:'photo_camera', gradient:'grd-orange', lv:1, dist:350, activity:'사진 촬영', mood:'play', hobbies:['사진','산책'], interests:['야경'], district:'반포', recentMoim:'야경 사진 찍을 사람', quote:'한강 처음이에요! 같이 사진 찍어요 📸', temp:36.8, tags:['사진 잘 찍어줘요'] },
+        { id:'u4', nickname:'한강멍멍이', icon:'pets', gradient:'grd-purple', lv:2, dist:450, activity:'산책 중', mood:'alone', hobbies:['반려동물','산책'], interests:['운동'], district:'잠실', recentMoim:'편의점 라면 파티', quote:'멍멍이와 산책 중~ 🐶', temp:37.2, tags:['배려심 넘쳐요','시간 잘 지켜요'] },
+        { id:'u5', nickname:'망원카페러', icon:'local_cafe', gradient:'grd-blue', lv:3, dist:500, activity:'카페', mood:'alone', hobbies:['카페','독서'], interests:['독서'], district:'망원', recentMoim:null, quote:'카페에서 책 읽는 중 ☕📖', temp:37.8, tags:['조용히 함께해요','배려심 넘쳐요'] }
+      ],
+      chatMessages: [
+        { sender:'여의도치맥왕', isMe:false, text:'치킨 주문했어요! 빨리 오세요~ 🍗', time:'19:30', icon:'sports_bar', gradient:'grd-blue' },
+        { sender:'나', isMe:true, text:'오 좋아요! 어디서 만날까요?', time:'19:31' },
+        { sender:'여의도치맥왕', isMe:false, text:'여의도 2지구 편의점 앞이요!', time:'19:32', icon:'sports_bar', gradient:'grd-blue' },
+        { sender:'system', text:'뚝섬러닝러님이 입장했습니다', time:'19:33', isSystem:true },
+        { sender:'뚝섬러닝러', isMe:false, text:'안녕하세요! 저도 합류합니다 🏃', time:'19:33', icon:'directions_run', gradient:'grd-pink' }
+      ]
+    };
+
+    let pageHistory = ['home'];
+    let currentMode = 'play';
+    let selectedDistrict = '전체';
+    let selectedHobby = '전체';
+    let selectedInterest = '전체';
+
+    /* ===== PAGE SWITCHING ===== */
+    function switchPage(name) {
+      document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+      const target = document.getElementById('page-' + name);
+      if (name === 'chat-room') {
+        target.style.display = 'flex';
+      } else {
+        target.classList.add('active');
+        target.style.display = 'block';
+      }
+      // Nav
+      const mainPages = ['home','matching','chat','profile'];
+      const nav = document.getElementById('mainNav');
+      if (mainPages.includes(name)) {
+        nav.style.display = 'flex';
+        document.querySelectorAll('.bnav-item').forEach(b => b.classList.toggle('active', b.dataset.page === name));
+      } else {
+        nav.style.display = 'none';
+      }
+      window.scrollTo(0, 0);
+      pageHistory.push(name);
+      // Init dynamic content
+      if (name === 'matching') renderUsers();
+      if (name === 'chat') renderRooms();
+      if (name === 'chat-room') renderMessages();
+    }
+
+    function goBack() {
+      pageHistory.pop();
+      const prev = pageHistory[pageHistory.length - 1] || 'home';
+      pageHistory.pop(); // switchPage will push again
+      switchPage(prev);
+    }
+
+    /* ===== MATCHING: FILTERS ===== */
+    function selectChip(el, containerId) {
+      document.getElementById(containerId).querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      if (containerId === 'districtChips') selectedDistrict = el.textContent;
+      if (containerId === 'hobbyChips') selectedHobby = el.textContent;
+      if (containerId === 'interestChips') selectedInterest = el.textContent;
+      renderUsers();
+    }
+
+    function selectMode(mode) {
+      currentMode = mode;
+      document.getElementById('modePlay').classList.toggle('active', mode === 'play');
+      document.getElementById('modeAlone').classList.toggle('active', mode === 'alone');
+      renderUsers();
+    }
+
+    function getFilteredUsers() {
+      return MOCK.users.filter(u => {
+        if (u.mood !== currentMode) return false;
+        if (selectedDistrict !== '전체' && u.district !== selectedDistrict) return false;
+        if (selectedHobby !== '전체' && !u.hobbies.includes(selectedHobby)) return false;
+        if (selectedInterest !== '전체' && !u.interests.includes(selectedInterest)) return false;
+        return true;
+      });
+    }
+
+    function renderUsers() {
+      const users = getFilteredUsers();
+      document.getElementById('filteredNum').textContent = users.length;
+      document.getElementById('totalCount').textContent = MOCK.totalOnline;
+      const list = document.getElementById('userList');
+      if (users.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF"><span class="mi" style="font-size:48px;display:block;margin-bottom:12px">search_off</span>조건에 맞는 사용자가 없어요<br>필터를 변경해보세요</div>';
+        return;
+      }
+      list.innerHTML = users.map(u => `
+        <div class="mu-item" onclick="viewUser('${u.id}')">
+          <div class="uav ${u.gradient}"><span class="mi">${u.icon}</span></div>
+          <div class="uinfo">
+            <div class="uname">${u.nickname} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:4px">Lv.${u.lv}</span></div>
+            <div class="udesc">${u.activity} · ${u.dist}m</div>
+            ${u.recentMoim ? `<div class="mu-moim"><span class="mi">groups</span>${u.recentMoim}</div>` : ''}
+          </div>
+          <div class="uright">
+            <span class="udist">${u.dist}m</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ===== USER PROFILE ===== */
+    function viewUser(userId) {
+      const u = MOCK.users.find(x => x.id === userId);
+      if (!u) return;
+      document.getElementById('upAvatar').className = 'up-avatar ' + u.gradient;
+      document.getElementById('upAvatar').innerHTML = '<span class="mi">' + u.icon + '</span>';
+      document.getElementById('upName').textContent = u.nickname;
+      document.getElementById('upDist').textContent = u.dist + 'm';
+      document.getElementById('upActivity').textContent = u.activity;
+      document.getElementById('upLv').textContent = u.lv;
+      document.getElementById('upQuote').textContent = u.quote;
+      document.getElementById('upTemp').textContent = u.temp + '°';
+      document.getElementById('upTempBar').style.width = Math.min((u.temp - 36) / 10 * 100, 100) + '%';
+      document.getElementById('upNickStage').textContent = u.nickname;
+      document.getElementById('upMoim').innerHTML = u.recentMoim ? `<div class="mu-moim"><span class="mi">groups</span>${u.recentMoim} 참여 중</div>` : '';
+      const tagColors = ['t1','t2','t3'];
+      const tagIcons = ['schedule','chat','local_fire_department'];
+      document.getElementById('upTags').innerHTML = u.tags.map((t,i) => `<div class="tag ${tagColors[i%3]}"><span class="mi">${tagIcons[i%3]}</span>${t}</div>`).join('');
+      switchPage('user-profile');
+    }
+
+    /* ===== ROOMS ===== */
+    function renderRooms() {
+      const list = document.getElementById('roomList');
+      list.innerHTML = MOCK.rooms.map(r => {
+        const lockIcon = r.isPrivate && !r.isJoined ? '<span class="mi" style="font-size:16px;color:#9CA3AF">lock</span>' : '';
+        const badge = r.unread > 0 ? `<div class="room-badge">${r.unread}</div>` : '';
+        const missionTag = r.mission ? `<div class="room-mission-tag"><span class="mi">timer</span>${r.mission.name}</div>` : '';
+        const onclick = r.isPrivate && !r.isJoined
+          ? `toggleMoimDetail('${r.id}')`
+          : `openRoom('${r.id}')`;
+        return `
+          <div class="room-item" onclick="${onclick}">
+            <div class="room-top">
+              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+              <div class="room-info">
+                <div class="room-title">${lockIcon}${r.title}</div>
+                <div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div>
+              </div>
+              <div class="room-right">${badge}${missionTag}</div>
+            </div>
+          </div>
+          <div class="moim-detail" id="moim-detail-${r.id}">
+            <div class="md-profile">
+              <div class="md-avatar ${r.gradient}"><span class="mi">${r.icon}</span></div>
+              <div><div class="md-name">${r.creator}</div><div class="md-sub">${r.district} · ${r.current}/${r.max}명</div></div>
+              <div class="md-badge">Lv.${r.creatorLv}</div>
+            </div>
+            <div class="card-quote">${r.quote}</div>
+            <div class="tags">${r.tags.map((t,i) => `<div class="tag ${'t'+(i%3+1)}"><span class="mi">${['schedule','chat','local_fire_department'][i%3]}</span>${t}</div>`).join('')}</div>
+            <div class="temp"><span class="mi">thermostat</span><div class="temp-info"><div class="temp-label">한강 온도</div><div class="temp-bar"><div class="temp-fill" style="width:${Math.min((r.temp-36)/10*100,100)}%"></div></div></div><span class="temp-val">${r.temp}°</span></div>
+            ${r.mission ? `<div class="md-mission"><span class="mi">${r.mission.icon}</span>${r.mission.name} · ${Math.floor(r.mission.time/60)}분</div>` : ''}
+            <div class="actions">
+              <button class="abtn skip" onclick="event.stopPropagation();toggleMoimDetail('${r.id}')"><span class="mi">close</span>닫기</button>
+              <button class="abtn wave" onclick="event.stopPropagation();alert('손흔들기를 보냈습니다! 👋')"><span class="mi">waving_hand</span>손흔들기</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleMoimDetail(id) {
+      const el = document.getElementById('moim-detail-' + id);
+      // Close all others
+      document.querySelectorAll('.moim-detail.open').forEach(d => { if(d.id !== 'moim-detail-'+id) d.classList.remove('open'); });
+      el.classList.toggle('open');
+    }
+
+    let currentRoomId = null;
+    function openRoom(roomId) {
+      currentRoomId = roomId;
+      const r = MOCK.rooms.find(x => x.id === roomId);
+      if (!r) return;
+      document.getElementById('croomTitle').textContent = r.title;
+      document.getElementById('croomCount').textContent = r.current + '/' + r.max + '명';
+      // Mission card
+      const mc = document.getElementById('roomMissionCard');
+      if (r.mission) {
+        mc.style.display = 'flex';
+        document.getElementById('mcName').textContent = r.mission.name;
+        document.getElementById('mcIcon').innerHTML = '<span class="mi">' + r.mission.icon + '</span>';
+        startRoomTimer(r.mission.time);
+      } else {
+        mc.style.display = 'none';
+      }
+      document.getElementById('missionSubmitArea').style.display = 'none';
+      switchPage('chat-room');
+    }
+
+    /* ===== CHAT ROOM ===== */
+    function renderMessages() {
+      const area = document.getElementById('msgArea');
+      area.innerHTML = MOCK.chatMessages.map(m => {
+        if (m.isSystem) return `<div class="msg-system">${m.text}</div>`;
+        if (m.isMe) return `<div class="msg-me"><div class="msg-content"><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+        return `<div class="msg-other"><div class="msg-av ${m.gradient||'grd-purple'}"><span class="mi">${m.icon||'person'}</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+      }).join('');
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const now = new Date();
+      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'나', isMe:true, text, time });
+      input.value = '';
+      renderMessages();
+    }
+
+    function showMissionSubmit() {
+      const area = document.getElementById('missionSubmitArea');
+      area.style.display = area.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function submitMission() {
+      const input = document.getElementById('missionTextInput');
+      const text = input.value.trim() || '(미션 제출 완료!)';
+      const now = new Date();
+      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+      MOCK.chatMessages.push({ sender:'나', isMe:true, text:'🎯 미션 제출: ' + text, time });
+      input.value = '';
+      document.getElementById('missionSubmitArea').style.display = 'none';
+      renderMessages();
+    }
+
+    let roomTimerInterval;
+    function startRoomTimer(totalSec) {
+      clearInterval(roomTimerInterval);
+      let sec = totalSec;
+      const circumference = 2 * Math.PI * 21; // r=21
+      const circle = document.getElementById('roomTimerCircle');
+      circle.style.strokeDasharray = circumference;
+      roomTimerInterval = setInterval(() => {
+        sec--;
+        if (sec <= 0) { clearInterval(roomTimerInterval); sec = 0; }
+        const m = Math.floor(sec / 60), s = sec % 60;
+        const display = m + ':' + String(s).padStart(2, '0');
+        document.getElementById('roomTimerText').textContent = display;
+        document.getElementById('mcTime').textContent = '남은 시간 ' + display;
+        const offset = circumference - (sec / totalSec) * circumference;
+        circle.style.strokeDashoffset = offset;
+      }, 1000);
+    }
+
+    /* ===== CREATE ROOM ===== */
+    let peopleCount = 3;
+    function addPeople(delta) {
+      peopleCount = Math.max(2, Math.min(10, peopleCount + delta));
+      document.getElementById('peopleCount').textContent = peopleCount;
+    }
+
+    let isPublic = true;
+    function togglePrivacy() {
+      isPublic = !isPublic;
+      const toggle = document.getElementById('privacyToggle');
+      toggle.className = 'toggle ' + (isPublic ? 'on' : 'off');
+      document.getElementById('privacyDesc').textContent = isPublic ? '누구나 바로 입장할 수 있어요' : '손흔들기 후 방장이 수락해야 입장 가능';
+    }
+
+    function selectMission(el, type) {
+      document.querySelectorAll('.mission-option').forEach(o => o.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('customOpts').style.display = type === 'custom' ? 'block' : 'none';
+    }
+
+    function selectCrChip(el, containerId) {
+      document.getElementById(containerId).querySelectorAll('.cr-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    /* ===== INIT ===== */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderUsers();
+    });
+  </script>
+</body>
+</html>

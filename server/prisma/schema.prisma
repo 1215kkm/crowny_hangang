@@ -50,6 +50,11 @@ model User {
   chatTranslation    Boolean @default(false) @map("chat_translation")
   language           String  @default("ko")
 
+  // 매칭 필터용
+  mood            String?  // play, alone
+  hobbies         String[]
+  recentMoimTitle String?  @map("recent_moim_title")
+
   // 별명 변경
   lastNicknameChange DateTime? @map("last_nickname_change")
 
@@ -73,6 +78,9 @@ model User {
   reported        Report[]      @relation("Reported")
   blocks          Block[]       @relation("Blocker")
   blocked         Block[]       @relation("Blocked")
+  createdMoimRooms  MoimRoom[]         @relation("MoimCreator")
+  moimMemberships   MoimRoomMember[]
+  missionSubmissions MissionSubmission[]
 
   @@map("users")
 }
@@ -141,7 +149,7 @@ model MissionCompletion {
   @@map("mission_completions")
 }
 
-// ── 채팅 ──
+// ── 1:1 채팅 (기존, DM용으로 유지) ──
 model ChatRoom {
   id        String   @id @default(uuid())
   user1Id   String   @map("user1_id")
@@ -158,17 +166,85 @@ model ChatRoom {
 }
 
 model ChatMessage {
-  id        String   @id @default(uuid())
-  roomId    String   @map("room_id")
-  senderId  String   @map("sender_id")
-  content   String
-  type      String   @default("text") // text, image, voice, mood_card, system
-  createdAt DateTime @default(now()) @map("created_at")
+  id         String   @id @default(uuid())
+  roomId     String?  @map("room_id")
+  moimRoomId String?  @map("moim_room_id")
+  senderId   String   @map("sender_id")
+  content    String
+  type       String   @default("text") // text, image, voice, mood_card, system, mission_photo, mission_voice, mission_text
+  missionId  String?  @map("mission_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  room   ChatRoom @relation(fields: [roomId], references: [id])
-  sender User     @relation(fields: [senderId], references: [id])
+  room     ChatRoom? @relation(fields: [roomId], references: [id])
+  moimRoom MoimRoom? @relation(fields: [moimRoomId], references: [id])
+  sender   User      @relation(fields: [senderId], references: [id])
 
   @@map("chat_messages")
+}
+
+// ── 모임방 (그룹) ──
+model MoimRoom {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  district    String   // 여의도, 뚝섬, 반포, 잠실, 망원, 이촌
+  maxPeople   Int      @default(5) @map("max_people")
+  isPrivate   Boolean  @default(false) @map("is_private")
+  creatorId   String   @map("creator_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  creator     User               @relation("MoimCreator", fields: [creatorId], references: [id])
+  members     MoimRoomMember[]
+  messages    ChatMessage[]
+  missions    RoomMission[]
+
+  @@map("moim_rooms")
+}
+
+model MoimRoomMember {
+  id       String   @id @default(uuid())
+  roomId   String   @map("room_id")
+  userId   String   @map("user_id")
+  role     String   @default("member") // creator, member
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  room MoimRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id])
+
+  @@unique([roomId, userId])
+  @@map("moim_room_members")
+}
+
+model RoomMission {
+  id              String   @id @default(uuid())
+  roomId          String   @map("room_id")
+  missionType     String   @map("mission_type") // selfie, find_unusual, share_story, share_today, voice_intro, custom
+  title           String
+  description     String?
+  attachmentTypes String[] @map("attachment_types") // photo, voice, text
+  timerSec        Int      @default(180) @map("timer_sec")
+  status          String   @default("pending") // pending, active, completed
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  room        MoimRoom            @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  submissions MissionSubmission[]
+
+  @@map("room_missions")
+}
+
+model MissionSubmission {
+  id        String   @id @default(uuid())
+  missionId String   @map("mission_id")
+  userId    String   @map("user_id")
+  type      String   // photo, voice, text
+  content   String   // URL or text content
+  createdAt DateTime @default(now()) @map("created_at")
+
+  mission RoomMission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  user    User        @relation(fields: [userId], references: [id])
+
+  @@map("mission_submissions")
 }
 
 // ── 이벤트/번개 모임 ──
