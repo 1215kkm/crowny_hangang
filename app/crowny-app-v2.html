@@ -985,11 +985,9 @@
     <div class="drawer-footer">
       <div style="display:flex;align-items:center;gap:8px;padding:8px 24px 14px">
         <span style="font-size:12px;color:#9CA3AF;font-weight:600;min-width:50px">글자크기</span>
-        <button style="flex:1;padding:10px;border:1px solid #E5E7EB;border-radius:10px;background:white;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;color:#1E1B4B" onclick="changeFontSize(-1)"><span class="mi" style="font-size:16px;vertical-align:middle">text_decrease</span> 줄이기</button>
-        <span style="font-size:14px;font-weight:800;color:var(--purple);min-width:28px;text-align:center" id="fsDisplay">0</span>
-        <button style="flex:1;padding:10px;border:1px solid #E5E7EB;border-radius:10px;background:white;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:700;color:#1E1B4B" onclick="changeFontSize(1)"><span class="mi" style="font-size:16px;vertical-align:middle">text_increase</span> 키우기</button>
+        <button style="flex:1;padding:12px;border:1px solid #E5E7EB;border-radius:10px;background:white;cursor:pointer;font-family:var(--font);font-size:18px;font-weight:800;color:#1E1B4B;text-align:center" onclick="changeFontSize(-1)">−</button>
+        <button style="flex:1;padding:12px;border:1px solid #E5E7EB;border-radius:10px;background:white;cursor:pointer;font-family:var(--font);font-size:18px;font-weight:800;color:#1E1B4B;text-align:center" onclick="changeFontSize(1)">+</button>
       </div>
-      <div style="padding:0 24px 8px;font-size:10px;color:#D1D5DB">30대+: 1단계 추천 · 40대+: 3단계 추천</div>
       <div class="drawer-item" onclick="closeDrawer()"><span class="mi">logout</span>로그아웃</div>
     </div>
   </div>
@@ -1382,7 +1380,6 @@
     let fontSizeOffset = parseInt(localStorage.getItem('crowny_fs') || '0');
     function applyFontSize() {
       document.documentElement.style.setProperty('--fs', fontSizeOffset);
-      document.getElementById('fsDisplay').textContent = (fontSizeOffset > 0 ? '+' : '') + fontSizeOffset;
     }
     function changeFontSize(delta) {
       fontSizeOffset = Math.max(-3, Math.min(6, fontSizeOffset + delta));
