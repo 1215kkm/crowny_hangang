@@ -1,0 +1,77 @@
+{
+  "app": {
+    "name": "한강앱",
+    "nameEn": "Hangang App",
+    "description": "한강에서 새로운 인연을 만나세요",
+    "logo": "assets/hangang/logo.png",
+    "homeBg": "assets/hangang/home_bg.jpg"
+  },
+  "theme": {
+    "primaryColor": "#6C3CE1",
+    "pinkColor": "#D63384",
+    "orangeColor": "#E8590C",
+    "cyanColor": "#0EA5E9",
+    "greenColor": "#059669",
+    "gradientStart": "#5B2FD6",
+    "gradientMid": "#7C4DFF",
+    "gradientEnd": "#9B72FF"
+  },
+  "location": {
+    "centerLat": 37.5283,
+    "centerLng": 126.9346,
+    "nearbyRadius": 2000,
+    "nearbyBadgeText": "한강근처",
+    "mapSvg": "assets/hangang/map.svg"
+  },
+  "districts": [
+    { "id": "nanji", "name": "난지", "lat": 37.5670, "lng": 126.8720 },
+    { "id": "mangwon", "name": "망원", "lat": 37.5560, "lng": 126.8950 },
+    { "id": "yanghwa", "name": "양화", "lat": 37.5440, "lng": 126.9050 },
+    { "id": "yeouido", "name": "여의도", "lat": 37.5247, "lng": 126.9322 },
+    { "id": "ichon", "name": "이촌", "lat": 37.5220, "lng": 126.9700 },
+    { "id": "banpo", "name": "반포", "lat": 37.5080, "lng": 126.9950 },
+    { "id": "ttukseom", "name": "뚝섬", "lat": 37.5310, "lng": 127.0660 },
+    { "id": "jamsil", "name": "잠실", "lat": 37.5170, "lng": 127.1000 },
+    { "id": "gwangnaru", "name": "광나루", "lat": 37.5450, "lng": 127.1200 }
+  ],
+  "categories": {
+    "hobbies": ["치맥", "러닝", "산책", "피크닉", "반려동물", "자전거", "사진", "카페"],
+    "interests": ["맛집탐방", "야경", "음악", "언어교환", "독서", "운동"]
+  },
+  "games": {
+    "balanceQuestions": [
+      ["치킨", "피자"], ["산", "바다"], ["여름", "겨울"], ["아침형", "저녁형"],
+      ["강아지", "고양이"], ["짜장", "짬뽕"], ["민트초코 O", "민트초코 X"],
+      ["소주", "맥주"], ["카페", "편의점"], ["드라마", "영화"],
+      ["한강 낮", "한강 밤"], ["자전거", "러닝"]
+    ],
+    "presetQuestions": [
+      "요즘 가장 많이 듣는 노래?",
+      "한강 오면 꼭 하는 것?",
+      "인생 맛집은?",
+      "최근 빠진 취미?",
+      "무인도에 하나만 가져간다면?",
+      "어릴 때 꿈은?",
+      "지금 가장 하고 싶은 것?"
+    ],
+    "charadesCategories": {
+      "동물": ["강아지", "고양이", "펭귄", "코끼리", "토끼"],
+      "음식": ["치킨", "피자", "라면", "김치찌개", "떡볶이"],
+      "한강": ["자전거", "러닝", "치맥", "피크닉", "야경"]
+    },
+    "rolePresets": {
+      "치맥팟": ["🍗 치킨 주문", "🧃 음료 담당", "📸 사진 담당", "🎮 게임 진행자"],
+      "피크닉팟": ["🥪 음식 준비", "🎵 음악 담당", "🗑 정리 담당", "📸 촬영 담당"],
+      "러닝팟": ["🏃 페이스 메이커", "💧 물 담당", "📸 인증샷", "🗺 코스 안내"]
+    },
+    "choseongList": ["ㅎㄱ", "ㅊㅁ", "ㅍㅋㄴ", "ㅂㅅ", "ㄱㅂ", "ㅅㅂ", "ㅎㄴ", "ㅇㅅ", "ㅋㅍ", "ㄴㅁ"]
+  },
+  "board": {
+    "name": "한강 게시판",
+    "categories": ["자유", "정보", "맛집", "사진", "질문"]
+  },
+  "legal": {
+    "termsUrl": "/legal/terms.html",
+    "privacyUrl": "/legal/privacy.html"
+  }
+}
