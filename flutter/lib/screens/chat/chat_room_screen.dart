@@ -3,6 +3,7 @@ import '../../app/theme.dart';
 import '../../models/chat_model.dart';
 import '../../mock/mock_data.dart';
 import '../../widgets/mission_timer.dart';
+import '../../widgets/chat_plus_menu.dart';
 
 /// 그룹 채팅방 화면
 class ChatRoomScreen extends StatefulWidget {
@@ -108,9 +109,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             decoration: const BoxDecoration(border: Border(top: BorderSide(color: Color(0xFFF3F4F6)))),
             child: Row(children: [
               GestureDetector(
-                onTap: () {
-                  // TODO: +메뉴 바텀시트
-                },
+                onTap: () => ChatPlusMenu.show(context),
                 child: Container(
                   width: 42, height: 42,
                   decoration: BoxDecoration(color: const Color(0xFFF3F4F6), shape: BoxShape.circle),

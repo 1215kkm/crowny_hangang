@@ -129,7 +129,30 @@ class ChatMessage {
   });
 }
 
-enum MessageType { text, image, voice, missionPhoto, missionVoice, missionText, system }
+enum MessageType { text, image, voice, missionPhoto, missionVoice, missionText, system, location, poll, randomOrder, dutchPay }
+
+/// 1:1 DM 방
+class DmRoom {
+  final String id;
+  final String partnerId;
+  final String partnerNickname;
+  final String partnerIcon;
+  final String partnerGradient;
+  final String? lastMessage;
+  final String? lastTime;
+  final int unreadCount;
+
+  const DmRoom({
+    required this.id,
+    required this.partnerId,
+    required this.partnerNickname,
+    this.partnerIcon = 'person',
+    this.partnerGradient = 'purple',
+    this.lastMessage,
+    this.lastTime,
+    this.unreadCount = 0,
+  });
+}
 
 /// 프리셋 미션 (모집글 작성 시 선택용)
 class PresetMission {

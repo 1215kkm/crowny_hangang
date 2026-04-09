@@ -18,6 +18,7 @@ class ChatListScreen extends StatefulWidget {
 
 class _ChatListScreenState extends State<ChatListScreen> {
   String? _expandedRoomId;
+  String _filter = 'all'; // all, joined, dm
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +40,20 @@ class _ChatListScreenState extends State<ChatListScreen> {
           child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
         ),
       ),
-      sheetContent: Column(
-        children: MockData.moimRooms.map((room) => _RoomTile(
+      topContent: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: Container(
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(14)),
+          child: Row(children: [
+            _FilterBtn(label: '📋 전체', active: _filter == 'all', onTap: () => setState(() => _filter = 'all')),
+            _FilterBtn(label: '✅ 참여중', active: _filter == 'joined', onTap: () => setState(() => _filter = 'joined')),
+            _FilterBtn(label: '💬 1:1', active: _filter == 'dm', onTap: () => setState(() => _filter = 'dm')),
+          ]),
+        ),
+      ),
+      sheetContent: _filter == 'dm' ? _buildDmList() : Column(
+        children: (_filter == 'joined' ? MockData.moimRooms.where((r) => r.isJoined).toList() : MockData.moimRooms).map((room) => _RoomTile(
           room: room,
           expanded: _expandedRoomId == room.id,
           onTap: () {
@@ -60,6 +73,76 @@ class _ChatListScreenState extends State<ChatListScreen> {
       ),
       bottomNav: CrownyBottomNav(currentIndex: widget.navIndex, onTap: widget.onNavTap),
     );
+  }
+
+  Widget _buildDmList() {
+    final dms = MockData.dmRooms;
+    if (dms.isEmpty) return const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('1:1 대화가 없습니다', style: TextStyle(color: Color(0xFF9CA3AF)))));
+    return Column(
+      children: dms.map((dm) => Dismissible(
+        key: Key(dm.id),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
+          color: const Color(0xFFDC2626),
+          child: const Text('나가기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
+        ),
+        confirmDismiss: (_) => showDialog<bool>(context: context, builder: (_) => AlertDialog(
+          title: const Text('대화 나가기'), content: const Text('이 대화를 나가시겠습니까?'),
+          actions: [TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('취소')), TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('나가기'))],
+        )),
+        child: GestureDetector(
+          onTap: () => Navigator.pushNamed(context, '/dm-room', arguments: dm.partnerNickname),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFF3F4F6)))),
+            child: Row(children: [
+              Container(width: 24, height: 24, decoration: BoxDecoration(color: CrownyTheme.primary, borderRadius: BorderRadius.circular(8)), child: const Icon(Icons.person_rounded, size: 14, color: Colors.white)),
+              const SizedBox(width: 14),
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(dm.partnerNickname, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: CrownyTheme.textPrimary)),
+                if (dm.lastMessage != null) Text(dm.lastMessage!, style: const TextStyle(fontSize: 12, color: Color(0xFF9CA3AF))),
+              ])),
+              Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                if (dm.lastTime != null) Text(dm.lastTime!, style: const TextStyle(fontSize: 10, color: Color(0xFF9CA3AF))),
+                if (dm.unreadCount > 0) ...[
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(color: CrownyTheme.primary, borderRadius: BorderRadius.circular(8)),
+                    child: Text('${dm.unreadCount}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
+                  ),
+                ],
+              ]),
+            ]),
+          ),
+        ),
+      )).toList(),
+    );
+  }
+}
+
+class _FilterBtn extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  const _FilterBtn({required this.label, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: active ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: active ? [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8)] : null,
+        ),
+        child: Center(child: Text(label, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: active ? CrownyTheme.primary : Colors.white.withValues(alpha: 0.7)))),
+      ),
+    ));
   }
 }
 

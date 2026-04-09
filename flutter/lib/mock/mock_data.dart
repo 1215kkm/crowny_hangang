@@ -248,6 +248,12 @@ class MockData {
     ChatMessage(id: 'msg5', senderId: 'u1', senderNickname: '뚝섬러닝러', senderIcon: 'directions_run', senderGradient: 'pink', text: '안녕하세요! 저도 합류합니다 🏃', timestamp: DateTime.now().subtract(const Duration(minutes: 1)), isMe: false),
   ];
 
+  // ── DM 목록 ──
+  static const List<DmRoom> dmRooms = [
+    DmRoom(id: 'dm1', partnerId: 'u1', partnerNickname: '뚝섬러닝러', lastMessage: '내일 뚝섬에서 봐요!', lastTime: '19:30', unreadCount: 1),
+    DmRoom(id: 'dm2', partnerId: 'u3', partnerNickname: 'SakuraLover', lastMessage: '사진 공유해주세요!', lastTime: '어제', unreadCount: 0),
+  ];
+
   // ── 활동 목록 ──
   static const List<Map<String, dynamic>> activities = [
     {'id': 'chimaek', 'name': '치맥', 'icon': 'sports_bar', 'gradient': 'pink', 'count': 5},
