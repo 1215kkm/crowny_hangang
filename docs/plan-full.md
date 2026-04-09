@@ -751,3 +751,795 @@ districtOnline: {
 - 게시판: 목록 → 상세 → 댓글 → 작성 확인
 - 지도: 일러스트 지도 표시 + 지구 탭 인터랙션 확인
 - 회원가입: 폼 입력 → 가입 → 로그인 흐름 확인
+
+---
+
+## v2.3 채팅방 게임 UX 개선
+
+### Context
+v2.2에서 채팅방 게임 16종을 구현했으나, 여러 UX 문제가 발견됨:
+- 채팅방 헤더 레이아웃 문제 (제목 왼쪽 쏠림, 더보기 버튼 위치)
+- 게임 닫기 시 사운드/타이머가 백그라운드에서 계속 실행
+- 카운트다운 위치가 정가운데가 아님
+- 게임별 설정 화면 필요 (눈치게임 시간, 역할배정 목록 등)
+- 밸런스 게임 질문 부족 + 7문제 연속 + 궁합 결과 필요
+
+### 수정 항목
+
+#### 1. 채팅방 헤더 레이아웃 수정
+**현재**: 뒤로가기 | 제목(flex:1) | 더보기 → 제목이 왼쪽으로 쏠림
+**수정**: 제목을 text-align:center + 더보기를 position:absolute로 맨 오른쪽에
+```css
+.chatroom-header { position: relative; justify-content: center; }
+/* 뒤로가기: position absolute left */
+/* 제목: text-align center */
+/* 더보기: position absolute right */
+```
+**파일**: `crowny-app-v2.html` 227줄 CSS + 708~714줄 HTML
+
+#### 2. 게임 닫기 시 모든 타이머/인터벌 정리
+**문제**: closeGame()이 overlay만 숨기고 setInterval들이 계속 실행됨
+**수정**: 
+- 전역 배열 `activeTimers = []`에 모든 setInterval/setTimeout ID 저장
+- `closeGame()`에서 전부 clearInterval/clearTimeout
+- `runShuffleAnimation()`의 shuffleInt, countInt도 등록
+- 눈치게임, 초성게임의 타이머도 등록
+**파일**: `crowny-app-v2.html` JS 1640~1678줄 (runShuffleAnimation, closeGame)
+
+#### 3. 카운트다운 위치 정가운데로
+**현재**: shuffle-area 안에 absolute로 넣어서 shuffle-area 기준 중앙
+**수정**: shuffle-area 대신 game-overlay 자체에 중앙 배치
+- 카운트다운 단계에서 shuffleArea를 숨기고 별도 #countdownDisplay를 game-overlay 중앙에 표시
+- CSS: `position:absolute; top:50%; left:50%; transform:translate(-50%,-50%)`
+**파일**: CSS 325줄, JS 1660~1674줄
+
+#### 4. 게임 시작 전 5초 카운트다운 (공통)
+**현재**: 설정 없이 바로 시작
+**수정**: 설정이 필요한 게임들은 설정 화면 → "시작" 버튼 → 5초 카운트다운 → 게임 시작
+- 설정 없는 게임 (랜덤순서, 랜덤질문): 바로 셔플+카운트다운
+- 설정 있는 게임: 설정 화면 표시 → 시작 → 5초 카운트다운 → 진행
+**파일**: JS 각 게임 함수
+
+#### 5. 눈치 게임 — 시간 설정 추가
+**현재**: 바로 시작, 시간 제한 없음
+**수정**:
+- 시작 전 설정 화면: 시간 선택 (10초/20초/30초/1분/3분) 칩
+- "시작" 버튼 → 5초 카운트다운 → 게임 시작 + 선택한 시간 카운트다운
+- 시간 끝나면 자동 종료 + 결과
+**파일**: JS nunchiGame() 함수
+
+#### 6. 밸런스 게임 — 7문제 연속 + 궁합 결과
+**현재**: 1문제만, 질문 6개
+**수정**:
+- 질문 10개 이상으로 확대:
+  ['치킨','피자'], ['산','바다'], ['여름','겨울'], ['아침형','저녁형'],
+  ['강아지','고양이'], ['짜장','짬뽕'], ['민트초코 O','민트초코 X'],
+  ['소주','맥주'], ['카페','편의점'], ['드라마','영화'],
+  ['한강 낮','한강 밤'], ['자전거','러닝']
+- 7문제 연속 진행 (매번 다른 질문, 중복 없이)
+- 각 참여자별 답변 기록
+- 7문제 후 결과: "🎯 #1과 #3이 5/7 일치! 궁합 71%"
+- 가장 많이 같은 답을 한 쌍 하이라이트
+**파일**: JS balanceGame(), BALANCE_QS, voteBalance()
+
+#### 7. 역할 배정 — 방장이 직접 입력
+**현재**: 하드코딩된 4개 역할
+**수정**:
+- 설정 화면: 인원수(ROOM_MEMBERS.length)만큼 역할 이름 입력 칸
+- 기본값으로 프리셋 제공 (치맥팟 등)
+- "시작" → 5초 카운트다운 → 랜덤 배정 결과
+**파일**: JS roleAssign()
+
+#### 8. 자리 정하기 — 남녀 섞기 옵션
+**현재**: 완전 랜덤
+**수정**:
+- 설정 화면: "랜덤 섞기" / "남녀 교대로 섞기" 선택
+- 남녀 교대: ROOM_MEMBERS에 gender 필드 추가 (Mock)
+- "시작" → 5초 카운트다운 → 배치 결과
+**파일**: JS seatShuffle(), ROOM_MEMBERS에 gender 추가
+
+### 수정 파일 목록
+
+| 파일 | 수정 내용 |
+|------|-----------|
+| `crowny-app-v2.html` CSS (227~229줄) | chatroom-header 레이아웃 수정 |
+| `crowny-app-v2.html` CSS (320~331줄) | 카운트다운 위치 수정, 설정화면 스타일 |
+| `crowny-app-v2.html` HTML (708~714줄) | 채팅방 헤더 구조 변경 |
+| `crowny-app-v2.html` JS closeGame() | 타이머 정리 로직 |
+| `crowny-app-v2.html` JS runShuffleAnimation() | 카운트다운 위치 수정 |
+| `crowny-app-v2.html` JS nunchiGame() | 시간 설정 + 카운트다운 추가 |
+| `crowny-app-v2.html` JS balanceGame() | 7문제 연속 + 궁합 결과 |
+| `crowny-app-v2.html` JS roleAssign() | 직접 입력 설정 화면 |
+| `crowny-app-v2.html` JS seatShuffle() | 남녀 옵션 설정 화면 |
+| `crowny-app-v2.html` JS BALANCE_QS | 12개로 확대 |
+| `crowny-app-v2.html` JS ROOM_MEMBERS | gender 필드 추가 |
+
+### 검증
+- 채팅방 헤더: 제목 가운데, 더보기 맨 오른쪽
+- 게임 닫기: 닫기 후 사운드/타이머 완전 정지 확인
+- 카운트다운: 화면 정가운데에 5,4,3,2,1 표시
+- 눈치게임: 시간 선택 → 시작 → 5초 카운트다운 → 게임
+- 밸런스: 7문제 연속 → 궁합 결과 ("#1과 #3이 5/7 일치!")
+- 역할배정: 역할 직접 입력 → 시작 → 배정 결과
+- 자리정하기: 남녀 옵션 → 결과
+
+### Context
+채팅방에서 실제 만남을 돕는 실용적 기능들이 부족함.
+위치 공유, 순서 정하기, 투표 등 오프라인 모임에 필요한 도구를 채팅방 안에 내장.
+
+### 추가 기능 목록
+
+#### 1. 위치 공유 (채팅방 + DM) — 실시간 슬라이드 지도
+- 채팅 입력바의 `+` 버튼 탭 → 메뉴에 "위치 공유" 추가
+- **공유 시작 시**:
+  - 채팅방 오른쪽 밖에 미니 지도 패널이 숨겨져 있음 (transform: translateX(100%))
+  - 화면 오른쪽에 **플로팅 버튼** (📍 아이콘, 보라색 원형) 이 항상 표시됨
+  - 플로팅 버튼이 보이면 = 위치 공유 중이라는 것을 인지 가능
+- **플로팅 버튼 탭** → 미니 지도가 왼쪽으로 슬라이드 인 (약 화면 70% 너비)
+  - 지도 안: 내 위치(핑크 핀) + 상대방들 위치(파란 핀) + 닉네임 라벨
+  - 일러스트 지도 스타일 (SVG, 한강 물줄기 배경)
+  - 지도 우측 상단에 **X 버튼** → 지도만 닫기 (오른쪽으로 슬라이드 아웃, 플로팅 버튼 유지)
+- **위치 공유 완전 종료**: 지도 하단에 "공유 종료" 버튼 → 플로팅 버튼도 사라짐
+- DM에서도 동일 동작 (1:1이므로 상대 핀 1개)
+- GPS 좌표: Socket.io로 10초 간격 전송 (카페24 VPS, 추가 비용 없음)
+- 지도 표시: 카카오맵 API 무료 또는 SVG 일러스트 지도
+
+**CSS 구현:**
+```css
+.location-panel {
+  position: fixed; top: 0; right: 0; width: 75%; height: 100%;
+  background: white; z-index: 180;
+  transform: translateX(100%); /* 오른쪽 밖에 숨김 */
+  transition: transform 0.3s ease;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+}
+.location-panel.open {
+  transform: translateX(0); /* 왼쪽으로 슬라이드 인 */
+}
+.location-fab {
+  position: fixed; right: 16px; top: 50%;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, #6C3CE1, #D63384);
+  color: white; z-index: 170;
+  display: none; /* 위치 공유 중일 때만 표시 */
+  box-shadow: 0 4px 16px rgba(108,60,225,0.4);
+  animation: pulse 2s infinite; /* 공유 중 표시 */
+}
+```
+
+**JS 흐름:**
+```
+shareLocation() → locationSharing = true
+  → 플로팅 버튼 표시 (display: flex)
+  → 채팅에 "📍 위치 공유를 시작했습니다" 시스템 메시지
+  → 10초마다 GPS 좌표 전송 (setInterval)
+
+플로팅 버튼 탭 → location-panel.classList.add('open')
+X 버튼 탭 → location-panel.classList.remove('open') (패널만 숨김)
+"공유 종료" 탭 → locationSharing = false
+  → 플로팅 버튼 숨김
+  → setInterval 해제
+  → 채팅에 "📍 위치 공유를 종료했습니다" 시스템 메시지
+```
+
+#### 2. 입장 순서 번호 시스템
+- 방 입장 시 자동으로 고유번호 부여 (1번부터 순서대로)
+- 채팅 메시지의 닉네임 앞에 `#1`, `#2` 등 번호 표시
+- 방장은 항상 #1
+- 시스템 메시지: "뚝섬러닝러님이 #3으로 입장했습니다"
+
+#### 3. 랜덤 순서 정하기
+- 입력바 `+` 메뉴 → "랜덤 순서"
+- 탭하면 현재 방 멤버들을 랜덤 셔플
+- 결과를 특별 카드로 채팅에 전송:
+  ```
+  🎲 랜덤 순서 결과!
+  1등: #2 여의도치맥왕
+  2등: #1 뚝섬러닝러
+  3등: #3 SakuraLover
+  ```
+- 누구나 다시 뽑기 가능
+
+#### 4. 투표 기능
+- 입력바 `+` 메뉴 → "투표 만들기"
+- 질문 입력 + 선택지 2~4개 입력 → 생성
+- 채팅에 투표 카드로 표시:
+  ```
+  📊 뭐 먹을까?
+  🍗 치킨 ██████ 2표
+  🍕 피자 ███ 1표
+  ```
+- 참여자가 선택지 탭 → 실시간 결과 반영
+
+#### 5. 사다리타기 / 제비뽑기
+- 입력바 `+` 메뉴 → "사다리타기" 또는 "제비뽑기"
+- **사다리타기**: 참여자 이름 + 결과(벌칙/당첨) 입력 → 애니메이션 → 결과
+- **제비뽑기**: 항목 입력 → 랜덤 1개 뽑기 → 결과 카드
+
+#### 6. 더치페이 계산기
+- 입력바 `+` 메뉴 → "더치페이"
+- 총 금액 입력 → 방 인원수로 자동 나누기
+- 결과 카드: "총 45,000원 ÷ 3명 = 1인 15,000원"
+- 카카오페이/토스 송금 링크 연결 (mock)
+
+#### 7. 공유 사진 앨범
+- 채팅방 헤더의 더보기(⋮) → "사진 앨범"
+- 방에서 공유된 사진들 그리드로 모아보기
+- 모임 끝난 후에도 열람 가능
+
+### 구현 방식 — 입력바 `+` 버튼 메뉴
+
+현재 `+` 버튼(add_circle)은 onclick이 없음. 여기에 바텀시트 메뉴를 연결:
+
+```
+[+] 탭 → 바텀시트 열림:
+┌──────────── 도구 ─────────────┐
+│ 📍 위치 공유                    │
+│ 📊 투표 만들기                  │
+│ 💰 더치페이                     │
+│ 📷 사진                        │
+├──────────── 게임 ─────────────┤
+│ 🎲 랜덤 순서                    │
+│ ❓ 랜덤 질문 (프리셋+직접등록)   │
+│ 🧩 공통점 찾기                  │
+│ 😂 밸런스 게임                  │
+│ 🎭 역할 배정                    │
+│ 💺 자리 정하기                  │
+│ 🪜 사다리타기                   │
+│ 🎫 제비뽑기                     │
+│ 👀 눈치 게임 🔊                │
+│ 🔤 초성 게임 🔊                │
+│ ⬆️ 업다운 게임 🔊              │
+│ 🎭 몸으로 말해요 🔊            │
+└────────────────────────────────┘
+🔊 = 효과음 포함
+```
+
+### 변경 파일
+
+#### HTML (`app/crowny-app-v2.html`)
+| 작업 | 내용 |
+|------|------|
+| CSS | 바텀시트 메뉴, 위치카드, 투표카드, 순서카드, 계산기 스타일 |
+| #page-chat-room | `+` 버튼 → 바텀시트 메뉴 연결 |
+| #page-dm-room | `+` 버튼 추가 + 위치 공유 메뉴 |
+| JS | openPlusMenu(), shareLocation(), randomOrder(), createPoll(), ladderGame(), drawLots(), dutchPay() |
+| Mock | 방 멤버 리스트 (번호 포함) 추가 |
+
+#### Flutter
+| 파일 | 변경 |
+|------|------|
+| `models/chat_model.dart` | MessageType에 location, poll, randomOrder, dutchPay 추가 |
+| `models/chat_model.dart` | MoimRoomMember (userId, number, nickname) 모델 추가 |
+| `mock/mock_data.dart` | 방 멤버 목록 + 번호 데이터 추가 |
+| 신규 `widgets/chat_plus_menu.dart` | 바텀시트 메뉴 위젯 |
+| 신규 `widgets/poll_card.dart` | 투표 카드 위젯 |
+| 신규 `widgets/location_card.dart` | 위치 공유 카드 위젯 |
+| 신규 `widgets/random_order_card.dart` | 랜덤 순서 카드 위젯 |
+
+#### Server (Prisma)
+| 모델 | 변경 |
+|------|------|
+| `MoimRoomMember` | `memberNumber Int` 필드 추가 (입장 순서) |
+| `ChatMessage.type` | location, poll, random_order, dutch_pay, ladder, draw 추가 |
+| 신규 `Poll` 모델 | question, options[], votes[] |
+
+### 입장 번호 표시 위치
+- 채팅 메시지 발신자 이름: `#1 뚝섬러닝러`
+- 시스템 메시지: `뚝섬러닝러님이 #3으로 입장했습니다`
+- 방 헤더 멤버 리스트: `#1 방장 · #2 멤버 · #3 멤버`
+
+#### 8. 랜덤 질문 뽑기
+- 입력바 `+` 메뉴 → "랜덤 질문"
+- **프리셋 질문**: "요즘 가장 많이 듣는 노래?", "한강 오면 꼭 하는 것?", "인생 맛집은?", "최근 빠진 취미?" (JSON 관리)
+- **참여자 질문 등록**: 방에 있는 누구나 "질문 추가" 버튼으로 궁금한 것 직접 입력 → 질문 풀에 추가
+- 뽑기 시 프리셋 + 참여자 등록 질문 합쳐서 랜덤 1개 선택
+- 질문 카드에 "by #2 여의도치맥왕" 또는 "프리셋" 출처 표시
+- 셔플 애니메이션 → 카운트다운 → 질문 카드 등장
+
+#### 9. 공통점 찾기 게임
+- 입력바 `+` 메뉴 → "공통점 찾기"
+- 랜덤 주제 카드 제시: "좋아하는 음식 장르", "최근 본 영화", "취미" 등
+- 참여자들이 답변 입력 → 공통점 자동 매칭 표시
+- "🧩 공통점 발견! 3명 모두 한식을 좋아해요!"
+
+#### 10. 밸런스 게임
+- 입력바 `+` 메뉴 → "밸런스 게임"
+- 랜덤 VS 질문 카드: "치킨 vs 피자", "산 vs 바다", "여름 vs 겨울"
+- A/B 버튼 탭 → 실시간 결과 표시 (투표 카드와 유사하되 2개 선택지 고정)
+- 프리셋 질문 JSON + 직접 만들기 가능
+
+#### 11. 랜덤 역할 배정
+- 입력바 `+` 메뉴 → "역할 배정"
+- **자동 모드**: 프리셋 역할 세트 선택 (치맥팟/피크닉팟/러닝팟 등)
+  - 치맥팟: 🍗치킨주문 / 🧃음료담당 / 📸사진담당 / 🎮게임진행자
+  - 피크닉팟: 🥪음식 / 🎵음악 / 🗑정리 / 📸촬영
+- **수동 모드**: 방장이 역할 이름 직접 입력 → 랜덤 배정
+- 결과 카드:
+  ```
+  🎭 역할 배정 결과!
+  🍗 치킨 주문: #2 여의도치맥왕
+  🧃 음료 담당: #1 뚝섬러닝러
+  📸 사진 담당: #3 SakuraLover
+  ```
+
+#### 12. 모임 상태 표시
+- 방 제목 옆에 상태 아이콘 자동/수동 표시:
+  - 🟢 모집중 (기본, 인원 미달)
+  - 🟡 곧 시작 (인원 충족 또는 방장이 수동 변경)
+  - 🔴 진행중 (방장이 "시작" 누름)
+  - ⚫ 종료 (방장이 "종료" 누름 또는 시간 초과)
+- 모임방 목록에서도 상태 아이콘 표시
+- 상태 변경 시 시스템 메시지: "모임이 시작되었습니다! 🔴"
+
+#### 13. 랜덤 자리 정하기
+- 입력바 `+` 메뉴 → "자리 정하기"
+- 참여자들을 원형으로 배치한 UI 표시
+- "섞기" 탭 → 애니메이션 → 새로운 배치 결과
+
+#### 15. 눈치 게임
+- 입력바 `+` 메뉴 → "눈치 게임"
+- 1부터 순서대로 숫자를 눌러야 하는데, 순서는 정해져 있지 않음
+- 두 명이 동시에 누르면 둘 다 탈락
+- **버튼 탭 시 효과음** 재생 (Web Audio API: 짧은 "딩!" 소리)
+- 탈락 시 "빵!" 효과음 + 빨간 플래시 애니메이션
+- 결과: "🏆 #2 여의도치맥왕 최후의 1인!"
+
+#### 16. 초성 게임
+- 입력바 `+` 메뉴 → "초성 게임"
+- 랜덤 초성 2~3글자 제시 (예: ㅎㄱ, ㅊㅁ, ㅍㅋㄴ)
+- 참여자들이 텍스트 입력 → **제출 버튼 탭 시 효과음** ("톡!" 소리)
+- 정답이 여러 개일 수 있으므로 모든 답변을 채팅에 표시
+- 제한시간 10초 카운트다운 (카운트다운 효과음: 똑똑똑)
+
+#### 17. 업다운 게임
+- 입력바 `+` 메뉴 → "업다운"
+- 1~100 사이 랜덤 숫자 선정 (숨김)
+- 참여자가 숫자 입력 → ⬆️UP / ⬇️DOWN 표시
+- **제출 시 효과음**: UP이면 "띵↑", DOWN이면 "뚱↓"
+- 정답 맞추면 🎉 폭죽 애니메이션 + "짠!" 효과음
+- 결과: "#3 SakuraLover가 7번 만에 정답! 🎯"
+
+#### 18. 몸으로 말해요
+- 입력바 `+` 메뉴 → "몸으로 말해요"
+- 카테고리 선택: 동물/음식/유명인/영화/한강관련
+- 출제자(방장 또는 랜덤)에게만 제시어 표시
+- 나머지 참여자들이 텍스트로 답변 입력
+- **제출 시 효과음** ("톡!")
+- 정답 시 🎉 + "딩동댕!" 효과음
+- 오답 시 "땡!" 효과음
+
+### 효과음 시스템 (Web Audio API)
+채팅방 게임들에 사용하는 효과음을 Web Audio API로 구현 (외부 파일 불필요):
+
+```javascript
+// 사인파 기반 효과음 생성 (파일 다운로드 없음)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function playSound(type) {
+  if (!audioCtx) audioCtx = new AudioCtx();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  switch(type) {
+    case 'tap':     // 버튼 탭 — 짧은 "톡"
+      osc.frequency.value = 800;
+      gain.gain.value = 0.3;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+      break;
+    case 'ding':    // 눈치게임 버튼 — "딩!"
+      osc.frequency.value = 1200;
+      gain.gain.value = 0.4;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      break;
+    case 'buzz':    // 탈락/오답 — "빵!"
+      osc.type = 'sawtooth';
+      osc.frequency.value = 200;
+      gain.gain.value = 0.5;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+      break;
+    case 'correct': // 정답 — "딩동댕!"
+      // 3연속 음: 도-미-솔
+      [523, 659, 784].forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = freq;
+        g.gain.value = 0.3;
+        o.start(audioCtx.currentTime + i * 0.15);
+        o.stop(audioCtx.currentTime + i * 0.15 + 0.15);
+      });
+      break;
+    case 'up':      // 업다운 UP — "띵↑"
+      osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.15);
+      gain.gain.value = 0.3;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+      break;
+    case 'down':    // 업다운 DOWN — "뚱↓"
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc.frequency.linearRampToValueAtTime(300, audioCtx.currentTime + 0.2);
+      gain.gain.value = 0.3;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+      break;
+    case 'countdown': // 카운트다운 똑 — 짧은 클릭
+      osc.frequency.value = 600;
+      gain.gain.value = 0.2;
+      osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+      break;
+    case 'fanfare': // 결과 발표 — 짠!
+      [523, 659, 784, 1047].forEach((freq, i) => {
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        o.frequency.value = freq;
+        g.gain.value = 0.25;
+        o.start(audioCtx.currentTime + i * 0.1);
+        o.stop(audioCtx.currentTime + i * 0.1 + 0.2);
+      });
+      break;
+  }
+}
+```
+
+효과음 종류:
+| 효과음 | 용도 | 소리 |
+|--------|------|------|
+| `tap` | 제출 버튼 탭 | 짧은 "톡" (800Hz, 0.08s) |
+| `ding` | 눈치게임 번호 누르기 | 높은 "딩!" (1200Hz, 0.15s) |
+| `buzz` | 탈락/오답/동시 누름 | 낮은 "빵!" (톱니파 200Hz, 0.3s) |
+| `correct` | 정답 맞춤 | "딩동댕!" (도미솔 3연속) |
+| `up` | 업다운 UP | 올라가는 "띵↑" (400→800Hz) |
+| `down` | 업다운 DOWN | 내려가는 "뚱↓" (800→300Hz) |
+| `countdown` | 카운트다운 5,4,3,2,1 | 짧은 "똑" (600Hz, 0.05s) |
+| `fanfare` | 최종 결과 발표 | "짠!" (도미솔도 4연속) |
+
+#### 14. 활동 기록 보기
+- 채팅방 헤더의 더보기(⋮) 또는 별도 버튼 → "활동 기록"
+- 해당 방에서 진행한 모든 게임/투표/역할배정/랜덤 결과를 시간순으로 모아보기
+- 각 기록 항목: 시간 + 종류 아이콘 + 결과 요약
+  ```
+  19:30  🎲 랜덤 순서 — 1등: #2 여의도치맥왕
+  19:35  📊 투표 "뭐 먹을까?" — 치킨 2표로 당선
+  19:40  🎭 역할 배정 — 치킨주문:#2, 음료:#1, 사진:#3
+  19:45  😂 밸런스 "치킨vs피자" — 치킨 3:1 승리
+  20:00  ❓ 랜덤 질문 — "한강 오면 꼭 하는 것?"
+  ```
+- 기록은 방이 종료(⚫)된 후에도 열람 가능
+- 공유 사진 앨범도 이 화면에 탭으로 통합: [기록] [사진]
+
+### 셔플 애니메이션 (공통)
+모든 랜덤 기능(순서/역할/자리/질문)에 공통 애니메이션 적용:
+
+1. **셔플 단계**: 번호/카드들이 화투 섞듯이 사방으로 랜덤 이동 (1.5초)
+   - CSS: `transform: translate(랜덤X, 랜덤Y) rotate(랜덤deg)`
+   - transition: 0.3s ease, 0.15s 간격으로 반복 이동
+2. **카운트다운 단계**: 5→4→3→2→1 큰 숫자가 중앙에 나타났다 사라짐
+   - 각 숫자: scale(2)→scale(1) + fadeIn→fadeOut (0.8초씩)
+   - 보라 그라데이션 텍스트, font-size: 80px, font-weight: 900
+3. **결과 단계**: 0일 때 결과 카드가 scale(0)→scale(1) 바운스로 등장
+   - CSS: `animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)`
+
+```css
+@keyframes shuffleMove {
+  0% { transform: translate(0,0) rotate(0deg); }
+  25% { transform: translate(랜덤px, 랜덤px) rotate(랜덤deg); }
+  50% { transform: translate(랜덤px, 랜덤px) rotate(랜덤deg); }
+  75% { transform: translate(랜덤px, 랜덤px) rotate(랜덤deg); }
+  100% { transform: translate(0,0) rotate(0deg); }
+}
+@keyframes countdownPop {
+  0% { transform: scale(2); opacity: 0; }
+  30% { transform: scale(1); opacity: 1; }
+  70% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+```
+
+### 검증
+- `+` 버튼 → 바텀시트 7개 메뉴 표시 확인
+- 위치 공유 → 위치 카드 채팅에 표시 확인
+- 랜덤 순서 → 셔플 결과 카드 확인
+- 투표 만들기 → 투표 카드 + 선택 + 결과 반영 확인
+- 사다리타기 → 결과 카드 확인
+- 더치페이 → 계산 결과 카드 확인
+- 입장 번호 → 닉네임 앞 #N 표시 확인
+- DM에서 위치 공유 동작 확인
+
+---
+
+## 화이트라벨 (White-label) 설계
+
+### Context
+한강 앱 완성 후 주제(해운대/공원/대학교 등)만 바꿔서 재활용할 수 있도록,
+처음부터 **앱 이름/지역/카테고리/색상 등을 설정 파일로 분리**하여 코드에 하드코딩하지 않는다.
+
+### 설정 파일 구조
+
+```
+config/
+├── app_config.json           ← 현재 활성 설정 (한강)
+├── themes/
+│   ├── hangang.json          ← 한강 앱
+│   ├── haeundae.json         ← 해운대 앱
+│   └── campus.json           ← 대학교 앱
+└── assets/
+    ├── hangang/
+    │   ├── home_bg.jpg
+    │   ├── map.svg
+    │   └── logo.png
+    └── haeundae/
+        ├── home_bg.jpg
+        ├── map.svg
+        └── logo.png
+```
+
+### 설정 파일 (app_config.json) 스키마
+
+```json
+{
+  "app": {
+    "name": "한강앱",
+    "nameEn": "Hangang App",
+    "description": "한강에서 새로운 인연을 만나세요",
+    "logo": "assets/hangang/logo.png",
+    "homeBg": "assets/hangang/home_bg.jpg"
+  },
+  "theme": {
+    "primaryColor": "#6C3CE1",
+    "pinkColor": "#D63384",
+    "gradientStart": "#5B2FD6",
+    "gradientMid": "#7C4DFF",
+    "gradientEnd": "#9B72FF"
+  },
+  "location": {
+    "centerLat": 37.5283,
+    "centerLng": 126.9346,
+    "nearbyRadius": 2000,
+    "nearbyBadgeText": "한강근처",
+    "mapSvg": "assets/hangang/map.svg"
+  },
+  "districts": [
+    { "id": "yeouido", "name": "여의도", "lat": 37.5247, "lng": 126.9322 },
+    { "id": "ttukseom", "name": "뚝섬", "lat": 37.5310, "lng": 127.0660 },
+    { "id": "banpo", "name": "반포", "lat": 37.5080, "lng": 126.9950 },
+    { "id": "jamsil", "name": "잠실", "lat": 37.5170, "lng": 127.1000 },
+    { "id": "mangwon", "name": "망원", "lat": 37.5560, "lng": 126.8950 },
+    { "id": "ichon", "name": "이촌", "lat": 37.5220, "lng": 126.9700 }
+  ],
+  "categories": {
+    "hobbies": ["치맥","러닝","산책","피크닉","반려동물","자전거","사진","카페"],
+    "interests": ["맛집탐방","야경","음악","언어교환","독서","운동"]
+  },
+  "games": {
+    "balanceQuestions": [
+      ["치킨","피자"],["산","바다"],["여름","겨울"],["아침형","저녁형"],
+      ["강아지","고양이"],["짜장","짬뽕"],["민트초코 O","민트초코 X"],
+      ["소주","맥주"],["카페","편의점"],["드라마","영화"],
+      ["한강 낮","한강 밤"],["자전거","러닝"]
+    ],
+    "presetQuestions": [
+      "요즘 가장 많이 듣는 노래?","한강 오면 꼭 하는 것?",
+      "인생 맛집은?","최근 빠진 취미?","무인도에 하나만 가져간다면?"
+    ],
+    "charadesCategories": {
+      "동물": ["강아지","고양이","펭귄","코끼리","토끼"],
+      "음식": ["치킨","피자","라면","김치찌개","떡볶이"],
+      "한강": ["자전거","러닝","치맥","피크닉","야경"]
+    },
+    "rolePresets": {
+      "치맥팟": ["🍗 치킨 주문","🧃 음료 담당","📸 사진 담당","🎮 게임 진행자"],
+      "피크닉팟": ["🥪 음식 준비","🎵 음악 담당","🗑 정리 담당","📸 촬영 담당"]
+    },
+    "choseongList": ["ㅎㄱ","ㅊㅁ","ㅍㅋㄴ","ㅂㅅ","ㄱㅂ","ㅅㅂ","ㅎㄴ"]
+  },
+  "board": {
+    "name": "한강 게시판",
+    "categories": ["자유","정보","맛집","사진","질문"]
+  },
+  "legal": {
+    "termsUrl": "/legal/terms.html",
+    "privacyUrl": "/legal/privacy.html"
+  }
+}
+```
+
+### 해운대 버전 예시 (haeundae.json)
+
+```json
+{
+  "app": { "name": "해운대앱", "nameEn": "Haeundae App", "description": "해운대에서 새로운 인연을 만나세요" },
+  "location": { "centerLat": 35.1587, "centerLng": 129.1604, "nearbyBadgeText": "해운대근처" },
+  "districts": [
+    { "id": "haeundae", "name": "해운대해수욕장" },
+    { "id": "gwangalli", "name": "광안리" },
+    { "id": "songjeong", "name": "송정" }
+  ],
+  "categories": { "hobbies": ["서핑","횟집","카페","산책","맥주"] },
+  "games": { "charadesCategories": { "해운대": ["서핑","횟집","물회","파라솔","모래성"] } },
+  "board": { "name": "해운대 게시판" }
+}
+```
+
+### 코드에서 사용법
+
+**Flutter:**
+```dart
+// lib/config/app_config.dart
+class AppConfig {
+  static late Map<String, dynamic> _config;
+  static Future<void> load([String theme = 'hangang']) async {
+    final json = await rootBundle.loadString('config/themes/$theme.json');
+    _config = jsonDecode(json);
+  }
+  static String get appName => _config['app']['name'];
+  static String get nearbyBadge => _config['location']['nearbyBadgeText'];
+  static List<String> get districts => (_config['districts'] as List).map((d) => d['name'] as String).toList();
+  static Color get primaryColor => Color(int.parse(_config['theme']['primaryColor'].replaceFirst('#','0xFF')));
+  // ...
+}
+```
+
+**HTML:**
+```javascript
+// config 로드 후 전역에서 사용
+let APP = {};
+fetch('config/app_config.json').then(r=>r.json()).then(c => {
+  APP = c;
+  document.title = APP.app.name;
+  // 모든 텍스트/색상을 APP에서 참조
+});
+```
+
+**Server:**
+```javascript
+// server/src/config/app.js
+const config = require('../../../config/app_config.json');
+module.exports = config;
+// API에서 config.location.nearbyRadius 등 참조
+```
+
+### 바꿔야 할 것 vs 공통 코드
+
+| 설정 파일 (주제별 다름) | 공통 코드 (100% 재사용) |
+|------------------------|------------------------|
+| 앱 이름/설명/로고 | 로그인/회원가입 시스템 |
+| 테마 색상 | 채팅/DM 시스템 |
+| 지역 목록 + 좌표 | 16개 게임 전체 |
+| 일러스트 지도 SVG | 매칭/필터 로직 |
+| 카테고리/취미/관심사 | 게시판 CRUD |
+| 프리셋 질문/역할/초성 | 프로필/신뢰도 |
+| 밸런스 질문/제시어 | 위치공유/검색 |
+| 홈 배경이미지 | 글자크기 조절 |
+| 배지 텍스트 ("한강근처") | 스와이프 나가기 |
+| 법적 문서 URL | 효과음/애니메이션 |
+
+### 새 주제 앱 만드는 과정
+
+```
+1. config/themes/새주제.json 작성 (5분)
+2. 지도 SVG 제작 (1~2시간)
+3. 홈 배경이미지 교체
+4. config/app_config.json → 새주제.json 으로 변경
+5. 빌드 → 배포
+```
+
+**코드 수정 0줄. 설정 파일만 교체.**
+
+### 구현 시 규칙
+- 코드에 "한강", "Hangang" 등 주제 관련 문자열을 **절대 하드코딩하지 않음**
+- 모든 텍스트는 `AppConfig.xxx`로 참조
+- 모든 색상은 `AppConfig.theme.xxx`로 참조
+- 모든 지역/카테고리는 `AppConfig.districts` / `AppConfig.categories`로 참조
+- 게임 프리셋 데이터도 전부 설정 파일에서 로드
+
+---
+
+## 실제 구현 계획 (HTML 프로토타입 → Flutter 앱)
+
+### Context
+HTML 프로토타입(crowny-app-v2.html, 2233줄)이 95% 완성됨.
+14개 페이지, 16개 게임, 효과음, 위치공유, 검색, 게시판 등 모든 기능이 Mock으로 동작.
+이제 Flutter 앱으로 전환하여 iOS/Android/Web 배포 준비.
+
+### Flutter 현황 (HTML 대비)
+- 화면: 12/14 구현됨 (유저프로필상세/채팅방/모집글생성/DM/지도 빠짐)
+- 네비: 4탭이나 마지막이 프로필 (→ 게시판으로 변경 필요)
+- 게임 시스템: 완전 미구현
+- 위치공유/검색/글자조절/스와이프: 미구현
+
+### 구현 순서 (우선순위)
+
+#### Step 0: 화이트라벨 기반 설정
+- `config/themes/hangang.json` 생성: 앱이름/색상/지역/카테고리/게임데이터 모든 설정
+- `flutter/lib/config/app_config.dart` 신규: JSON 로드 + 전역 접근 싱글톤
+- `flutter/lib/app/theme.dart` 수정: 하드코딩 색상 → AppConfig.theme에서 로드
+- 모든 "한강" 하드코딩 문자열 제거 → AppConfig.appName 등으로 교체
+- HTML도 config fetch 후 동적 텍스트 적용
+
+#### Step 1: Flutter 구조 동기화 (네비 + 라우트)
+- `crowny_bottom_nav.dart`: 프로필→게시판 탭 변경
+- `main_shell.dart`: IndexedStack에서 Profile→BoardList 교체
+- `main.dart`: 빠진 라우트 추가 (/user-profile, /chat-room, /create-room, /dm-room, /map, /search)
+- `widgets/app_drawer.dart` 신규: 햄버거 드로어 (프로필/지도/로그인/설정)
+- `home_screen.dart`: 햄버거→Drawer 연결, 검색→/search 연결
+
+#### Step 2: 빠진 화면 구현
+- `screens/chat/chat_room_screen.dart` 신규: 그룹 채팅방 + 미션 + 입력바
+- `screens/chat/create_room_screen.dart` 신규: 모집글 작성 폼
+- `screens/chat/dm_room_screen.dart` 신규: 1:1 채팅방
+- `screens/profile/user_profile_screen.dart` 신규: 타인 프로필 상세
+- `screens/search/search_screen.dart` 신규: 검색 (채팅방/사용자 탭)
+- `screens/map/hangang_map_screen.dart` 신규: 한강 일러스트 지도
+
+#### Step 3: 채팅 필터 + DM
+- `chat_list_screen.dart` 수정: 상단 3탭 필터 (전체/참여중/1:1)
+- `models/chat_model.dart`: DmRoom 모델 추가
+- `mock/mock_data.dart`: DM mock 데이터 추가
+
+#### Step 4: 게임 시스템
+- `widgets/chat_plus_menu.dart` 신규: 바텀시트 +메뉴 (16개 항목)
+- `widgets/game_overlay.dart` 신규: 게임 전체화면 오버레이
+- `services/sound_service.dart` 신규: Web Audio → Flutter audioplayers 효과음
+- `services/game_service.dart` 신규: 셔플 애니메이션 + 카운트다운
+- 개별 게임 위젯: balance, nunchi, choseong, updown, charades, random_order, role_assign, seat_shuffle, draw_lots, poll
+
+#### Step 5: UX 기능
+- 글자크기 조절: SharedPreferences + MediaQuery textScaleFactor
+- 스와이프 나가기: Dismissible 위젯
+- 한강근처 배지: Geolocator 패키지 + 거리 계산
+- 위치공유 슬라이드 패널: AnimatedPositioned + Timer
+
+#### Step 6: 서버 API 연결
+- Mock 데이터 → HTTP API 호출 교체
+- Socket.io 실시간 연결 (채팅, 게임, 위치)
+- Firebase Auth 연동 (카카오/구글/Apple)
+
+#### Step 7: 카페24 VPS 배포
+- Node.js + PostgreSQL + Redis 서버 세팅
+- SSL + PM2 + 자동 백업
+- Flutter Web 빌드 → 서버에 배포
+- Flutter APK/IPA 빌드
+
+### 핵심 파일 목록
+
+**수정 필요:**
+- `flutter/lib/widgets/crowny_bottom_nav.dart` — 프로필→게시판
+- `flutter/lib/screens/main_shell.dart` — Profile→BoardList
+- `flutter/lib/main.dart` — 라우트 6개 추가
+- `flutter/lib/screens/home/home_screen.dart` — 햄버거+검색 연결
+- `flutter/lib/screens/chat/chat_list_screen.dart` — 3탭 필터
+- `flutter/lib/models/chat_model.dart` — DmRoom 추가
+- `flutter/lib/mock/mock_data.dart` — DM + 게시판 mock 추가
+
+**신규 생성:**
+- `config/themes/hangang.json` — 한강 앱 설정 (화이트라벨)
+- `flutter/lib/config/app_config.dart` — 설정 로더 싱글톤
+- `flutter/lib/widgets/app_drawer.dart`
+- `flutter/lib/screens/search/search_screen.dart`
+- `flutter/lib/screens/chat/chat_room_screen.dart`
+- `flutter/lib/screens/chat/create_room_screen.dart`
+- `flutter/lib/screens/chat/dm_room_screen.dart`
+- `flutter/lib/screens/profile/user_profile_screen.dart`
+- `flutter/lib/screens/map/hangang_map_screen.dart`
+- `flutter/lib/widgets/chat_plus_menu.dart`
+- `flutter/lib/widgets/game_overlay.dart`
+- `flutter/lib/services/sound_service.dart`
+- `flutter/lib/services/game_service.dart`
+
+### 검증
+- Flutter 앱 빌드 성공 (web/android/ios)
+- 14개 화면 네비게이션 정상 동작
+- 채팅 메시지 전송/수신
+- 게임 시작 → 셔플 → 카운트다운 → 결과
+- 위치공유 패널 슬라이드
+- 검색 결과 표시
+- 글자크기 조절 + 저장/복원
