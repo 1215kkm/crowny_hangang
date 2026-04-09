@@ -15,7 +15,7 @@ class CrownyBottomNav extends StatelessWidget {
     _NavItem(icon: Icons.home_rounded, label: '홈'),
     _NavItem(icon: Icons.waving_hand_rounded, label: '매칭'),
     _NavItem(icon: Icons.forum_rounded, label: '채팅'),
-    _NavItem(icon: Icons.person_rounded, label: '프로필'),
+    _NavItem(icon: Icons.article_rounded, label: '게시판'),
   ];
 
   @override

@@ -5,6 +5,7 @@ import '../../mock/mock_data.dart';
 import '../../widgets/crowny_bottom_nav.dart';
 import '../../widgets/gradient_icon_box.dart';
 import '../../widgets/gradient_button.dart';
+import '../../widgets/app_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   final int navIndex;
@@ -18,6 +19,7 @@ class HomeScreen extends StatelessWidget {
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
         backgroundColor: Colors.white,
+        drawer: const AppDrawer(),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -62,21 +64,27 @@ class HomeScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          width: 40, height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(14),
+                        GestureDetector(
+                          onTap: () => Scaffold.of(context).openDrawer(),
+                          child: Container(
+                            width: 40, height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
                           ),
-                          child: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
                         ),
-                        Container(
-                          width: 40, height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(14),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/search'),
+                          child: Container(
+                            width: 40, height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
                           ),
-                          child: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
                         ),
                       ],
                     ),

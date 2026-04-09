@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'home/home_screen.dart';
 import 'matching/matching_screen.dart';
 import 'chat/chat_list_screen.dart';
-import 'profile/profile_screen.dart';
+import 'board/board_list_screen.dart';
 
 /// 메인 탭 네비게이션 셸 — 하단 네비로 4개 탭 전환
 class MainShell extends StatefulWidget {
@@ -27,7 +27,7 @@ class _MainShellState extends State<MainShell> {
         HomeScreen(navIndex: _currentIndex, onNavTap: _onNavTap),
         MatchingScreen(navIndex: _currentIndex, onNavTap: _onNavTap),
         ChatListScreen(navIndex: _currentIndex, onNavTap: _onNavTap),
-        ProfileScreen(navIndex: _currentIndex, onNavTap: _onNavTap),
+        BoardListScreen(),
       ],
     );
   }
