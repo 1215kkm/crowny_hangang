@@ -58,8 +58,8 @@
     .fc-meta{font-size:10px;color:#9CA3AF}
     .user-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #F3F4F6}
     .user-item:last-child{border-bottom:none}
-    .uav{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
-    .uav .mi{font-size:24px}
+    .uav{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .uav .mi{font-size:14px}
     .uinfo{flex:1;min-width:0}
     .uname{font-size:calc(14px + var(--fs) * 1px);font-weight:700;color:#1E1B4B}
     .udesc{font-size:calc(12px + var(--fs) * 1px);color:#9CA3AF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -100,8 +100,8 @@
     .swipe-content{position:relative;background:white;transition:transform .25s ease;z-index:1}
     .swipe-leave{position:absolute;top:0;right:0;height:100%;width:80px;display:flex;align-items:center;justify-content:center;background:#DC2626;color:white;font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;z-index:0}
     .room-top{display:flex;align-items:center;gap:14px}
-    .room-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
-    .room-icon .mi{font-size:24px}
+    .room-icon{width:24px;height:24px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white}
+    .room-icon .mi{font-size:14px}
     .room-info{flex:1;min-width:0}
     .room-title{font-size:calc(14px + var(--fs) * 1px);font-weight:700;color:#1E1B4B;display:flex;align-items:center;gap:6px}
     .room-title .mi{font-size:16px;color:#9CA3AF}
@@ -415,17 +415,17 @@
         <span class="sec-more" onclick="switchPage('matching')">View all <span class="mi" style="font-size:16px">chevron_right</span></span>
       </div>
       <div class="user-item">
-        <div class="uav grd-pink"><span class="mi">directions_run</span></div>
+        <div class="uav grd-purple"><span class="mi">person</span></div>
         <div class="uinfo"><div class="uname">뚝섬러닝러</div><div class="udesc">러닝 중 · "같이 달릴 사람~"</div></div>
         <div class="uright"><span class="udist">120m</span><button class="ubtn" onclick="viewUser('u1')"><span class="mi">waving_hand</span>손흔들기</button></div>
       </div>
       <div class="user-item">
-        <div class="uav grd-blue"><span class="mi">sports_bar</span></div>
+        <div class="uav grd-purple"><span class="mi">person</span></div>
         <div class="uinfo"><div class="uname">여의도치맥왕</div><div class="udesc">치맥 중 · "합석 환영!"</div></div>
         <div class="uright"><span class="udist">200m</span><button class="ubtn" onclick="viewUser('u2')"><span class="mi">waving_hand</span>손흔들기</button></div>
       </div>
       <div class="user-item">
-        <div class="uav grd-orange"><span class="mi">photo_camera</span></div>
+        <div class="uav grd-purple"><span class="mi">person</span></div>
         <div class="uinfo"><div class="uname">SakuraLover</div><div class="udesc">사진 촬영 · "한강 처음이에요!"</div></div>
         <div class="uright"><span class="udist">350m</span><button class="ubtn" onclick="viewUser('u3')"><span class="mi">waving_hand</span>Wave</button></div>
       </div>
@@ -1248,7 +1248,7 @@
       }
       list.innerHTML = users.map(u => `
         <div class="mu-item" onclick="viewUser('${u.id}')">
-          <div class="uav ${u.gradient}"><span class="mi">${u.icon}</span></div>
+          <div class="uav grd-purple"><span class="mi">person</span></div>
           <div class="uinfo">
             <div class="uname">${u.nickname} ${u.nearHangang?'<span style="font-size:9px;color:white;font-weight:700;background:linear-gradient(135deg,#0EA5E9,#2563EB);padding:2px 6px;border-radius:6px;margin-left:3px">한강근처</span>':''} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:3px">신뢰 ${u.trust}</span></div>
             <div class="udesc">${u.activity} · ${u.dist}m</div>
@@ -1445,7 +1445,7 @@
             <div class="swipe-content">
               <div class="room-item" onclick="openDm('${dm.id}')">
                 <div class="room-top">
-                  <div class="room-icon ${dm.partner.gradient}"><span class="mi">${dm.partner.icon}</span></div>
+                  <div class="room-icon grd-purple"><span class="mi">person</span></div>
                   <div class="room-info"><div class="room-title">${dm.partner.nickname}</div><div class="room-meta">${dm.lastMessage}</div></div>
                   <div class="room-right"><span style="font-size:10px;color:#D1D5DB">${dm.time}</span>${dm.unread>0?`<div class="room-badge">${dm.unread}</div>`:''}</div>
                 </div>
@@ -1472,7 +1472,7 @@
             <div class="swipe-content">
               <div class="room-item" onclick="${onclick}">
                 <div class="room-top">
-                  <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+                  <div class="room-icon grd-purple"><span class="mi">group</span></div>
                   <div class="room-info"><div class="room-title">${lockIcon}${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">${r.status==='recruiting'?'<span class="room-status recruiting">🟢 모집중</span>':r.status==='starting'?'<span class="room-status starting">🟡 곧시작</span>':r.status==='active'?'<span class="room-status active">🔴 진행중</span>':'<span class="room-status ended">⚫ 종료</span>'}${missionTag}</div></div>
                   <div class="room-right">${badge}</div>
                 </div>
@@ -1577,7 +1577,7 @@
         results.innerHTML = matched.map(r => `
           <div class="room-item" onclick="closeSearch();openRoom('${r.id}')">
             <div class="room-top">
-              <div class="room-icon ${r.gradient}"><span class="mi">${r.icon}</span></div>
+              <div class="room-icon grd-purple"><span class="mi">group</span></div>
               <div class="room-info"><div class="room-title">${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div></div>
             </div>
           </div>`).join('');
@@ -1586,7 +1586,7 @@
         if (matched.length === 0) { results.innerHTML = '<div style="text-align:center;padding:40px;color:#9CA3AF">결과 없음</div>'; return; }
         results.innerHTML = matched.map(u => `
           <div class="mu-item" onclick="closeSearch();viewUser('${u.id}')">
-            <div class="uav ${u.gradient}"><span class="mi">${u.icon}</span></div>
+            <div class="uav grd-purple"><span class="mi">person</span></div>
             <div class="uinfo"><div class="uname">${u.nickname} ${u.nearHangang?'<span style="font-size:9px;color:white;font-weight:700;background:linear-gradient(135deg,#0EA5E9,#2563EB);padding:2px 6px;border-radius:6px;margin-left:3px">한강근처</span>':''} <span style="font-size:10px;color:var(--purple);font-weight:700;background:rgba(123,97,255,.08);padding:2px 8px;border-radius:6px;margin-left:3px">신뢰 ${u.trust}</span></div><div class="udesc">${u.activity} · ${u.dist}m</div></div>
           </div>`).join('');
       }
