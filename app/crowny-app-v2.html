@@ -1535,7 +1535,7 @@
             <div class="swipe-content">
               <div class="room-item" onclick="openDm('${dm.id}')">
                 <div class="room-top">
-                  <div class="room-icon grd-purple"><span class="mi">person</span></div>
+                  <div class="room-icon grd-blue"><span class="mi">person</span></div>
                   <div class="room-info"><div class="room-title">${dm.partner.nickname}</div><div class="room-meta">${dm.lastMessage}</div></div>
                   <div class="room-right"><span style="font-size:10px;color:#D1D5DB">${dm.time}</span>${dm.unread>0?`<div class="room-badge">${dm.unread}</div>`:''}</div>
                 </div>
@@ -1562,7 +1562,7 @@
             <div class="swipe-content">
               <div class="room-item" onclick="${onclick}">
                 <div class="room-top">
-                  <div class="room-icon grd-purple"><span class="mi">group</span></div>
+                  <div class="room-icon ${r.isJoined ? 'grd-blue' : 'grd-purple'}"><span class="mi">group</span></div>
                   <div class="room-info"><div class="room-title">${lockIcon}${r.title}</div><div class="room-meta">${r.creator} · ${r.district} · ${r.current}/${r.max}명</div><div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap">${r.status==='recruiting'?'<span class="room-status recruiting">🟢 모집중</span>':r.status==='starting'?'<span class="room-status starting">🟡 곧시작</span>':r.status==='active'?'<span class="room-status active">🔴 진행중</span>':'<span class="room-status ended">⚫ 종료</span>'}${missionTag}</div></div>
                   <div class="room-right">${badge}</div>
                 </div>
