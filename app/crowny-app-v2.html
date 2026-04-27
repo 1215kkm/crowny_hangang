@@ -678,6 +678,12 @@
       <input class="cr-input" type="text" placeholder="제목을 입력하세요" id="crTitle">
       <textarea class="cr-textarea" placeholder="어떤 모임인지 설명해주세요..." id="crDesc"></textarea>
 
+      <div class="cr-label">모집시간 카운트</div>
+      <div class="slider-row">
+        <input type="range" min="5" max="180" value="30" step="5" oninput="document.getElementById('recruitTimeVal').textContent=this.value+'분'">
+        <div class="slider-val" id="recruitTimeVal">30분</div>
+      </div>
+
       <div class="cr-label">반경 (이 거리 안 사람에게 알림)</div>
       <div class="cr-chips" id="crRadiusChips">
         <div class="cr-chip active" onclick="selectCrChip(this,'crRadiusChips')">1km</div>
@@ -754,56 +760,6 @@
         <label><input type="checkbox" checked> 글 첨부</label>
         <input type="text" placeholder="미션 설명을 입력하세요">
       </div>
-
-      <div class="cr-label">미션 시간</div>
-      <div class="slider-row">
-        <input type="range" min="1" max="60" value="3" oninput="document.getElementById('sliderVal').textContent=this.value+'분'">
-        <div class="slider-val" id="sliderVal">3분</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== PAGE: HOST ROOM (주최자 화면) ========== -->
-  <div class="page" id="page-host-room" style="background:white;min-height:100vh">
-    <div class="chatroom-header">
-      <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;left:20px" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
-      <div>
-        <div class="chatroom-title" id="hostTitle">치킨 같이 시켜요!</div>
-        <div class="chatroom-count" id="hostCount">모집중 · 1/4명</div>
-      </div>
-    </div>
-
-    <!-- 탭 (반경상황 / 채팅방) -->
-    <div class="host-tabs">
-      <div class="host-tab active" id="hostTabRadar" onclick="switchHostTab('radar')">반경상황</div>
-      <div class="host-tab" id="hostTabChat" onclick="switchHostTab('chat')">채팅방</div>
-    </div>
-
-    <!-- 반경상황 (레이더 뷰) -->
-    <div id="hostRadarView">
-      <div class="radar-stats">
-        <span>👋 참여 <strong id="hostJoinCount">0</strong>명</span>
-        <span>❤️ 관심 <strong id="hostInterestCount">0</strong>명</span>
-      </div>
-      <div class="radar-container">
-        <div class="radar-bg"></div>
-        <div class="radar-ring r1"></div>
-        <div class="radar-ring r2"></div>
-        <div class="radar-sweep"></div>
-        <div class="radar-center"></div>
-        <div id="radarIcons"></div>
-      </div>
-      <div style="text-align:center;font-size:11px;color:#9CA3AF;padding:8px">반경 내 사용자가 참여/관심을 누르면 레이더에 표시됩니다</div>
-    </div>
-
-    <!-- 채팅방 (숨김) -->
-    <div id="hostChatView" style="display:none;flex:1;flex-direction:column">
-      <div class="msg-area" id="hostMsgArea" style="flex:1;overflow-y:auto;padding:16px"></div>
-      <div class="input-bar">
-        <button class="input-icon" onclick="openPlusMenu()"><span class="mi">add_circle</span></button>
-        <input class="input-field" type="text" placeholder="메시지 입력..." id="hostChatInput" onkeydown="if(event.key==='Enter')sendHostMsg()">
-        <button class="send-btn" onclick="sendHostMsg()"><span class="mi">send</span></button>
-      </div>
     </div>
   </div>
 
@@ -823,7 +779,7 @@
     </div>
   </div>
 
-  <!-- ========== PAGE: CHAT ROOM ========== -->
+  <!-- ========== PAGE: CHAT ROOM (모집상황 + 채팅방 통합) ========== -->
   <div class="page" id="page-chat-room" style="background:white;min-height:100vh;display:none;flex-direction:column">
     <div class="chatroom-header">
       <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;left:20px" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
@@ -834,44 +790,71 @@
       <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;right:20px" onclick="showActivityLog()"><span class="mi">more_vert</span></button>
     </div>
 
-    <!-- 미션 카드 (있을 때만) -->
-    <div class="mission-card" id="roomMissionCard" style="display:none">
-      <div class="mc-icon grd-pink" id="mcIcon"><span class="mi">photo_camera</span></div>
-      <div class="mc-info">
-        <div class="mc-name" id="mcName">가장 웃긴 셀카</div>
-        <div class="mc-time" id="mcTime">남은 시간 2:30</div>
-      </div>
-      <div class="mc-timer">
-        <svg viewBox="0 0 48 48">
-          <circle class="mc-timer-bg" cx="24" cy="24" r="21"/>
-          <circle class="mc-timer-prog" cx="24" cy="24" r="21" id="roomTimerCircle"/>
-        </svg>
-        <div class="mc-timer-text" id="roomTimerText">2:30</div>
-      </div>
-      <button class="mc-join" onclick="showMissionSubmit()">참여</button>
+    <!-- 탭 (모집상황 / 채팅방) -->
+    <div class="host-tabs">
+      <div class="host-tab active" id="croomTabRadar" onclick="switchCroomTab('radar')">모집상황</div>
+      <div class="host-tab" id="croomTabChat" onclick="switchCroomTab('chat')">채팅방</div>
     </div>
 
-    <!-- 미션 제출 영역 -->
-    <div id="missionSubmitArea" style="display:none;padding:12px 16px;background:#FFF7ED;border-bottom:1px solid #FDE68A">
-      <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px">미션 제출</div>
-      <div style="display:flex;gap:8px">
-        <button class="input-icon" style="background:#FEF3C7" onclick="alert('사진 업로드 (Mock)')"><span class="mi" style="color:#D97706">photo_camera</span></button>
-        <button class="input-icon" style="background:#FEF3C7" onclick="alert('음성 녹음 (Mock)')"><span class="mi" style="color:#D97706">mic</span></button>
-        <input type="text" placeholder="텍스트로 제출..." style="flex:1;border:1px solid #FDE68A;border-radius:12px;padding:8px 12px;font-size:12px;font-family:var(--font);outline:none" id="missionTextInput">
-        <button style="padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#F59E0B,#E8590C);color:white;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)" onclick="submitMission()">제출</button>
+    <!-- 모집상황 (레이더 뷰) -->
+    <div id="croomRadarView" style="overflow-y:auto">
+      <div class="radar-stats">
+        <span>👋 참여 <strong id="croomJoinCount">0</strong>명</span>
+        <span>❤️ 관심 <strong id="croomInterestCount">0</strong>명</span>
+        <span>⏱ <strong id="croomRecruitTime">30:00</strong></span>
       </div>
+      <div class="radar-container">
+        <div class="radar-bg"></div>
+        <div class="radar-ring r1"></div>
+        <div class="radar-ring r2"></div>
+        <div class="radar-sweep"></div>
+        <div class="radar-center"></div>
+        <div id="croomRadarIcons"></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#9CA3AF;padding:8px 16px">반경 내 사용자가 참여/관심을 누르면 레이더에 표시됩니다</div>
     </div>
 
-    <!-- 채팅 메시지 -->
-    <div class="msg-area" id="msgArea">
-      <!-- JS로 동적 렌더링 -->
-    </div>
+    <!-- 채팅방 (숨김) -->
+    <div id="croomChatView" style="display:none;flex:1;flex-direction:column;min-height:0">
+      <!-- 미션 카드 (있을 때만) -->
+      <div class="mission-card" id="roomMissionCard" style="display:none">
+        <div class="mc-icon grd-pink" id="mcIcon"><span class="mi">photo_camera</span></div>
+        <div class="mc-info">
+          <div class="mc-name" id="mcName">가장 웃긴 셀카</div>
+          <div class="mc-time" id="mcTime">남은 시간 2:30</div>
+        </div>
+        <div class="mc-timer">
+          <svg viewBox="0 0 48 48">
+            <circle class="mc-timer-bg" cx="24" cy="24" r="21"/>
+            <circle class="mc-timer-prog" cx="24" cy="24" r="21" id="roomTimerCircle"/>
+          </svg>
+          <div class="mc-timer-text" id="roomTimerText">2:30</div>
+        </div>
+        <button class="mc-join" onclick="showMissionSubmit()">참여</button>
+      </div>
 
-    <!-- 하단 입력바 -->
-    <div class="input-bar">
-      <button class="input-icon" onclick="openPlusMenu()"><span class="mi">add_circle</span></button>
-      <input class="input-field" type="text" placeholder="메시지 입력..." id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
-      <button class="send-btn" onclick="sendMessage()"><span class="mi">send</span></button>
+      <!-- 미션 제출 영역 -->
+      <div id="missionSubmitArea" style="display:none;padding:12px 16px;background:#FFF7ED;border-bottom:1px solid #FDE68A">
+        <div style="font-size:12px;font-weight:700;color:#92400E;margin-bottom:8px">미션 제출</div>
+        <div style="display:flex;gap:8px">
+          <button class="input-icon" style="background:#FEF3C7" onclick="alert('사진 업로드 (Mock)')"><span class="mi" style="color:#D97706">photo_camera</span></button>
+          <button class="input-icon" style="background:#FEF3C7" onclick="alert('음성 녹음 (Mock)')"><span class="mi" style="color:#D97706">mic</span></button>
+          <input type="text" placeholder="텍스트로 제출..." style="flex:1;border:1px solid #FDE68A;border-radius:12px;padding:8px 12px;font-size:12px;font-family:var(--font);outline:none" id="missionTextInput">
+          <button style="padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#F59E0B,#E8590C);color:white;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font)" onclick="submitMission()">제출</button>
+        </div>
+      </div>
+
+      <!-- 채팅 메시지 -->
+      <div class="msg-area" id="msgArea" style="flex:1;overflow-y:auto">
+        <!-- JS로 동적 렌더링 -->
+      </div>
+
+      <!-- 하단 입력바 -->
+      <div class="input-bar">
+        <button class="input-icon" onclick="openPlusMenu()"><span class="mi">add_circle</span></button>
+        <input class="input-field" type="text" placeholder="메시지 입력..." id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="send-btn" onclick="sendMessage()"><span class="mi">send</span></button>
+      </div>
     </div>
   </div>
 
@@ -1299,9 +1282,8 @@
       pageHistory.push(name);
       // Init dynamic content
       if (name === 'matching') renderUsers();
-      if (name === 'host-room') { switchHostTab('radar'); updateRadar(); }
       if (name === 'chat') renderRooms();
-      if (name === 'chat-room') renderMessages();
+      if (name === 'chat-room') { renderMessages(); updateCroomRadar(); }
       if (name === 'board') renderBoard();
     }
 
@@ -1413,6 +1395,11 @@
       if (!r) return;
       document.getElementById('croomTitle').textContent = r.title;
       document.getElementById('croomCount').textContent = r.current + '/' + r.max + '명';
+      // 기존 방의 모집상황 mock (참여자/관심자)
+      croomJoiners = [{ name:'기존참여1', x:0.3, y:0.3 }, { name:'기존참여2', x:0.6, y:0.4 }];
+      croomInterests = [{ name:'관심1', x:0.7, y:0.7 }];
+      croomRecruitMin = 30;
+      updateCroomRadar();
       // Mission card
       const mc = document.getElementById('roomMissionCard');
       if (r.mission) {
@@ -1424,6 +1411,7 @@
         mc.style.display = 'none';
       }
       document.getElementById('missionSubmitArea').style.display = 'none';
+      switchCroomTab('radar'); // 기본은 모집상황 탭
       switchPage('chat-room');
     }
 
@@ -1630,7 +1618,7 @@
     }
 
     /* ===== FONT SIZE ===== */
-    let fontSizeOffset = parseInt(localStorage.getItem('crowny_fs') || '1');
+    let fontSizeOffset = parseInt(localStorage.getItem('crowny_fs') || '3');
     function applyFontSize() {
       document.documentElement.style.setProperty('--fs', fontSizeOffset);
     }
@@ -1703,9 +1691,11 @@
       { id:'p5', title:'오늘 한강 치맥 후기 🍗', preview:'여의도에서 치킨 시켜서 한강에서 먹었는데 역시 한강 치맥은 최고...', author:'치맥마스터', district:'여의도', isAnon:false, likes:23, comments:8, time:'어제' },
     ];
 
+    const BOARD_THUMBS = ['🌸','🍜','🌈','🐶','🍗']; // 게시글별 썸네일 이모지 (mock)
     function renderBoard() {
-      document.getElementById('boardList').innerHTML = MOCK_POSTS.map(p => `
-        <div class="board-item" onclick="viewBoardPost('${p.id}')">
+      document.getElementById('boardList').innerHTML = MOCK_POSTS.map((p, i) => `
+        <div class="board-item" onclick="viewBoardPost('${p.id}')" style="display:flex;gap:12px;align-items:center">
+          <div style="flex:1;min-width:0">
           <div class="board-title-row">
             ${p.isAnon ? '<span class="board-anon">익명</span>' : ''}
             <span class="board-post-title">${p.title}</span>
@@ -1716,6 +1706,8 @@
             <span style="margin-left:auto;display:flex;align-items:center;gap:2px"><span class="mi">favorite</span>${p.likes}</span>
             <span style="display:flex;align-items:center;gap:2px"><span class="mi">chat_bubble</span>${p.comments}</span>
           </div>
+          </div>
+          <div style="width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg,#F3F0FF,#FCE7F3);display:flex;align-items:center;justify-content:center;font-size:36px;flex-shrink:0">${BOARD_THUMBS[i % BOARD_THUMBS.length]}</div>
         </div>
       `).join('');
     }
@@ -2311,72 +2303,85 @@
       renderRoomsFiltered();
     }
 
-    /* ===== HOST ROOM (주최자 화면) ===== */
-    let hostJoiners = [];
-    let hostInterests = [];
-    let hostMessages = [];
+    /* ===== CHAT ROOM (모집상황 + 채팅방 통합) ===== */
+    let croomJoiners = [];
+    let croomInterests = [];
+    let croomRecruitMin = 30;
 
     function createRoom() {
       const title = document.getElementById('crTitle')?.value || '새 모임';
-      document.getElementById('hostTitle').textContent = title;
-      hostJoiners = [];
-      hostInterests = [];
-      hostMessages = [];
-      updateRadar();
-      switchHostTab('radar');
-      switchPage('host-room');
-      // Mock: 3초 후 참여자 1명 등장
-      addTimer(setTimeout(() => { addRadarPerson('join', '뚝섬러닝러', 0.3, 0.25); }, 3000));
-      addTimer(setTimeout(() => { addRadarPerson('interest', 'SakuraLover', 0.7, 0.35); }, 5000));
-      addTimer(setTimeout(() => { addRadarPerson('join', '한강멍멍이', 0.4, 0.7); }, 8000));
+      const recruitTime = parseInt(document.getElementById('recruitTimeVal')?.textContent) || 30;
+      croomRecruitMin = recruitTime;
+      // Mock: 새 모임방을 chat-room으로 열기
+      currentRoomId = 'new';
+      document.getElementById('croomTitle').textContent = title;
+      document.getElementById('croomCount').textContent = `모집중 · 1/4명`;
+      croomJoiners = [];
+      croomInterests = [];
+      MOCK.chatMessages = [{ sender:'system', text:`📢 모집을 시작했습니다 (${recruitTime}분)`, time:_now(), isSystem:true }];
+      updateCroomRadar();
+      startRecruitTimer(recruitTime);
+      switchCroomTab('radar');
+      // 미션카드 숨김
+      document.getElementById('roomMissionCard').style.display = 'none';
+      switchPage('chat-room');
+      // Mock: 시간차로 참여자/관심자 등장
+      addTimer(setTimeout(() => { addCroomPerson('join', '뚝섬러닝러', 0.3, 0.25); }, 3000));
+      addTimer(setTimeout(() => { addCroomPerson('interest', 'SakuraLover', 0.7, 0.35); }, 5000));
+      addTimer(setTimeout(() => { addCroomPerson('join', '한강멍멍이', 0.4, 0.7); }, 8000));
     }
 
-    function switchHostTab(tab) {
-      document.getElementById('hostTabRadar').classList.toggle('active', tab === 'radar');
-      document.getElementById('hostTabChat').classList.toggle('active', tab === 'chat');
-      document.getElementById('hostRadarView').style.display = tab === 'radar' ? 'block' : 'none';
-      document.getElementById('hostChatView').style.display = tab === 'chat' ? 'flex' : 'none';
+    function switchCroomTab(tab) {
+      document.getElementById('croomTabRadar').classList.toggle('active', tab === 'radar');
+      document.getElementById('croomTabChat').classList.toggle('active', tab === 'chat');
+      document.getElementById('croomRadarView').style.display = tab === 'radar' ? 'block' : 'none';
+      document.getElementById('croomChatView').style.display = tab === 'chat' ? 'flex' : 'none';
     }
 
-    function addRadarPerson(type, name, xRatio, yRatio) {
-      if (type === 'join') hostJoiners.push({ name, x: xRatio, y: yRatio });
-      else hostInterests.push({ name, x: xRatio, y: yRatio });
-      updateRadar();
+    function addCroomPerson(type, name, xRatio, yRatio) {
+      if (type === 'join') croomJoiners.push({ name, x: xRatio, y: yRatio });
+      else croomInterests.push({ name, x: xRatio, y: yRatio });
+      updateCroomRadar();
       playSound('ding');
     }
 
-    function updateRadar() {
-      document.getElementById('hostJoinCount').textContent = hostJoiners.length;
-      document.getElementById('hostInterestCount').textContent = hostInterests.length;
-      document.getElementById('hostCount').textContent = `모집중 · ${1 + hostJoiners.length}/4명`;
-      const container = document.getElementById('radarIcons');
+    function updateCroomRadar() {
+      const jEl = document.getElementById('croomJoinCount');
+      const iEl = document.getElementById('croomInterestCount');
+      if (jEl) jEl.textContent = croomJoiners.length;
+      if (iEl) iEl.textContent = croomInterests.length;
+      const cnt = document.getElementById('croomCount');
+      if (cnt) cnt.textContent = `모집중 · ${1 + croomJoiners.length}/4명`;
+      const container = document.getElementById('croomRadarIcons');
+      if (!container) return;
       container.innerHTML = '';
-      hostJoiners.forEach(p => {
+      croomJoiners.forEach(p => {
         container.innerHTML += `<div class="radar-icon join" style="left:${p.x * 100}%;top:${p.y * 100}%" title="${p.name}">👋</div>`;
       });
-      hostInterests.forEach(p => {
+      croomInterests.forEach(p => {
         container.innerHTML += `<div class="radar-icon interest" style="left:${p.x * 100}%;top:${p.y * 100}%" title="${p.name}">❤️</div>`;
       });
     }
 
-    function sendHostMsg() {
-      const input = document.getElementById('hostChatInput');
-      const text = input.value.trim();
-      if (!text) return;
-      const now = new Date();
-      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-      hostMessages.push({ sender: '나', isMe: true, text, time });
-      input.value = '';
-      renderHostMessages();
+    let recruitTimerId = null;
+    function startRecruitTimer(min) {
+      if (recruitTimerId) clearInterval(recruitTimerId);
+      let sec = min * 60;
+      const update = () => {
+        const m = Math.floor(sec / 60);
+        const s = sec % 60;
+        const el = document.getElementById('croomRecruitTime');
+        if (el) el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+        sec--;
+        if (sec < 0) clearInterval(recruitTimerId);
+      };
+      update();
+      recruitTimerId = addTimer(setInterval(update, 1000));
     }
 
-    function renderHostMessages() {
-      const area = document.getElementById('hostMsgArea');
-      area.innerHTML = hostMessages.map(m => {
-        if (m.isMe) return `<div class="msg-me"><div class="msg-content"><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
-        return `<div class="msg-other"><div class="msg-av grd-purple"><span class="mi">person</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
-      }).join('');
-      area.scrollTop = area.scrollHeight;
+    function _now() {
+      const d = new Date();
+      return d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
     }
 
     function joinRoom() {
