@@ -372,6 +372,33 @@
     .loc-fab .mi{font-size:22px}
     @keyframes locPulse{0%,100%{box-shadow:0 4px 16px rgba(108,60,225,.4)}50%{box-shadow:0 4px 24px rgba(108,60,225,.7)}}
     .loc-fab.active{animation:locPulse 2s infinite}
+
+    /* === RADAR VIEW === */
+    .radar-container{position:relative;width:280px;height:280px;margin:20px auto}
+    .radar-bg{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,rgba(108,60,225,.03) 0%,rgba(108,60,225,.08) 50%,rgba(108,60,225,.15) 100%);border:2px solid rgba(108,60,225,.2)}
+    .radar-ring{position:absolute;border-radius:50%;border:1px solid rgba(108,60,225,.1)}
+    .radar-ring.r1{top:25%;left:25%;width:50%;height:50%}
+    .radar-ring.r2{top:10%;left:10%;width:80%;height:80%}
+    .radar-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--purple);border:3px solid white;box-shadow:0 0 12px rgba(108,60,225,.5);z-index:5}
+    .radar-icon{position:absolute;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;font-size:18px;z-index:3;transform:translate(-50%,-50%)}
+    .radar-icon.join{background:rgba(108,60,225,.12)}
+    .radar-icon.interest{background:rgba(214,51,132,.12)}
+    .radar-sweep{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(108,60,225,.15) 30deg,transparent 60deg);animation:radarSweep 3s linear infinite}
+    @keyframes radarSweep{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    .host-tabs{display:flex;border-bottom:2px solid #F3F4F6}
+    .host-tab{flex:1;padding:14px;text-align:center;font-size:calc(14px + var(--fs) * 1px);font-weight:700;color:#9CA3AF;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+    .host-tab.active{color:var(--purple);border-bottom-color:var(--purple)}
+    .radar-stats{display:flex;justify-content:center;gap:24px;padding:16px;font-size:calc(13px + var(--fs) * 1px);font-weight:700;color:#4B5563}
+    .radar-stats span{display:flex;align-items:center;gap:4px}
+
+    /* === NOTIFICATION CARD === */
+    .notif-card{margin:8px 16px;padding:14px;background:#F9F7FF;border:1px solid #EDE9FE;border-radius:16px}
+    .notif-title{font-size:calc(14px + var(--fs) * 1px);font-weight:700;color:#1E1B4B;margin-bottom:4px}
+    .notif-meta{font-size:calc(12px + var(--fs) * 1px);color:#9CA3AF;margin-bottom:12px}
+    .notif-btns{display:flex;gap:8px}
+    .notif-btn{flex:1;padding:12px;border-radius:12px;border:none;font-family:var(--font);font-size:calc(13px + var(--fs) * 1px);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+    .notif-btn.join{background:linear-gradient(135deg,#6C3CE1,#D63384);color:white}
+    .notif-btn.interest{background:#F3F4F6;color:#D63384}
   </style>
 </head>
 <body>
@@ -639,11 +666,25 @@
     <div class="cr-header">
       <button class="cr-close" onclick="goBack()"><span class="mi">close</span></button>
       <div class="cr-title">모집글 작성</div>
-      <button class="cr-submit" onclick="alert('모집글이 등록되었습니다!');switchPage('chat')">등록</button>
+      <button class="cr-submit" onclick="createRoom()">등록</button>
     </div>
     <div class="cr-body">
-      <input class="cr-input" type="text" placeholder="제목을 입력하세요">
-      <textarea class="cr-textarea" placeholder="어떤 모임인지 설명해주세요..."></textarea>
+      <div class="cr-label" style="margin-top:0">분류</div>
+      <div class="cr-chips" id="crCategoryChips">
+        <div class="cr-chip active" onclick="selectCrChip(this,'crCategoryChips')" data-val="play">🎉 같이놀기</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crCategoryChips')" data-val="share">🎁 나눔하기</div>
+      </div>
+
+      <input class="cr-input" type="text" placeholder="제목을 입력하세요" id="crTitle">
+      <textarea class="cr-textarea" placeholder="어떤 모임인지 설명해주세요..." id="crDesc"></textarea>
+
+      <div class="cr-label">반경 (이 거리 안 사람에게 알림)</div>
+      <div class="cr-chips" id="crRadiusChips">
+        <div class="cr-chip active" onclick="selectCrChip(this,'crRadiusChips')">1km</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crRadiusChips')">2km</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crRadiusChips')">3km</div>
+        <div class="cr-chip" onclick="selectCrChip(this,'crRadiusChips')">한강 전체</div>
+      </div>
 
       <div class="cr-label">지역 선택</div>
       <div class="cr-chips" id="crDistrictChips">
@@ -718,6 +759,66 @@
       <div class="slider-row">
         <input type="range" min="1" max="60" value="3" oninput="document.getElementById('sliderVal').textContent=this.value+'분'">
         <div class="slider-val" id="sliderVal">3분</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: HOST ROOM (주최자 화면) ========== -->
+  <div class="page" id="page-host-room" style="background:white;min-height:100vh">
+    <div class="chatroom-header">
+      <button class="icon-btn" style="background:rgba(255,255,255,.15);position:absolute;left:20px" onclick="switchPage('chat')"><span class="mi">arrow_back</span></button>
+      <div>
+        <div class="chatroom-title" id="hostTitle">치킨 같이 시켜요!</div>
+        <div class="chatroom-count" id="hostCount">모집중 · 1/4명</div>
+      </div>
+    </div>
+
+    <!-- 탭 (반경상황 / 채팅방) -->
+    <div class="host-tabs">
+      <div class="host-tab active" id="hostTabRadar" onclick="switchHostTab('radar')">반경상황</div>
+      <div class="host-tab" id="hostTabChat" onclick="switchHostTab('chat')">채팅방</div>
+    </div>
+
+    <!-- 반경상황 (레이더 뷰) -->
+    <div id="hostRadarView">
+      <div class="radar-stats">
+        <span>👋 참여 <strong id="hostJoinCount">0</strong>명</span>
+        <span>❤️ 관심 <strong id="hostInterestCount">0</strong>명</span>
+      </div>
+      <div class="radar-container">
+        <div class="radar-bg"></div>
+        <div class="radar-ring r1"></div>
+        <div class="radar-ring r2"></div>
+        <div class="radar-sweep"></div>
+        <div class="radar-center"></div>
+        <div id="radarIcons"></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:#9CA3AF;padding:8px">반경 내 사용자가 참여/관심을 누르면 레이더에 표시됩니다</div>
+    </div>
+
+    <!-- 채팅방 (숨김) -->
+    <div id="hostChatView" style="display:none;flex:1;flex-direction:column">
+      <div class="msg-area" id="hostMsgArea" style="flex:1;overflow-y:auto;padding:16px"></div>
+      <div class="input-bar">
+        <button class="input-icon" onclick="openPlusMenu()"><span class="mi">add_circle</span></button>
+        <input class="input-field" type="text" placeholder="메시지 입력..." id="hostChatInput" onkeydown="if(event.key==='Enter')sendHostMsg()">
+        <button class="send-btn" onclick="sendHostMsg()"><span class="mi">send</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== PAGE: JOIN NOTIFICATION (참여 알림 화면) ========== -->
+  <div class="page" id="page-join-notif" style="background:white;min-height:100vh">
+    <div style="padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #F3F4F6">
+      <button class="cr-close" onclick="goBack()"><span class="mi">arrow_back</span></button>
+      <div style="font-size:16px;font-weight:800;color:#1E1B4B">모임 알림</div>
+    </div>
+    <div class="notif-card" id="notifCard">
+      <div class="notif-title" id="notifTitle">🍗 치킨 같이 시켜요!</div>
+      <div class="notif-meta" id="notifMeta">여의도 · 500m · 🎉 같이놀기 · 1/4명</div>
+      <div class="notif-btns">
+        <button class="notif-btn join" onclick="joinRoom()">👋 참여할래요</button>
+        <button class="notif-btn interest" onclick="interestRoom()">❤️ 관심</button>
       </div>
     </div>
   </div>
@@ -1198,6 +1299,7 @@
       pageHistory.push(name);
       // Init dynamic content
       if (name === 'matching') renderUsers();
+      if (name === 'host-room') { switchHostTab('radar'); updateRadar(); }
       if (name === 'chat') renderRooms();
       if (name === 'chat-room') renderMessages();
       if (name === 'board') renderBoard();
@@ -2207,6 +2309,84 @@
       const idx = MOCK_DMS.findIndex(d => d.id === dmId);
       if (idx >= 0) MOCK_DMS.splice(idx, 1);
       renderRoomsFiltered();
+    }
+
+    /* ===== HOST ROOM (주최자 화면) ===== */
+    let hostJoiners = [];
+    let hostInterests = [];
+    let hostMessages = [];
+
+    function createRoom() {
+      const title = document.getElementById('crTitle')?.value || '새 모임';
+      document.getElementById('hostTitle').textContent = title;
+      hostJoiners = [];
+      hostInterests = [];
+      hostMessages = [];
+      updateRadar();
+      switchHostTab('radar');
+      switchPage('host-room');
+      // Mock: 3초 후 참여자 1명 등장
+      addTimer(setTimeout(() => { addRadarPerson('join', '뚝섬러닝러', 0.3, 0.25); }, 3000));
+      addTimer(setTimeout(() => { addRadarPerson('interest', 'SakuraLover', 0.7, 0.35); }, 5000));
+      addTimer(setTimeout(() => { addRadarPerson('join', '한강멍멍이', 0.4, 0.7); }, 8000));
+    }
+
+    function switchHostTab(tab) {
+      document.getElementById('hostTabRadar').classList.toggle('active', tab === 'radar');
+      document.getElementById('hostTabChat').classList.toggle('active', tab === 'chat');
+      document.getElementById('hostRadarView').style.display = tab === 'radar' ? 'block' : 'none';
+      document.getElementById('hostChatView').style.display = tab === 'chat' ? 'flex' : 'none';
+    }
+
+    function addRadarPerson(type, name, xRatio, yRatio) {
+      if (type === 'join') hostJoiners.push({ name, x: xRatio, y: yRatio });
+      else hostInterests.push({ name, x: xRatio, y: yRatio });
+      updateRadar();
+      playSound('ding');
+    }
+
+    function updateRadar() {
+      document.getElementById('hostJoinCount').textContent = hostJoiners.length;
+      document.getElementById('hostInterestCount').textContent = hostInterests.length;
+      document.getElementById('hostCount').textContent = `모집중 · ${1 + hostJoiners.length}/4명`;
+      const container = document.getElementById('radarIcons');
+      container.innerHTML = '';
+      hostJoiners.forEach(p => {
+        container.innerHTML += `<div class="radar-icon join" style="left:${p.x * 100}%;top:${p.y * 100}%" title="${p.name}">👋</div>`;
+      });
+      hostInterests.forEach(p => {
+        container.innerHTML += `<div class="radar-icon interest" style="left:${p.x * 100}%;top:${p.y * 100}%" title="${p.name}">❤️</div>`;
+      });
+    }
+
+    function sendHostMsg() {
+      const input = document.getElementById('hostChatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const now = new Date();
+      const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+      hostMessages.push({ sender: '나', isMe: true, text, time });
+      input.value = '';
+      renderHostMessages();
+    }
+
+    function renderHostMessages() {
+      const area = document.getElementById('hostMsgArea');
+      area.innerHTML = hostMessages.map(m => {
+        if (m.isMe) return `<div class="msg-me"><div class="msg-content"><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+        return `<div class="msg-other"><div class="msg-av grd-purple"><span class="mi">person</span></div><div class="msg-content"><div class="msg-sender">${m.sender}</div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div></div>`;
+      }).join('');
+      area.scrollTop = area.scrollHeight;
+    }
+
+    function joinRoom() {
+      alert('참여 완료! 👋 채팅방으로 이동합니다');
+      switchPage('chat');
+    }
+
+    function interestRoom() {
+      alert('관심 등록 완료! ❤️ 인원 변동 시 알림을 받습니다');
+      goBack();
     }
 
     /* ===== MAP ===== */

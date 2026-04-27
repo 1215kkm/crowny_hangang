@@ -11,6 +11,8 @@ class MoimRoom {
   final String title;
   final String? description;
   final String district;
+  final String category; // play, share
+  final int radiusKm; // 1, 2, 3, 0=전체
   final int maxPeople;
   final int currentPeople;
   final bool isJoined;
@@ -32,6 +34,8 @@ class MoimRoom {
     required this.title,
     this.description,
     required this.district,
+    this.category = 'play',
+    this.radiusKm = 2,
     required this.maxPeople,
     required this.currentPeople,
     this.isJoined = false,
