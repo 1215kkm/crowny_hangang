@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>강팀 회의 — 크라우니 한강 v2 킥오프</title>
+<style>
+  /* 회의록 문서 자체의 표시 스타일 — 산출물용 Crowny Class 디자인 시스템과는 별개. */
+  :root {
+    --bg: #fafafa; --panel: #fff; --line: #e5e7eb;
+    --fg: #111827; --muted: #6b7280;
+    --c-decision: #1f2937;  /* 강사장·CEO */
+    --c-hub:      #2563eb;  /* 강팀장 */
+    --c-exec:     #0f766e;  /* 강디1·강디2·강개발·강체크 */
+    --c-guard:    #7c3aed;  /* 강홍보·강감시 */
+    --c-wild:     #b45309;  /* 아뱅 */
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background: var(--bg); color: var(--fg); }
+  header { padding: 24px 32px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { margin: 0; font-size: 20px; }
+  header .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px 80px; }
+  .turn { margin: 20px 0; }
+  .who { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 6px; }
+  .who .emoji { font-size: 18px; }
+  .bubble { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; }
+  .bubble :first-child { margin-top: 0; }
+  .bubble :last-child { margin-bottom: 0; }
+  .bubble pre { background: #f3f4f6; padding: 10px 12px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
+  .bubble code { background: #f3f4f6; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; }
+  .bubble img, .bubble svg { max-width: 100%; height: auto; display: block; margin: 8px 0; }
+  .bubble table { border-collapse: collapse; margin: 8px 0; }
+  .bubble th, .bubble td { border: 1px solid var(--line); padding: 6px 10px; text-align: left; font-size: 14px; }
+  .bubble th { background: #f9fafb; }
+  .turn.ceo .who, .turn.advisor .who { color: var(--c-decision); }
+  .turn.pm .who { color: var(--c-hub); }
+  .turn.ux .who, .turn.ui .who, .turn.dev .who, .turn.qa .who { color: var(--c-exec); }
+  .turn.marketer .who, .turn.security .who { color: var(--c-guard); }
+  .turn.abang .who { color: var(--c-wild); }
+  section.closing, section.summary { margin-top: 48px; border-top: 2px solid var(--line); padding-top: 32px; }
+  section.closing h2, section.summary h2 { margin: 0 0 16px; font-size: 18px; }
+  section.closing iframe { width: 100%; height: 600px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+  section.summary .block { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 12px 0; }
+  section.summary .block h3 { margin: 0 0 8px; font-size: 15px; color: var(--c-hub); }
+  section.summary ul { margin: 0; padding-left: 20px; }
+  .final-comments { margin-top: 24px; }
+  .final-comments .comment { padding: 10px 14px; border-left: 3px solid var(--line); margin: 8px 0; }
+  .final-comments .comment.ceo, .final-comments .comment.advisor { border-color: var(--c-decision); }
+  .final-comments .comment.pm { border-color: var(--c-hub); }
+  .final-comments .comment.ux, .final-comments .comment.ui, .final-comments .comment.dev, .final-comments .comment.qa { border-color: var(--c-exec); }
+  .final-comments .comment.marketer, .final-comments .comment.security { border-color: var(--c-guard); }
+  .final-comments .comment.abang { border-color: var(--c-wild); }
+  .final-comments .comment .who { font-weight: 600; margin-right: 8px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 32px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>강팀 회의 — 크라우니 한강 v2 킥오프</h1>
+  <div class="meta">날짜: 2026-05-22  ·  안건: 크라우니 한강 v2 킥오프  ·  진행: 🎯 강팀장</div>
+</header>
+
+<main>
+
+<!-- 턴 블록 복사용 (각 멤버가 자기 턴을 여기에 append):
+<div class="turn pm">       <-- 클래스: ceo / advisor / pm / ux / ui / dev / qa / marketer / security / abang
+  <div class="who"><span class="emoji">🎯</span> 강팀장</div>
+  <div class="bubble">
+    여기에 마크다운 → HTML 또는 직접 HTML.
+    SVG·표·코드블록·이미지 자유롭게.
+  </div>
+</div>
+-->
+
+<!-- TURNS_START -->
+
+<div class="turn pm">
+  <div class="who"><span class="emoji">🎯</span> 강팀장 — 오프닝</div>
+  <div class="bubble">
+    <p>오늘 안건: <strong>크라우니 한강 v2 킥오프</strong>. 강팀이 이 프로젝트를 처음 받는 자리.</p>
+    <p>현황 한 줄: <code>v2.1</code>이 <code>claude/hangang-community-app-VzYHs</code> 브랜치에 머지된 상태. Flutter 앱 + Node/Prisma 서버 + Admin이 다 있지만 <em>대부분 Mock 데이터</em>이고 실연결이 안 끝났음.</p>
+    <p>진행 순서:</p>
+    <ol>
+      <li>🧭 강사장 — 우선순위 재정렬 (지금 뭘 먼저?)</li>
+      <li>🧪 강디1 — 현재 7개 페이지 플로우 점검</li>
+      <li>🎨 강디2 — Crowny Class 디자인 시스템 정합성 진단</li>
+      <li>⚙️ 강개발 — 서버↔앱 연결 갭 진단</li>
+      <li>🛡️ 강감시 — 위치·매칭·DM의 리스크</li>
+      <li>📣 강홍보 — 0→1 사용자 확보 전략</li>
+      <li>💡 아뱅 — 이미 정석으로 굳은 곳 깨기</li>
+      <li>🔍 강체크 — 회귀·엣지 케이스 우선 목록</li>
+      <li>🎯 마감 요약</li>
+    </ol>
+    <p>오늘 회의 목표: <strong>다음 2주 스프린트 결정</strong>까지 가는 것. 화면 안건 있으면 강디2가 마감에 mockup 채움.</p>
+    <table>
+      <tr><th>참석</th><td>🧭 강사장 · 🎯 강팀장 · 🧪 강디1 · 🎨 강디2 · ⚙️ 강개발 · 🔍 강체크 · 📣 강홍보 · 🛡️ 강감시 · 💡 아뱅</td></tr>
+      <tr><th>리포팅</th><td>👤 CEO (강사님)</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="turn advisor">
+  <div class="who"><span class="emoji">🧭</span> 강사장 — 우선순위 재정렬</div>
+  <div class="bubble">
+    <p>강팀장이 정리한 현황 위에서 <em>반대 의견 한 번</em> 던지고 시작.</p>
+    <p><strong>관찰</strong>: 기능은 16개 수정요청까지 처리하고 v2.1까지 왔는데, <em>한 명이라도 한강에서 실제로 매칭 성사된 적이 있느냐</em> — 없다. 지금 우선순위가 "더 많은 화면"으로 굳어 있는데, 이게 함정.</p>
+    <table>
+      <tr><th>축</th><th>지금까지 투자</th><th>지금 부족한 것</th></tr>
+      <tr><td>화면 수</td><td>14개 (HTML) + Flutter 7개</td><td>충분 — 더 그리지 말 것</td></tr>
+      <tr><td>서버 연결</td><td>스키마만 (Prisma 14모델)</td><td>실연결: Socket.io 실매칭, 위치 푸시</td></tr>
+      <tr><td>실사용자</td><td>0명</td><td>한강 근처 베타 10명 — <strong>최우선</strong></td></tr>
+      <tr><td>안전 보강</td><td>스펙만 있음</td><td>긴급 신고·체크인 — 출시 전 필수</td></tr>
+    </table>
+    <p><strong>우선순위 매트릭스 (Effort × Impact)</strong></p>
+<pre>
+Impact ↑
+  높 │   [실 매칭 1회]      │  [한강 11지구 데모]
+     │   서버 연결          │  (보류 — 11개 다 필요 X)
+     │                      │
+     │   [긴급신고/체크인]  │  [번역 채팅]
+  중 │   안전 가드          │  (외국인 베타 전엔 보류)
+     │                      │
+     │   [디자인 토큰 감사] │  [업적·프리미엄]
+  낮 │   강디2 한 사이클    │  (Phase 3 전 X)
+     │                      │
+     └──────────────────────┴────────────────────
+        낮 (1~2일)            높 (1~2주+)     Effort →
+</pre>
+    <p><strong>제안</strong>: 이번 2주는 좌상단 3개만. <em>화면 하나 더 그리는 시간을 서버 연결로</em>.</p>
+    <p>CEO(강사님)에게 묻는 한 줄: <em>"가족·친구 10명한테 지금 베타 깔라고 하면 무엇이 가장 부끄러우십니까?"</em> → 그게 진짜 1순위.</p>
+  </div>
+</div>
+
+<div class="turn ux">
+  <div class="who"><span class="emoji">🧪</span> 강디1 — 플로우 진단</div>
+  <div class="bubble">
+    <p>v2의 4탭(홈·매칭·채팅·프로필) 구조는 단순성 기준 통과. 문제는 <em>"손흔들기→비공개방 입장"</em> 분기가 사용자 머릿속에 안 그려진다는 것.</p>
+    <p><strong>현재 비공개방 입장 플로우</strong> (3단계가 권고 — 지금 5단계)</p>
+<pre>
+Mermaid (렌더 안 되면 그냥 읽기용):
+
+flowchart LR
+  A[채팅 탭] --> B[비공개방 자물쇠 탭]
+  B --> C[아코디언 펼침<br/>방장 카드+매너태그]
+  C --> D[손흔들기 버튼]
+  D --> E[방장 수락 대기]
+  E --> F[방 입장]
+
+  style D fill:#ffe9f0,stroke:#D53A6B
+  style E fill:#fff3d6,stroke:#f59e0b
+</pre>
+    <p><strong>문제 3가지</strong>:</p>
+    <ol>
+      <li><strong>대기 상태(E)가 화면 어디에 사는지 불명</strong> — 푸시 외엔 회수 경로 없음. "내 손흔들기" 목록이 필요.</li>
+      <li><strong>공개방은 1탭, 비공개방은 2탭</strong> — 같은 카드 컴포넌트에 다른 액션. 멘탈모델 깨짐.</li>
+      <li><strong>"손흔들기"가 매칭 탭에도 있음</strong> — 어디서 한 손흔들기인지 사용자가 못 추적.</li>
+    </ol>
+    <p><strong>제안</strong>: <em>"내 활동"</em> 모드만 추가. 채팅 탭의 필터 (전체/참여중/1:1) 옆에 <em>"보낸 손흔들기"</em> 한 칸 더. 새 페이지 X, 필터 1개 추가.</p>
+    <p>한 화면 = 한 목표 원칙: 매칭 페이지는 <strong>"누구를 발견"</strong>, 채팅 페이지는 <strong>"누구와 진행 중"</strong>. 손흔들기는 "진행 중"이지 "발견"이 아님.</p>
+  </div>
+</div>
+
+<div class="turn ui">
+  <div class="who"><span class="emoji">🎨</span> 강디2 — 디자인 시스템 정합성</div>
+  <div class="bubble">
+    <p>코드를 훑었는데 <strong>임의 HEX 두 곳 발견</strong>. v2.1까지 오면서 토큰이 슬며시 새는 중.</p>
+    <table>
+      <tr><th>발견 위치</th><th>임의 값</th><th>제안 토큰</th></tr>
+      <tr><td>flutter — 채팅 참여중 아이콘</td><td>파란색 (커밋 <code>42d8d5f</code>)</td><td><code>--color-info</code>로 토큰화 (지금 토큰 없음 → 디자인 시스템 문서에 <em>먼저</em> 추가)</td></tr>
+      <tr><td>HTML 게시판 썸네일</td><td>회색 #aaa 추정</td><td><code>--color-muted</code></td></tr>
+    </table>
+    <p><strong>제안 — Crowny Class 디자인 시스템 v2 갱신</strong>:</p>
+    <ul>
+      <li><strong>색 토큰 3개 추가</strong>: <code>--color-info</code> (참여중/진행중), <code>--color-warn</code> (마감임박), <code>--color-muted</code></li>
+      <li>그라데이션은 그대로: 보라 <code>#8A38F5</code> → 분홍 <code>#D53A6B</code> 135deg</li>
+      <li>"한강근처" 배지는 그라데이션이 아닌 <em>단색 보조</em>로 — CTA와 충돌 방지</li>
+    </ul>
+    <p><strong>한강근처 배지 시안</strong> (mockup.html에 채울 예정):</p>
+    <svg width="280" height="60" viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
+      <rect width="280" height="60" rx="16" fill="#fff" stroke="#e5e7eb"/>
+      <circle cx="34" cy="30" r="20" fill="url(#gp1)"/>
+      <defs><linearGradient id="gp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#8A38F5"/><stop offset="100%" stop-color="#D53A6B"/></linearGradient></defs>
+      <text x="66" y="28" font-family="Pretendard,sans-serif" font-size="14" font-weight="600" fill="#111">뚝섬치맥러</text>
+      <rect x="66" y="36" width="64" height="18" rx="9" fill="#E0F2FE" stroke="#0EA5E9"/>
+      <text x="74" y="49" font-size="11" fill="#0369A1" font-weight="600">한강근처</text>
+      <text x="138" y="49" font-size="11" fill="#6b7280">· 120m · 러닝 중</text>
+    </svg>
+    <p>모바일 9:16 프레임 기준으로 8개 화면 mockup은 마감에 채움 (지도·매칭·모임방·DM·게시판·프로필·모집글·미션타이머).</p>
+  </div>
+</div>
+
+<div class="turn dev">
+  <div class="who"><span class="emoji">⚙️</span> 강개발 — 서버↔앱 연결 갭</div>
+  <div class="bubble">
+    <p>스키마는 Prisma 14모델로 잘 잡혀 있는데, <strong>Flutter 앱은 mock_data.dart만 본다</strong>. 즉 v2.1까지의 모든 화면은 서버 0줄도 호출 안 함.</p>
+    <p><strong>현재 아키텍처</strong>:</p>
+<pre>
+[Flutter app] ─ mock_data.dart ─ (끝)
+
+[server]
+  src/app.js ─ Express
+  prisma/   ─ User/MoimRoom/RoomMission/ChatMessage/TrustVote/Wave...
+  Socket.io ─ 초기화만, 핸들러 없음
+  Redis     ─ 의존성만, 연결 안 됨
+
+[admin]    ─ 별개 SPA (slot in tree)
+</pre>
+    <p><strong>최소 연결 셋 (MVP 1주차)</strong>:</p>
+    <pre><code>POST  /auth/firebase         // Firebase ID 토큰 → 서버 JWT
+GET   /matching/nearby       // 위도/경도 + 반경 → User 리스트
+POST  /rooms                 // 모임방 생성
+GET   /rooms?district=뚝섬   // 모임방 목록
+POST  /rooms/:id/join        // 공개방 입장
+POST  /waves                 // 비공개방 손흔들기
+WS    /chat                  // Socket.io 그룹/DM 채팅
+WS    /mission/tick          // 미션 타이머 동기화
+</code></pre>
+    <p><strong>리스크</strong>: 위치 푸시(<code>/matching/nearby</code>)를 polling으로 갈 거냐 GPS subscribe로 갈 거냐 — <em>배터리 vs 신선도</em> 트레이드오프. 1주차는 30초 polling 권장 (베타 10명엔 충분).</p>
+    <p>Redis는 1주차에 빼도 됨 — Postgres + Socket.io adapter만으로 10명 트래픽 처리. <em>"세 번째 비슷한 케이스가 보일 때"</em> 추상화 룰 따라가자.</p>
+  </div>
+</div>
+
+<div class="turn security">
+  <div class="who"><span class="emoji">🛡️</span> 강감시 — 리스크 + 우회안</div>
+  <div class="bubble">
+    <p>오프라인 매칭은 본질적으로 안전 리스크가 큰 도메인. "안 됩니다"가 아니라 <em>비즈니스 의도를 유지하는 우회안</em>까지.</p>
+    <table>
+      <tr><th>리스크</th><th>심각도</th><th>우회안</th></tr>
+      <tr><td>위치 정확도 노출 (스토킹)</td><td>🔴 치명</td><td>거리 표시는 <strong>3구간만</strong>: 100m 미만/100m~1km/1km+. 정확한 좌표는 서버도 저장 X (반경 그리드 cell ID만)</td></tr>
+      <tr><td>비공개방 손흔들기 스팸</td><td>🟡 중간</td><td>1인당 시간당 5회 rate limit + 거부 3회 시 24h 차단 (DB <code>Wave</code> 모델에 <code>cooldown_until</code> 추가)</td></tr>
+      <tr><td>익명 게시판 → 명예훼손</td><td>🟡 중간</td><td>익명은 <em>표시</em>만 익명. 서버는 작성자 ID 보존 (수사 협조 가능 명시) + 신고 3회 시 자동 가림</td></tr>
+      <tr><td>미성년자 가입</td><td>🔴 치명</td><td>PASS 본인인증 필수 (만 17세+). Phase 1에 본인인증 없으면 <strong>출시 불가</strong></td></tr>
+      <tr><td>DM에서 개인정보 강요</td><td>🟡 중간</td><td>전화번호·인스타·카톡 ID 패턴 감지 → 회색 처리 + "정말 보내시겠습니까" 한 단계</td></tr>
+      <tr><td>외국인 사기 (피싱·로맨스 스캠)</td><td>🟢 낮음(현재) → 🟡(외국인 모드 후)</td><td>Stage 3 연락처 공개 전까지 결제·송금 키워드 차단</td></tr>
+    </table>
+    <p><strong>법규 체크</strong>: <code>legal/privacy.html</code>·<code>terms.html</code>은 있는데 위치·생체(셀카 미션) 항목이 약함. 개인정보처리방침에 <em>"위치 정보 그리드 cell 저장, 정확좌표 저장 X"</em> 명시 필요.</p>
+    <p>Phase 1 출시 차단 조건 한 줄: <strong>PASS 본인인증 + 긴급신고 + 거리 3구간 표시</strong>. 이 셋 없이 출시는 강사장 경유 강사님께 직보.</p>
+  </div>
+</div>
+
+<div class="turn marketer">
+  <div class="who"><span class="emoji">📣</span> 강홍보 — 0→1 채널 + 카피</div>
+  <div class="bubble">
+    <p>한강 사용자 0명 → 10명 → 100명 가는 길은 <em>광고비가 아니라 한강 자체</em>가 채널.</p>
+    <table>
+      <tr><th>채널</th><th>비용</th><th>예상 효과</th></tr>
+      <tr><td>여의도/뚝섬 피크닉 시즌 QR 스티커</td><td>인쇄비만</td><td>주말 하루 50명 노출 → 5명 설치</td></tr>
+      <tr><td>인스타 릴스 "한강 우연 만남" 시리즈</td><td>제작 시간</td><td>알고리즘 폭발 가능</td></tr>
+      <tr><td>구글/네이버 광고</td><td>월 100만+</td><td>비효율 (의도 검색 안 함)</td></tr>
+      <tr><td>대학 동아리방 입소문</td><td>0</td><td>20대 핵심 타겟 직접</td></tr>
+    </table>
+    <p><strong>카피 A/B</strong> — 첫 화면 후크</p>
+    <table>
+      <tr><th>A (기능 중심)</th><th>B (감정 중심)</th></tr>
+      <tr>
+        <td><em>"한강에서 새 친구 만들기"</em><br/>전형 — 패스</td>
+        <td><em>"옆자리 그 사람, 같이 라면 먹자고 해볼래요?"</em><br/>구체적·상황적·살짝 부끄러움 발동</td>
+      </tr>
+    </table>
+    <p>B로 가자. 아뱅이 더 위로 비틀어주면 좋겠음.</p>
+    <p>한 줄: 첫 베타는 <strong>"여의도 한강공원 토요일 오후 4-7시"</strong>로 시간·장소 좁히기. 매칭 풀이 적으면 매칭 안 됨 → 베타 망함.</p>
+  </div>
+</div>
+
+<div class="turn abang">
+  <div class="who"><span class="emoji">💡</span> 아뱅 — 정석 깨기</div>
+  <div class="bubble">
+    <p>강팀이 너무 잘 정리해서 끼어들어야 함. <em>지금 안이 정석으로 굳어가는 게 보임</em>. 토큰은 안 깬다 — 깨는 건 <strong>심리 레버</strong>.</p>
+    <p><strong>레버 1: 마감 임박 = 손실회피</strong></p>
+    <p>강홍보 카피 B 좋은데 한 단 더. <em>"옆자리 그 사람, 같이 라면 먹자고 해볼래요?"</em> → <em>"옆자리 그 사람, <strong>10분 뒤엔 사라져요</strong>"</em>. 모임방 카드에 <em>"방장이 26분 뒤 떠남"</em> 표시 — 이미 RoomMission timerSec 있으니 <strong>방장 체류 시간</strong>만 한 줄 더.</p>
+    <p><strong>레버 2: 미션은 "핑계"라는 프레임을 광고로</strong></p>
+    <p>강디1이 잘 짠 미션 시스템의 진짜 가치는 "어색함 해결"이 아니라 <em>"미션이 시켜서요"라는 핑계 제공</em>. 이걸 마케팅이 안 쓰고 있음.</p>
+    <pre style="background:linear-gradient(135deg,#8A38F5,#D53A6B);color:#fff;padding:16px;border-radius:16px;font-family:Pretendard;">
+"먼저 말 거는 게 어려우세요?
+ 미션이 대신 말 걸어드려요."
+─ Before/After ─
+Before: 침묵 → 도망
+After : 미션 알림 → "아 이거 시켜서…" → 웃음 → 대화
+    </pre>
+    <p><strong>레버 3: 한강 11지구 ≠ 11등급</strong></p>
+    <p>지구별 접속자 수 표시를 <em>"127명"</em> 식 숫자가 아니라 <em>"오늘 뚝섬이 제일 뜨거워요"</em> 식 <strong>비교</strong>로. 같은 데이터, 다른 프레임 = 경쟁사가 못 따라옴.</p>
+    <p><strong>한 줄</strong>: 화면 하나 추가 X. 카피·타이밍·표시 프레임 3개만 비틀자. <em>토큰 안 건드림.</em></p>
+  </div>
+</div>
+
+<div class="turn qa">
+  <div class="who"><span class="emoji">🔍</span> 강체크 — 회귀·엣지 케이스</div>
+  <div class="bubble">
+    <p>v2.1까지 16개 수정요청 처리하면서 <em>회귀 가능성 높은 곳</em>들. 사용자 관점에서 가장 빨리 깨지는 지점부터.</p>
+    <table>
+      <tr><th>#</th><th>케이스</th><th>예상 결과</th><th>실제 (테스트 필요)</th></tr>
+      <tr><td>1</td><td>글자크기 +3 상태에서 모집글 작성 입력</td><td>독바 아래로 본문 안 가려야 함</td><td>❓</td></tr>
+      <tr><td>2</td><td>비공개방 손흔들기 → 방장 거절</td><td>"거절됨" 상태 어딘가 보임</td><td>❌ (강디1 지적대로 회수 경로 없음)</td></tr>
+      <tr><td>3</td><td>모집글 미션 60분 → 백그라운드 30분 후 복귀</td><td>타이머 30분 남아야 함</td><td>❓ (서버 동기화 없음 → 부정확)</td></tr>
+      <tr><td>4</td><td>채팅 필터 "1:1" 상태에서 새 모임방 알림</td><td>필터 유지, 알림은 배지로만</td><td>❓</td></tr>
+      <tr><td>5</td><td>한강 지도 가로 스크롤 + 글자크기 +3</td><td>레이아웃 안 깨져야 함</td><td>❓</td></tr>
+      <tr><td>6</td><td>익명 게시글 작성 → 작성자 본인이 보기</td><td>본인은 "내가 쓴 글" 표시</td><td>❓</td></tr>
+      <tr><td>7</td><td>로그아웃 → 로그인 페이지 (독바 없음)</td><td>독바·햄버거 모두 X</td><td>✅ (의도된 것 확인됨)</td></tr>
+      <tr><td>8</td><td>"한강근처" 배지 — GPS 거부 사용자</td><td>배지만 사라지고 기능은 작동</td><td>❓</td></tr>
+    </table>
+    <p><strong>디자인 시스템 토큰 회귀</strong>: 강디2가 지적한 임의 HEX 2건은 <em>회귀 테스트 자동화</em>로 잡자. 빌드 단계에 <code>grep -E "#[0-9a-f]{3,6}"</code>로 토큰 외 색 감지.</p>
+    <p><strong>다음 회의 전까지 강개발에게 부탁</strong>: 케이스 1·2·8 재현 환경 만들기.</p>
+  </div>
+</div>
+
+<div class="turn pm">
+  <div class="who"><span class="emoji">🎯</span> 강팀장 — 정리 + 라우팅</div>
+  <div class="bubble">
+    <p>모두 듣고 정리. 강사장 우선순위 매트릭스 + 강감시 출시 차단 조건 + 아뱅 심리 레버 — 이 셋이 다음 2주를 정의함.</p>
+    <p><strong>스프린트 1 (5/22 → 6/5, 2주) 태스크 분해</strong>:</p>
+    <table>
+      <tr><th>담당</th><th>태스크</th><th>마감</th><th>의존</th></tr>
+      <tr><td>⚙️ 강개발</td><td>POST <code>/auth/firebase</code> + GET <code>/matching/nearby</code> + WS <code>/chat</code></td><td>5/29</td><td>—</td></tr>
+      <tr><td>⚙️ 강개발</td><td>Flutter — mock_data 분리, ApiClient 도입 (위 3개만 실연결)</td><td>6/2</td><td>위 ↑</td></tr>
+      <tr><td>🛡️ 강감시 → ⚙️ 강개발</td><td>PASS 본인인증 통합 + 거리 3구간화 + Wave rate-limit</td><td>6/5</td><td>auth 완성</td></tr>
+      <tr><td>🧪 강디1 → 🎨 강디2</td><td>"보낸 손흔들기" 필터 1개 추가 (채팅 탭)</td><td>5/27</td><td>—</td></tr>
+      <tr><td>🎨 강디2</td><td>디자인 시스템 v2: <code>--color-info/warn/muted</code> 추가, 임의 HEX 2건 토큰 교체</td><td>5/26</td><td>—</td></tr>
+      <tr><td>📣 강홍보 + 💡 아뱅</td><td>여의도 토요일 베타용 카피 B 변형 3안 + QR 스티커 시안</td><td>5/30</td><td>—</td></tr>
+      <tr><td>🔍 강체크</td><td>케이스 1·2·8 재현 + 디자인 토큰 grep 검사 CI 한 줄</td><td>5/28</td><td>—</td></tr>
+    </table>
+    <p><strong>다음 회의</strong>: 5/29 (목) — 강개발 서버 3개 API 데모 + 강디2 토큰 작업 리뷰.</p>
+    <p>이 회의 끝나고 강디2가 mockup.html에 8개 화면 채움. 모두 마감 한 줄 코멘트 남기고 종료.</p>
+  </div>
+</div>
+
+<!-- TURNS_END -->
+
+</main>
+
+<section class="summary">
+  <h2>🎯 강팀장 마감 요약 — 텔레그램으로도 발송됨</h2>
+  <p style="color: var(--muted); font-size: 13px; margin-top: 0;">
+    강팀장은 회의 마감 시 아래 SUMMARY 블록을 *반드시* 채운다.
+    이 안의 내용이 텔레그램 메시지 본문으로 그대로 전송된다.
+  </p>
+  <!-- SUMMARY_START -->
+  <div class="block">
+    <h3>결정</h3>
+    <ul>
+      <li>다음 2주는 <strong>"화면 추가 X, 서버 연결 + 안전 + 베타 1회"</strong>로 우선순위 고정</li>
+      <li>Phase 1 출시 차단 조건: <strong>PASS 본인인증 + 긴급신고 + 거리 3구간 표시</strong> (3개 모두 충족 전 출시 불가)</li>
+      <li>위치 정확좌표는 서버 저장 금지 — 그리드 cell ID만 저장 (스토킹 리스크 차단)</li>
+      <li>Crowny Class 디자인 시스템에 <code>--color-info / --color-warn / --color-muted</code> 3개 토큰 신설</li>
+      <li>첫 베타: 여의도 한강공원, 토요일 16-19시 한정 (매칭 풀 보장)</li>
+      <li>아뱅 심리 레버 3종 채택: 마감 임박(방장 체류) · "미션이 핑계" 광고 프레임 · 지구 비교 카피</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>미결정 / 다음 회의 안건</h3>
+    <ul>
+      <li>위치 갱신 — polling(30초) vs GPS subscribe — 1주차는 polling 가는 방향이지만 강사님 확정 필요</li>
+      <li>외국인 모드(번역 채팅) — Phase 1 포함 vs Phase 2 — 본인인증 PASS가 외국인 막는 문제 풀어야</li>
+      <li>익명 게시판 → 명예훼손 처리 SOP 초안 (법무 자문 필요)</li>
+      <li>한강 11지구 → 9지구 실제 운영 범위 확정 (현재 코드는 9지구 기준)</li>
+    </ul>
+  </div>
+  <div class="block">
+    <h3>다음 액션</h3>
+    <ul>
+      <li>[⚙️ 강개발] auth/firebase + matching/nearby + WS chat 3개 엔드포인트 — 5/29</li>
+      <li>[⚙️ 강개발] Flutter ApiClient 도입, 위 3개만 실연결 — 6/2</li>
+      <li>[🛡️ 강감시 → ⚙️ 강개발] PASS 본인인증 통합 + 거리 3구간 + Wave rate-limit — 6/5</li>
+      <li>[🧪 강디1 → 🎨 강디2] 채팅 탭에 "보낸 손흔들기" 필터 추가 — 5/27</li>
+      <li>[🎨 강디2] 색 토큰 3개 추가 + 임의 HEX 2건 교체 — 5/26</li>
+      <li>[📣 강홍보 + 💡 아뱅] 베타 카피 3안 + QR 스티커 시안 — 5/30</li>
+      <li>[🔍 강체크] 케이스 1·2·8 재현 + 디자인 토큰 grep CI — 5/28</li>
+      <li>[🎯 강팀장] 다음 회의 5/29 (목) 소집</li>
+    </ul>
+  </div>
+  <!-- SUMMARY_END -->
+</section>
+
+<section class="closing">
+  <h2>회의 마무리 — 목업 보고 한 마디씩</h2>
+  <iframe src="mockup.html" title="화면 목업"></iframe>
+  <div class="final-comments">
+    <!-- 디자인/화면 안건이 있었던 회의는 *모든 참석자가* 여기 한 줄씩 남기고 종료 -->
+    <!-- 예:
+    <div class="comment ui"><span class="who">🎨 강디2</span>: 결제 단계 CTA 위계 한 단 더 약하게.</div>
+    -->
+    <!-- COMMENTS_START -->
+    <div class="comment advisor"><span class="who">🧭 강사장</span>: "더 많은 화면" 본능을 이번 2주만 참자. 강사님께 첫 베타 부끄러움 한 줄 받아오겠음.</div>
+    <div class="comment pm"><span class="who">🎯 강팀장</span>: 라우팅 정리 끝. 의존성 깨지면 즉시 재분해.</div>
+    <div class="comment ux"><span class="who">🧪 강디1</span>: "보낸 손흔들기" 필터 1개로 분기 줄임 — 화면 추가 없이 멘탈모델 맞춤.</div>
+    <div class="comment ui"><span class="who">🎨 강디2</span>: 토큰 3개 신설 + HEX 누수 잡고, 한강근처 배지를 단색 보조로 바로 적용.</div>
+    <div class="comment dev"><span class="who">⚙️ 강개발</span>: Redis 1주차 빼고 Postgres + Socket.io만. 추상화 미루겠음.</div>
+    <div class="comment qa"><span class="who">🔍 강체크</span>: 디자인 토큰 회귀 CI 한 줄로 자동화 시작.</div>
+    <div class="comment marketer"><span class="who">📣 강홍보</span>: 카피 B로 시작, 아뱅 레버 얹어서 3안 제출.</div>
+    <div class="comment security"><span class="who">🛡️ 강감시</span>: PASS 없으면 출시 막는다 — 우회안: 외국인은 여권+셀카 2차 인증으로 같이 풀자.</div>
+    <div class="comment abang"><span class="who">💡 아뱅</span>: 토큰 안 깨고도 비틀 자리 많음. 화면 늘리지 말 것.</div>
+    <!-- COMMENTS_END -->
+  </div>
+</section>
+
+<footer>강팀 · Crowny Class 디자인 시스템</footer>
+</body>
+</html>

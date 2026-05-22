@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>목업 — 크라우니 한강 v2 킥오프</title>
+<style>
+  /* 엄청 심플 베이스 — 색 3, 그림자 0, 장식 0, 타이포 3단 */
+  :root {
+    --bg: #fafafa; --panel: #fff; --line: #e5e7eb;
+    --fg: #111827; --muted: #6b7280; --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; background: var(--bg); color: var(--fg); }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { margin: 0; font-size: 16px; font-weight: 600; }
+  header .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .screens { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; padding: 16px; }
+  .screen { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+  .screen h3 { margin: 0 0 8px; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .screen .desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  /* 9:16 phone frame — 화면 비율을 모바일 기본으로 */
+  .frame { aspect-ratio: 9 / 16; background: white; border: 1px solid var(--line); border-radius: 6px; padding: 16px; overflow: hidden; font-size: 14px; }
+  /* Crowny Class 디자인 시스템 토큰 (이 mockup 한정 inline) */
+  .cc-grad { background: linear-gradient(135deg, #8A38F5, #D53A6B); color: #fff; }
+  .cc-grad-text { background: linear-gradient(135deg, #8A38F5, #D53A6B); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 700; }
+  .cc-cta { display:block; background: linear-gradient(135deg, #8A38F5, #D53A6B); color: #fff; text-align: center; padding: 12px; border-radius: 10px; font-weight: 700; margin-top: 12px; text-decoration:none; box-shadow: 0 6px 14px rgba(138,56,245,0.25); }
+  .cc-chip { display:inline-block; padding: 4px 10px; border-radius: 999px; background:#f3f4f6; font-size: 11px; color:#374151; margin: 2px; }
+  .cc-chip.active { background: linear-gradient(135deg, #8A38F5, #D53A6B); color:#fff; }
+  .cc-card { background:#fff; border:1px solid #e5e7eb; border-radius: 16px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); margin: 8px 0; }
+  .cc-near { background: #E0F2FE; color:#0369A1; border:1px solid #0EA5E9; border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight:600; }
+  .cc-warn { background: #FEF3C7; color:#92400E; border:1px solid #F59E0B; border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight:600; }
+  .cc-info { background: #DBEAFE; color:#1D4ED8; border:1px solid #3B82F6; border-radius: 999px; padding: 1px 8px; font-size: 10px; font-weight:600; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #8A38F5, #D53A6B); display: inline-block; vertical-align: middle; }
+  .bnav { display:flex; justify-content: space-around; border-top:1px solid #e5e7eb; padding: 8px 0 4px; margin-top: 10px; }
+  .bnav span { font-size: 10px; color: #6b7280; text-align: center; }
+  .bnav span.on { color: #8A38F5; font-weight: 700; }
+  /* 목업 안에서 자주 쓸 패턴 — 강디2가 인라인으로 더 정의 가능 */
+  .frame .topbar { display: flex; justify-content: space-between; align-items: center; padding: 4px 0 12px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+  .frame .title { font-size: 18px; font-weight: 700; margin: 16px 0 8px; }
+  .frame .body { font-size: 13px; line-height: 1.55; }
+  .frame .cta { display: block; background: var(--accent); color: white; text-align: center; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 16px; text-decoration: none; }
+  .frame .input { display: block; border: 1px solid var(--line); padding: 10px 12px; border-radius: 6px; margin: 8px 0; font-size: 13px; }
+  .frame .row { display: flex; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>목업 — 크라우니 한강 v2 킥오프</h1>
+  <div class="meta">강디2 빠른 스케치 · 엄청 심플 베이스 · 클릭 동작 없음 (보기 전용)</div>
+</header>
+
+<div class="screens">
+  <!-- 강디2가 안건별 화면을 여기 채움. 화면당 article.screen 한 개.
+       빠르게 — 색 ≤ 3, 그림자 X, 장식 0. 위계는 크기·여백·굵기로만.
+
+  예시:
+  <article class="screen">
+    <h3>1. 진입</h3>
+    <div class="desc">사용자가 처음 보는 화면</div>
+    <div class="frame">
+      <div class="topbar"><span>9:41</span><span>●●●</span></div>
+      <div class="title">한 줄 카피</div>
+      <div class="body">보조 한 줄.</div>
+      <a class="cta">시작하기</a>
+    </div>
+  </article>
+  -->
+
+  <!-- SCREENS_START -->
+
+  <article class="screen">
+    <h3>1. 홈</h3>
+    <div class="desc">히어로 + 번개 + 근처 사용자</div>
+    <div class="frame" style="padding:0;">
+      <div class="cc-grad" style="padding:14px 12px; border-radius:6px 6px 0 0;">
+        <div style="font-size:10px; opacity:0.85;">한강 · 오늘 일몰 19:23</div>
+        <div style="font-size:18px; font-weight:700; margin-top:4px;">옆자리 그 사람,<br/>같이 라면 먹자고 해볼래요?</div>
+      </div>
+      <div style="padding: 10px 12px;">
+        <div style="font-size:11px; color:#6b7280; margin: 6px 0 4px;">⚡ 번개 모임 · 마감 임박</div>
+        <div class="cc-card" style="margin:6px 0;">
+          <div style="font-size:13px; font-weight:600;">여의도 치맥 모임 <span class="cc-warn">26분 뒤 떠남</span></div>
+          <div style="font-size:11px; color:#6b7280; margin-top:2px;">방장 · 여의도치맥왕 · 3/5명</div>
+        </div>
+        <div style="font-size:11px; color:#6b7280; margin: 8px 0 4px;">근처 사용자</div>
+        <div class="cc-card" style="display:flex; gap:8px; align-items:center; margin:4px 0;">
+          <span class="avatar" style="width:28px;height:28px;"></span>
+          <div style="flex:1;">
+            <div style="font-size:12px; font-weight:600;">뚝섬러닝러 <span class="cc-near">한강근처</span></div>
+            <div style="font-size:10px; color:#6b7280;">120m · 러닝 중</div>
+          </div>
+        </div>
+      </div>
+      <div class="bnav"><span class="on">홈</span><span>매칭</span><span>채팅</span><span>프로필</span></div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>2. 매칭</h3>
+    <div class="desc">필터 + 사용자 리스트</div>
+    <div class="frame" style="padding:0;">
+      <div class="cc-grad" style="padding:14px 12px; border-radius:6px 6px 0 0; color:#fff;">
+        <div style="font-size:11px; opacity:0.9;">← 매칭</div>
+        <div style="font-size:22px; font-weight:700; margin-top:2px;">현재 한강에 127명</div>
+        <div style="font-size:10px; opacity:0.9; margin-top:4px;">오늘 뚝섬이 제일 뜨거워요 🔥</div>
+      </div>
+      <div style="padding: 8px 10px;">
+        <div style="margin: 4px 0; line-height: 1.4;">
+          <span class="cc-chip active">전체</span><span class="cc-chip">여의도</span><span class="cc-chip">뚝섬</span><span class="cc-chip">반포</span>
+        </div>
+        <div style="margin: 4px 0; line-height: 1.4;">
+          <span class="cc-chip">🍗 치맥</span><span class="cc-chip">🏃 러닝</span><span class="cc-chip">🚶 산책</span>
+        </div>
+        <div class="cc-card" style="display:flex; gap:8px; align-items:center;">
+          <span class="avatar"></span>
+          <div style="flex:1;">
+            <div style="font-size:12px; font-weight:600;">여의도치맥왕 <span class="cc-info">참여중</span></div>
+            <div style="font-size:10px; color:#6b7280;">~100m · 🍗 치맥 모임</div>
+          </div>
+        </div>
+        <div class="cc-card" style="display:flex; gap:8px; align-items:center;">
+          <span class="avatar"></span>
+          <div style="flex:1;">
+            <div style="font-size:12px; font-weight:600;">뚝섬러닝러 <span class="cc-near">한강근처</span></div>
+            <div style="font-size:10px; color:#6b7280;">100m~1km · 🏃 러닝</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>3. 채팅 (모임방)</h3>
+    <div class="desc">필터에 "보낸 손흔들기" 추가</div>
+    <div class="frame" style="padding:0;">
+      <div class="cc-grad" style="padding:14px 12px; border-radius:6px 6px 0 0;">
+        <div style="font-size:11px; opacity:0.9;">← 모임방</div>
+        <div style="font-size:18px; font-weight:700; margin-top:2px;">진행 중인 자리</div>
+      </div>
+      <div style="padding: 8px 10px;">
+        <div style="margin: 4px 0;">
+          <span class="cc-chip active">전체</span><span class="cc-chip">참여중</span><span class="cc-chip">1:1</span><span class="cc-chip">👋 보낸 손흔들기</span>
+        </div>
+        <div class="cc-card">
+          <div style="font-size:13px; font-weight:600;">🍗 여의도 치맥 모임 <span class="cc-info">참여중</span></div>
+          <div style="font-size:11px; color:#6b7280; margin-top:2px;">방장 · 여의도치맥왕 · 3/5명</div>
+        </div>
+        <div class="cc-card">
+          <div style="font-size:13px; font-weight:600;">🏃 한강 러닝 크루 🔒</div>
+          <div style="font-size:11px; color:#6b7280; margin-top:2px;">방장 · 뚝섬러닝러 · 2/4명 · 미션 있음</div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>4. 비공개방 손흔들기</h3>
+    <div class="desc">아코디언 펼침 + 대기 상태</div>
+    <div class="frame" style="padding: 12px;">
+      <div style="font-size:11px; color:#6b7280;">← 뚝섬</div>
+      <div class="cc-card">
+        <div style="font-size:14px; font-weight:600;">🏃 한강 러닝 크루 🔒</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+          <span class="avatar"></span>
+          <div>
+            <div style="font-size:12px; font-weight:600;">뚝섬러닝러</div>
+            <div style="font-size:10px; color:#6b7280;">한강온도 38.5°</div>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <span class="cc-chip">시간 잘 지켜요</span><span class="cc-chip">분위기 메이커</span>
+        </div>
+        <div style="font-size:11px; color:#6b7280; margin-top:10px;">미션: 가장 웃긴 셀카 · 3분</div>
+        <a class="cc-cta">👋 손흔들기</a>
+        <div style="font-size:10px; color:#92400E; text-align:center; margin-top:6px;">하루 5회 제한 · 거부 3회면 24h 차단</div>
+      </div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>5. 모임방 + 미션 타이머</h3>
+    <div class="desc">그룹 채팅 + SVG 진행바</div>
+    <div class="frame" style="padding:0;">
+      <div class="cc-grad" style="padding:12px; border-radius:6px 6px 0 0;">
+        <div style="font-size:11px;">← 🍗 여의도 치맥 모임</div>
+        <div style="font-size:11px; opacity:0.9; margin-top:2px;">3/5명 · 여의도</div>
+      </div>
+      <div style="padding: 10px 12px; text-align:center;">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8A38F5"/><stop offset="1" stop-color="#D53A6B"/></linearGradient></defs>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#f3f4f6" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="url(#g1)" stroke-width="8" stroke-dasharray="263" stroke-dashoffset="80" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+          <text x="50" y="48" text-anchor="middle" font-size="16" font-weight="700">02:14</text>
+          <text x="50" y="62" text-anchor="middle" font-size="9" fill="#6b7280">미션 중</text>
+        </svg>
+        <div style="font-size:12px; color:#6b7280;">"가장 웃긴 셀카" — 미션이 시켰어요 😅</div>
+      </div>
+      <div style="padding: 6px 12px;">
+        <div style="background:#f3f4f6; border-radius: 12px; padding: 6px 10px; margin: 4px 0; font-size:12px;">치킨 주문했어요!</div>
+        <div style="background: linear-gradient(135deg,#8A38F5,#D53A6B); color:#fff; border-radius:12px; padding:6px 10px; margin:4px 0; font-size:12px; margin-left:auto; max-width: 70%;">저는 라면이요 🍜</div>
+      </div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>6. 1:1 DM</h3>
+    <div class="desc">Stage 2 익명 채팅</div>
+    <div class="frame" style="padding:0;">
+      <div class="cc-grad" style="padding:12px; border-radius:6px 6px 0 0; display:flex; align-items:center; gap:8px;">
+        <span class="avatar" style="background:#fff; width:28px; height:28px;"></span>
+        <div>
+          <div style="font-size:13px; font-weight:700;">뚝섬러닝러</div>
+          <div style="font-size:10px; opacity:0.85;">Stage 2 · 닉네임만 공개</div>
+        </div>
+      </div>
+      <div style="padding: 10px 12px;">
+        <div style="background:#f3f4f6; border-radius:12px; padding:6px 10px; margin:4px 0; font-size:12px; max-width:70%;">안녕하세요! 어제 미션 재밌었어요</div>
+        <div style="background: linear-gradient(135deg,#8A38F5,#D53A6B); color:#fff; border-radius:12px; padding:6px 10px; margin:4px 0; font-size:12px; margin-left:auto; max-width: 70%;">ㅎㅎ 셀카 진짜 웃겼어요</div>
+        <div style="background:#FEF3C7; color:#92400E; border:1px solid #F59E0B; border-radius: 8px; padding:6px 8px; font-size:10px; margin-top: 8px;">⚠️ "전화번호" 패턴 감지 — Stage 3로 올린 후 공유하세요</div>
+      </div>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>7. 한강 지도 (9지구)</h3>
+    <div class="desc">접속자 수를 비교 프레임으로</div>
+    <div class="frame" style="padding: 10px;">
+      <div style="font-size:11px; color:#6b7280; margin-bottom: 6px;">← 한강 지도 · 오늘 19:23</div>
+      <svg viewBox="0 0 200 320" width="100%" height="100%" style="background:#F0F9FF; border-radius: 6px;">
+        <path d="M0,120 Q60,80 100,130 T200,140 L200,180 Q140,200 100,180 T0,160 Z" fill="#7DD3FC" opacity="0.7"/>
+        <circle cx="40" cy="100" r="14" fill="url(#g2)"/><text x="40" y="86" text-anchor="middle" font-size="9" fill="#111">망원 22</text>
+        <circle cx="80" cy="110" r="20" fill="url(#g2)"/><text x="80" y="92" text-anchor="middle" font-size="9" fill="#111">여의도 41</text>
+        <circle cx="120" cy="135" r="26" fill="url(#g2)" stroke="#D53A6B" stroke-width="2"/><text x="120" y="115" text-anchor="middle" font-size="10" font-weight="700" fill="#D53A6B">뚝섬 64</text>
+        <circle cx="160" cy="155" r="18" fill="url(#g2)"/><text x="160" y="135" text-anchor="middle" font-size="9" fill="#111">잠실 34</text>
+        <circle cx="90" cy="200" r="16" fill="url(#g2)"/><text x="90" y="182" text-anchor="middle" font-size="9" fill="#111">반포 28</text>
+        <circle cx="50" cy="220" r="10" fill="url(#g2)"/><text x="50" y="206" text-anchor="middle" font-size="9" fill="#111">이촌 12</text>
+        <defs><linearGradient id="g2"><stop offset="0" stop-color="#8A38F5"/><stop offset="1" stop-color="#D53A6B"/></linearGradient></defs>
+        <text x="100" y="280" text-anchor="middle" font-size="11" font-weight="700" fill="#D53A6B">오늘 뚝섬이 제일 뜨거워요</text>
+        <text x="100" y="300" text-anchor="middle" font-size="9" fill="#6b7280">탭하면 해당 지구 모임방으로</text>
+      </svg>
+    </div>
+  </article>
+
+  <article class="screen">
+    <h3>8. 안전 — 거리 3구간 + 본인인증</h3>
+    <div class="desc">강감시 출시 차단 조건 반영</div>
+    <div class="frame" style="padding: 12px;">
+      <div style="font-size:14px; font-weight:700; margin-bottom: 6px;">프로필 보기</div>
+      <div class="cc-card">
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="avatar"></span>
+          <div>
+            <div style="font-size:13px; font-weight:600;">여의도치맥왕 <span class="cc-near">한강근처</span></div>
+            <div style="font-size:11px; color:#6b7280;">~100m · 🍗 치맥 중</div>
+          </div>
+        </div>
+        <div style="font-size:10px; color:#6b7280; margin-top: 8px; border-top:1px solid #e5e7eb; padding-top: 8px;">
+          거리 표시: <strong>100m 미만 / 100m~1km / 1km+</strong><br/>
+          (정확한 좌표는 서버도 저장하지 않음)
+        </div>
+      </div>
+      <div class="cc-card">
+        <div style="font-size:12px; font-weight:600;">🛡️ 인증 단계</div>
+        <div style="font-size:11px; color:#374151; margin-top: 4px;">
+          ✅ 휴대폰 인증<br/>
+          ✅ PASS 본인인증 (만 17세+ 확인)<br/>
+          ☐ 프로필 셀카 AI 검증<br/>
+          ☐ 첫 만남 완료 → 한강 단골 배지
+        </div>
+      </div>
+      <div style="display:flex; gap:6px; margin-top: 10px;">
+        <a class="cc-cta" style="flex:1;">👋 손흔들기</a>
+        <a style="flex:1; display:block; background:#fff; border:1px solid #ef4444; color:#ef4444; text-align:center; padding:12px; border-radius:10px; font-weight:700; font-size:12px;">🚨 신고</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- SCREENS_END -->
+</div>
+
+</body>
+</html>
